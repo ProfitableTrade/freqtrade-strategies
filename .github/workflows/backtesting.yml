@@ -8,6 +8,7 @@ on:
       time_frames:
         description: "Timeframes, example: 30m"
         required: true
+        default: 30m
       start_date:
         description: "Start date - year month day, example: 20210101"
         required: true
@@ -111,6 +112,7 @@ jobs:
             --rm freqtrade download-data \
             --timeframes ${{ inputs.time_frames }} \
             --timerange ${{ inputs.start_date }}-${{ inputs.end_date }} \
+            --config /freqtrade/configs/${{ inputs.exchange }}.json \
             --pairs ${{ inputs.pair }} >> $GITHUB_STEP_SUMMARY | cat
         env:
           STRATEGY: ${{ inputs.strategy }}
@@ -125,8 +127,5 @@ jobs:
             --timeframe ${{ inputs.time_frames }} \
             --timerange ${{ inputs.start_date }}-${{ inputs.end_date }} \
             --strategy ${{ inputs.strategy }} \
-            --pairs ${{ inputs.pair }} \
-            --export trades >> $GITHUB_STEP_SUMMARY | cat
-        env:
-          STRATEGY: ${{ inputs.strategy }}
-          EXCHANGE: ${{ inputs.exchange }}
+            --config /freqtrade/configs/${{ inputs.exchange }}.json \
+            --pairs ${{ inputs.pair }} >> $GITHUB_STEP_SUMMARY | cat
