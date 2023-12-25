@@ -1,0 +1,17 @@
+version: "3"
+services:
+  freqtrade:
+    image: freqtradeorg/freqtrade:stable
+    container_name: freqtrade
+    volumes:
+      - "./user_data:/freqtrade/user_data"
+      - "./configs:/freqtrade/configs"
+    environment:
+      - STRATEGY=${STRATEGY}
+      - EXCHANGE=${EXCHANGE}
+    command: >
+      trade
+      --logfile /freqtrade/user_data/logs/freqtrade.log
+      --db-url sqlite:////freqtrade/user_data/tradesv3.sqlite
+      --config /freqtrade/configs/${EXCHANGE}.json
+      --strategy ${STRATEGY}

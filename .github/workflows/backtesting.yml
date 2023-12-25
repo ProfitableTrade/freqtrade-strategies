@@ -1,0 +1,132 @@
+name: Backtesting
+on:
+  workflow_dispatch:
+    inputs:
+      strategy:
+        description: "Strategy, example: Strategy0"
+        required: true
+      time_frames:
+        description: "Timeframes, example: 30m"
+        required: true
+      start_date:
+        description: "Start date - year month day, example: 20210101"
+        required: true
+      end_date:
+        description: "End date - year month day, example: 20210101"
+        required: false
+        default: ""
+      pair:
+        description: "Pair, example: SOL/USDT"
+        required: true
+        type: choice
+        default: SOL/USDT
+        options:
+          - SOL/USDT
+          - BTC/USDT
+          - ETH/USDT
+          - DOT/USDT
+          - ADA/USDT
+          - LINK/USDT
+          - XRP/USDT
+          - LTC/USDT
+          - BCH/USDT
+          - BNB/USDT
+          - EOS/USDT
+          - TRX/USDT
+          - XLM/USDT
+          - ETC/USDT
+          - XTZ/USDT
+          - NEO/USDT
+          - ATOM/USDT
+          - IOTA/USDT
+          - VET/USDT
+          - XMR/USDT
+          - DASH/USDT
+          - ZEC/USDT
+          - QTUM/USDT
+          - THETA/USDT
+          - FIL/USDT
+          - UNI/USDT
+          - AAVE/USDT
+          - COMP/USDT
+          - MKR/USDT
+          - SNX/USDT
+          - YFI/USDT
+          - SUSHI/USDT
+          - ZRX/USDT
+          - KNC/USDT
+          - BAND/USDT
+          - REN/USDT
+          - BAL/USDT
+          - OXT/USDT
+          - CRV/USDT
+          - TRB/USDT
+          - UMA/USDT
+          - NMR/USDT
+          - ANT/USDT
+          - LRC/USDT
+          - CVC/USDT
+          - KAVA/USDT
+          - AR/USDT
+          - GRT/USDT
+          - STORJ/USDT
+          - SNM/USDT
+          - CTK/USDT
+          - BNT/USDT
+          - GNO/USDT
+          - REP/USDT
+          - MLN/USDT
+          - CRV/USDT
+          - STORJ/USDT
+          - SNM/USDT
+          - CTK/USDT
+          - BNT/USDT
+          - GNO/USDT
+          - REP/USDT
+          - MLN/USDT
+          - CRV/USDT
+      exchange:
+        description: "Exchange, example: binance"
+        required: true
+        type: choice
+        default: binance
+        options:
+          - binance
+          - bybit
+
+jobs:
+  backtesting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+          submodules: true
+      - name: Download data
+        run: |
+          echo Download, strategy: ${{ inputs.strategy }} >> $GITHUB_STEP_SUMMARY | cat
+          docker compose -f docker-compose-backtesting.yml \
+            run \
+            --rm freqtrade download-data \
+            --timeframes ${{ inputs.time_frames }} \
+            --timerange ${{ inputs.start_date }}-${{ inputs.end_date }} \
+            --p ${{ inputs.pair }} >> $GITHUB_STEP_SUMMARY | cat
+        env:
+          STRATEGY: ${{ inputs.strategy }}
+          EXCHANGE: ${{ inputs.exchange }}
+      - name: Backtesting
+        run: |
+          echo --- >> $GITHUB_STEP_SUMMARY | cat
+          echo Backtesting, strategy: ${{ inputs.strategy }} >> $GITHUB_STEP_SUMMARY | cat
+          docker compose -f docker-compose-backtesting.yml \
+            run \
+            --rm freqtrade backtesting \
+            --timeframe ${{ inputs.time_frames }} \
+            --timerange ${{ inputs.start_date }}-${{ inputs.end_date }} \
+            --strategy ${{ inputs.strategy }} \
+            --pair ${{ inputs.pair }} \
+            --export trades >> $GITHUB_STEP_SUMMARY | cat
+        env:
+          STRATEGY: ${{ inputs.strategy }}
+          EXCHANGE: ${{ inputs.exchange }}
