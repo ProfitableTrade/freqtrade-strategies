@@ -111,7 +111,7 @@ jobs:
             --rm freqtrade download-data \
             --timeframes ${{ inputs.time_frames }} \
             --timerange ${{ inputs.start_date }}-${{ inputs.end_date }} \
-            --p ${{ inputs.pair }} >> $GITHUB_STEP_SUMMARY | cat
+            --pairs ${{ inputs.pair }} >> $GITHUB_STEP_SUMMARY | cat
         env:
           STRATEGY: ${{ inputs.strategy }}
           EXCHANGE: ${{ inputs.exchange }}
@@ -125,7 +125,7 @@ jobs:
             --timeframe ${{ inputs.time_frames }} \
             --timerange ${{ inputs.start_date }}-${{ inputs.end_date }} \
             --strategy ${{ inputs.strategy }} \
-            --pair ${{ inputs.pair }} \
+            --pairs ${{ inputs.pair }} \
             --export trades >> $GITHUB_STEP_SUMMARY | cat
         env:
           STRATEGY: ${{ inputs.strategy }}
