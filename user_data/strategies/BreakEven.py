@@ -45,7 +45,7 @@ class BreakEven(IStrategy):
 #    }
 
     # Optimal stoploss designed for the strategy
-    stoploss = -0.05
+    stoploss = -0.008
 
     # Optimal timeframe for the strategy
     timeframe = '5m'
