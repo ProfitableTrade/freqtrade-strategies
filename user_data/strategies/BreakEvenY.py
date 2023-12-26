@@ -1,82 +1,92 @@
-from freqtrade.strategy import IStrategy
+from freqtrade.strategy.interface import IStrategy
 from pandas import DataFrame
-import numpy as np
 
-class Strategy00(IStrategy):
+class CustomEMAStrategy(IStrategy):
     """
-    Strategy 00
-    author@: Yurii Udaltsov
-    github@: https://github.com/freqtrade/freqtrade-strategies
-
-    How to use it?
-    > python3 ./freqtrade/main.py -s Strategy00
+    Custom EMA Strategy
+    This is a simple strategy using EMA and Stochastic RSI without TA-Lib.
     """
 
-    INTERFACE_VERSION: int = 3
+    INTERFACE_VERSION = 2
 
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
-    stoploss = -0.03
+    stoploss = -0.05
 
     # Оптимальний таймфрейм для стратегії
     timeframe = '5m'
 
-    # Trailing stoploss
-    trailing_stop = False
-    trailing_stop_positive = 0.5
-    trailing_stop_positive_offset = 0.6
-
-    # Запускати "populate_indicators" тільки для нової свічки
-    process_only_new_candles = True
-
-    # Експериментальні параметри
-    use_exit_signal = True
-    exit_profit_only = False
-
-    # Optional order type mapping
-    order_types = {
-        'entry': 'limit',
-        'exit': 'limit',
-        'stoploss': 'market',
-        'stoploss_on_exchange': False
+    # ROI table:
+    minimal_roi = {
+        "0": 0.01
     }
 
-    def ema(self, series: DataFrame, timeperiod: int) -> DataFrame:
+    # Trailing stop:
+    trailing_stop = True
+    trailing_stop_positive = 0.01
+    trailing_stop_positive_offset = 0.02
+    trailing_only_offset_is_reached = False
+
+    def ema(self, series, timeperiod):
         """
         Calculate EMA without using TA-Lib
         """
         return series.ewm(span=timeperiod, adjust=False).mean()
 
+    def stoch_rsi(self, series, timeperiod, fastk_period, fastd_period):
+        """
+        Calculate Stochastic RSI without using TA-Lib
+        """
+        delta = series.diff()
+        dUp, dDown = delta.copy(), delta.copy()
+        dUp[dUp < 0] = 0
+        dDown[dDown > 0] = 0
+
+        RolUp = dUp.rolling(window=timeperiod).mean()
+        RolDown = dDown.abs().rolling(window=timeperiod).mean()
+        RS = RolUp / RolDown
+        rsi = 100.0 - (100.0 / (1.0 + RS))
+
+        stochrsi = (rsi - rsi.rolling(window=timeperiod).min()) / (rsi.rolling(window=timeperiod).max() - rsi.rolling(window=timeperiod).min())
+        fastk = stochrsi.rolling(window=fastk_period).mean()
+        fastd = fastk.rolling(window=fastd_period).mean()
+
+        return fastk, fastd
+
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
-        Adds EMA 15 and EMA 30 indicators to the given DataFrame
+        Adds several different indicators to the given DataFrame
         """
-        dataframe['ema15'] = self.ema(dataframe['close'], timeperiod=15)
-        dataframe['ema30'] = self.ema(dataframe['close'], timeperiod=30)
+        dataframe['ema_fast'] = self.ema(dataframe['close'], 28)
+        dataframe['ema_slow'] = self.ema(dataframe['close'], 48)
+
+        fastk, fastd = self.stoch_rsi(dataframe['close'], 14, 3, 3)
+        dataframe['stoch_rsi_k'] = fastk
+        dataframe['stoch_rsi_d'] = fastd
 
         return dataframe
 
-    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
-        Generates buy signal based on EMA indicators
+        Based on indicators add buy signals
         """
         dataframe.loc[
             (
-                (dataframe['ema15'] > dataframe['ema30']) & 
-                (dataframe['ema15'].shift(1) <= dataframe['ema30'].shift(1))
+                (dataframe['ema_fast'] > dataframe['ema_slow']) &
+                (dataframe['stoch_rsi_k'] < 0.20)
             ),
-            'enter_long'] = 1
+            'buy'] = 1
 
         return dataframe
 
-    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
-        Generates sell signal based on EMA indicators
+        Based on indicators add sell signals
         """
         dataframe.loc[
             (
-                (dataframe['ema15'] < dataframe['ema30']) & 
-                (dataframe['ema15'].shift(1) >= dataframe['ema30'].shift(1))
+                (dataframe['ema_fast'] < dataframe['ema_slow']) &
+                (dataframe['stoch_rsi_k'] > 0.80)
             ),
-            'exit_long'] = 1
+            'sell'] = 1
 
         return dataframe
