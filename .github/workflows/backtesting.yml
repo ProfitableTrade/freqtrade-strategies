@@ -100,7 +100,7 @@ jobs:
   backtesting:
     runs-on: ubuntu-latest
     env:
-      REMOTE_SERVER: ${{ secrets.REMOTE_SERVER }}
+      REMOTE_SERVER: root@${{ secrets.REMOTE_SERVER }}
     steps:
       #------------------------------------------------------------
       # Checkout the repository
