@@ -5,15 +5,17 @@ on:
       strategy:
         description: "Strategy, example: Strategy0"
         required: true
+        default: Strategy001
       time_frames:
         description: "Timeframes, example: 30m"
         required: true
         default: 30m
       start_date:
-        description: "Start date - year month day, example: 20210101"
+        description: "Start date - year month day, example: 20230101"
         required: true
+        default: "20230101"
       end_date:
-        description: "End date - year month day, example: 20210101"
+        description: "End date - year month day, example: 20230101"
         required: false
         default: ""
       pair:
@@ -93,34 +95,63 @@ on:
         default: binance
         options:
           - binance
-          - bybit
 
 jobs:
   backtesting:
     runs-on: ubuntu-latest
+    env:
+      REMOTE_SERVER: ${{ secrets.REMOTE_SERVER }}
     steps:
+      #------------------------------------------------------------
+      # Checkout the repository
+      #------------------------------------------------------------
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           lfs: true
           submodules: true
-      - name: Download data
+      #------------------------------------------------------------
+      # Create ssh private key
+      #------------------------------------------------------------
+      - name: 🔑 Prepare ssh private key 🔑
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ./id_rsa
+          chmod 600 ./id_rsa
+      #------------------------------------------------------------
+      # Copy to remote
+      #------------------------------------------------------------
+      - name: 📝 Copy to remote 📝
+        run: |
+          echo "Copy to remote $REMOTE_SERVER:/root/"
+          yes | scp -o StrictHostKeyChecking=no -i ./id_rsa -r "./configs" "$REMOTE_SERVER:/root/${{ github.run_number }}/"
+          yes | scp -o StrictHostKeyChecking=no -i ./id_rsa -r "./user_data" "$REMOTE_SERVER:/root/${{ github.run_number }}/"
+          yes | scp -o StrictHostKeyChecking=no -i ./id_rsa -r "./docker-compose-backtesting.yml" "$REMOTE_SERVER:/root/${{ github.run_number }}/"
+      #------------------------------------------------------------
+      # Download data
+      #------------------------------------------------------------
+      - name: 🗃️ Download data 🗃️
         run: |
           echo Download, strategy: ${{ inputs.strategy }} >> $GITHUB_STEP_SUMMARY | cat
+          ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" <<'EOF' 
+          set -e 
+          cd /root/${{ github.run_number }}
           docker compose -f docker-compose-backtesting.yml \
             run \
             --rm freqtrade download-data \
             --timeframes ${{ inputs.time_frames }} \
             --timerange ${{ inputs.start_date }}-${{ inputs.end_date }} \
             --config /freqtrade/configs/${{ inputs.exchange }}.json \
-            --pairs ${{ inputs.pair }} >> $GITHUB_STEP_SUMMARY | cat
-        env:
-          STRATEGY: ${{ inputs.strategy }}
-          EXCHANGE: ${{ inputs.exchange }}
-      - name: Backtesting
+            --pairs ${{ inputs.pair }}
+          EOF >> $GITHUB_STEP_SUMMARY | cat
+      #------------------------------------------------------------
+      # Backtesting
+      #------------------------------------------------------------
+      - name: 🚀 Backtesting 🚀
         run: |
-          echo --- >> $GITHUB_STEP_SUMMARY | cat
           echo Backtesting, strategy: ${{ inputs.strategy }} >> $GITHUB_STEP_SUMMARY | cat
+          ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" <<'EOF' 
+          set -e 
+          cd /root/${{ github.run_number }}
           docker compose -f docker-compose-backtesting.yml \
             run \
             --rm freqtrade backtesting \
@@ -128,4 +159,5 @@ jobs:
             --timerange ${{ inputs.start_date }}-${{ inputs.end_date }} \
             --strategy ${{ inputs.strategy }} \
             --config /freqtrade/configs/${{ inputs.exchange }}.json \
-            --pairs ${{ inputs.pair }} >> $GITHUB_STEP_SUMMARY | cat
+            --pairs ${{ inputs.pair }}
+          EOF >> $GITHUB_STEP_SUMMARY | cat
