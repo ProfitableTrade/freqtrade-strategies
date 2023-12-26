@@ -132,17 +132,7 @@ jobs:
       - name: 🗃️ Download data 🗃️
         run: |
           echo Download, strategy: ${{ inputs.strategy }} >> $GITHUB_STEP_SUMMARY | cat
-          ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" <<'EOF' 
-          set -e 
-          cd /root/${{ github.run_number }}
-          docker compose -f docker-compose-backtesting.yml \
-            run \
-            --rm freqtrade download-data \
-            --timeframes ${{ inputs.time_frames }} \
-            --timerange ${{ inputs.start_date }}-${{ inputs.end_date }} \
-            --config /freqtrade/user_data/${{ inputs.exchange }}.json \
-            --pairs ${{ inputs.pair }}
-          EOF | cat >> $GITHUB_STEP_SUMMARY
+          ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "set -e && cd /root/${{ github.run_number }} && docker compose -f docker-compose-backtesting.yml run --rm freqtrade download-data --timeframes ${{ inputs.time_frames }} --timerange ${{ inputs.start_date }}-${{ inputs.end_date }} --config /freqtrade/user_data/${{ inputs.exchange }}.json --pairs ${{ inputs.pair }}" >> $GITHUB_STEP_SUMMARY | cat
       #------------------------------------------------------------
       # Backtesting
       #------------------------------------------------------------
@@ -160,4 +150,4 @@ jobs:
             --strategy ${{ inputs.strategy }} \
             --config /freqtrade/user_data/${{ inputs.exchange }}.json \
             --pairs ${{ inputs.pair }}
-          EOF | cat >> $GITHUB_STEP_SUMMARY
+          EOF
