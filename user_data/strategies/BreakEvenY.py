@@ -10,7 +10,7 @@ class ModifiedBreakEven(IStrategy):
         "0": 0.01,  # at least 1% at first
         "10": 0     # after 10min, everything goes
     }
-    stoploss = -0.05
+    stoploss = -0.01
 
     # Встановлення таймфрейму
     timeframe = '5m'
