@@ -142,7 +142,7 @@ jobs:
             --timerange ${{ inputs.start_date }}-${{ inputs.end_date }} \
             --config /freqtrade/user_data/${{ inputs.exchange }}.json \
             --pairs ${{ inputs.pair }}
-          EOF >> $GITHUB_STEP_SUMMARY | cat
+          EOF
       #------------------------------------------------------------
       # Backtesting
       #------------------------------------------------------------
@@ -160,4 +160,4 @@ jobs:
             --strategy ${{ inputs.strategy }} \
             --config /freqtrade/user_data/${{ inputs.exchange }}.json \
             --pairs ${{ inputs.pair }}
-          EOF >> $GITHUB_STEP_SUMMARY | cat
+          EOF
