@@ -10,7 +10,6 @@ on:
         options:
           - Strategy00
           - CrossEMAStrategy
-          - Bandtastic
           - BreakEven
         
       time_frames:
