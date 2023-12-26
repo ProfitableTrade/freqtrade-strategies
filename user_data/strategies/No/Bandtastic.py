@@ -25,14 +25,14 @@ class Bandtastic(IStrategy):
 
     # ROI table:
     minimal_roi = {
-        "0": 0.01,
-        "69": 0.02,
-        "229": 0.035,
-        "566": 0.4
+        "0": 0.162,
+        "69": 0.097,
+        "229": 0.061,
+        "566": 0
     }
 
     # Stoploss:
-    stoploss = -0.03
+    stoploss = -0.345
 
     # Trailing stop:
     trailing_stop = True
