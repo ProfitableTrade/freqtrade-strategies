@@ -5,7 +5,6 @@ services:
     container_name: freqtrade
     volumes:
       - "./user_data:/freqtrade/user_data"
-      - "./configs:/freqtrade/configs"
     command: >
       trade
       --logfile /freqtrade/user_data/logs/freqtrade.log

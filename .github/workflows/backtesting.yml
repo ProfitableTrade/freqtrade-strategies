@@ -123,7 +123,6 @@ jobs:
       - name: 📝 Copy to remote 📝
         run: |
           echo "Copy to remote $REMOTE_SERVER:/root/"
-          yes | scp -o StrictHostKeyChecking=no -i ./id_rsa -r "./configs" "$REMOTE_SERVER:/root/${{ github.run_number }}/"
           yes | scp -o StrictHostKeyChecking=no -i ./id_rsa -r "./user_data" "$REMOTE_SERVER:/root/${{ github.run_number }}/"
           yes | scp -o StrictHostKeyChecking=no -i ./id_rsa -r "./docker-compose-backtesting.yml" "$REMOTE_SERVER:/root/${{ github.run_number }}/"
       #------------------------------------------------------------
@@ -140,7 +139,7 @@ jobs:
             --rm freqtrade download-data \
             --timeframes ${{ inputs.time_frames }} \
             --timerange ${{ inputs.start_date }}-${{ inputs.end_date }} \
-            --config /freqtrade/configs/${{ inputs.exchange }}/config.json \
+            --config /freqtrade/user_data/${{ inputs.exchange }}.json \
             --pairs ${{ inputs.pair }}
           EOF >> $GITHUB_STEP_SUMMARY | cat
       #------------------------------------------------------------
@@ -158,6 +157,6 @@ jobs:
             --timeframe ${{ inputs.time_frames }} \
             --timerange ${{ inputs.start_date }}-${{ inputs.end_date }} \
             --strategy ${{ inputs.strategy }} \
-            --config /freqtrade/configs/${{ inputs.exchange }}/config.json \
+            --config /freqtrade/user_data/${{ inputs.exchange }}.json \
             --pairs ${{ inputs.pair }}
           EOF >> $GITHUB_STEP_SUMMARY | cat
