@@ -1,6 +1,6 @@
 from freqtrade.strategy import IStrategy
-from freqtrade.vendor.qtpylib.indicators import crossed_above, crossed_below
 from pandas import DataFrame
+import numpy as np
 
 class Strategy00(IStrategy):
     """
@@ -40,23 +40,18 @@ class Strategy00(IStrategy):
         'stoploss_on_exchange': False
     }
 
-    def ema(self, dataframe: DataFrame, timeperiod: int) -> DataFrame:
+    def ema(self, series: DataFrame, timeperiod: int) -> DataFrame:
         """
         Calculate EMA without using TA-Lib
         """
-        k = 2 / (timeperiod + 1)
-        dataframe['ema'] = dataframe['close'].ewm(span=timeperiod, adjust=False).mean()
-        return dataframe['ema']
+        return series.ewm(span=timeperiod, adjust=False).mean()
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
         Adds EMA 15 and EMA 30 indicators to the given DataFrame
         """
-        # Calculate and add EMA 15
-        dataframe['ema15'] = self.ema(dataframe, timeperiod=15)
-
-        # Calculate and add EMA 30
-        dataframe['ema30'] = self.ema(dataframe, timeperiod=30)
+        dataframe['ema15'] = self.ema(dataframe['close'], timeperiod=15)
+        dataframe['ema30'] = self.ema(dataframe['close'], timeperiod=30)
 
         return dataframe
 
@@ -66,7 +61,8 @@ class Strategy00(IStrategy):
         """
         dataframe.loc[
             (
-                crossed_above(dataframe['ema15'], dataframe['ema30'])
+                (dataframe['ema15'] > dataframe['ema30']) & 
+                (dataframe['ema15'].shift(1) <= dataframe['ema30'].shift(1))
             ),
             'enter_long'] = 1
 
@@ -78,7 +74,8 @@ class Strategy00(IStrategy):
         """
         dataframe.loc[
             (
-                crossed_below(dataframe['ema15'], dataframe['ema30'])
+                (dataframe['ema15'] < dataframe['ema30']) & 
+                (dataframe['ema15'].shift(1) >= dataframe['ema30'].shift(1))
             ),
             'exit_long'] = 1
 
