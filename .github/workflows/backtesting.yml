@@ -5,7 +5,12 @@ on:
       strategy:
         description: "Strategy, example: Strategy0"
         required: true
-        default: Strategy001
+        default: Strategy00
+        type: choice
+        options:
+          - Strategy00
+          - CrossEMAStrategy
+        
       time_frames:
         description: "Timeframes, example: 30m"
         required: true
