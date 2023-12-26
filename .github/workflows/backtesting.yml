@@ -123,6 +123,7 @@ jobs:
       - name: 📝 Copy to remote 📝
         run: |
           echo "Copy to remote $REMOTE_SERVER:/root/"
+          ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "mkdir -p /root/${{ github.run_number }}/user_data"
           yes | scp -o StrictHostKeyChecking=no -i ./id_rsa -r "./user_data" "$REMOTE_SERVER:/root/${{ github.run_number }}/user_data"
           yes | scp -o StrictHostKeyChecking=no -i ./id_rsa "./docker-compose-backtesting.yml" "$REMOTE_SERVER:/root/${{ github.run_number }}/"
       #------------------------------------------------------------
