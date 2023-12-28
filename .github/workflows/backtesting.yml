@@ -11,6 +11,7 @@ on:
           - Strategy00
           - CrossEMAStrategy
           - CustomStoplossWithPSAR
+          - Diamond
         
       time_frames:
         description: "Timeframes, example: 30m"
