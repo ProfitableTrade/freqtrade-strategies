@@ -10,7 +10,7 @@ on:
         options:
           - Strategy00
           - CrossEMAStrategy
-          - BreakEvenY
+          - CustomStoplossWithPSAR
         
       time_frames:
         description: "Timeframes, example: 30m"
