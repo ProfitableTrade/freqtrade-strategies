@@ -71,7 +71,7 @@ class HourBasedStrategy(IStrategy):
     }
 
     # Stoploss:
-    stoploss = -0.10
+    stoploss = -0.15
 
     # Optimal timeframe
     timeframe = '1h'
