@@ -11,6 +11,7 @@ on:
           - Strategy00
           - CrossEMAStrategy
           - CustomStoplossWithPSAR
+          - GodStra
       time_frames:
         description: "Timeframes, example: 30m"
         required: true
