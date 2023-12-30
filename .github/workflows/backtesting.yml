@@ -12,6 +12,8 @@ on:
           - CrossEMAStrategy
           - CustomStoplossWithPSAR
           - GodStra
+          - Heracles
+          - hlhb
       time_frames:
         description: "Timeframes, example: 30m"
         required: true
