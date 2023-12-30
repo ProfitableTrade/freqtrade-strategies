@@ -28,6 +28,7 @@ on:
          - 2h
          - 3h
          - 4h
+         - 12h
       start_date:
         description: "Start date - year month day, example: 20230101"
         required: true
