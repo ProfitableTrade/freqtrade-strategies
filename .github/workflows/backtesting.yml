@@ -11,7 +11,6 @@ on:
           - Strategy00
           - CrossEMAStrategy
           - CustomStoplossWithPSAR
-          - GodStra
           - Heracles
           - hlhb
       time_frames:
