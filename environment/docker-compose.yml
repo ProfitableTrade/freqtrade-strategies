@@ -17,10 +17,10 @@ services:
     logging:
       driver: "json-file"
       options:
-        mode: ${LOGGING_MODE}
-        max-buffer-size: ${LOGGING_MAX_BUFFER_SIZE}
-        max-file: ${LOGGING_MAX_FILE_COUNT}
-        max-size: ${LOGGING_MAX_FILE_SIZE}
+        mode: ${LOGGING_MODE:-non-blocking}
+        max-buffer-size: ${LOGGING_MAX_BUFFER_SIZE:-16m}
+        max-file: ${LOGGING_MAX_FILE_COUNT:-2}
+        max-size: ${LOGGING_MAX_FILE_SIZE:-50m}
   #----------------------------------------
   # Portainer
   #----------------------------------------
@@ -40,10 +40,10 @@ services:
     logging:
       driver: "json-file"
       options:
-        mode: ${LOGGING_MODE}
-        max-buffer-size: ${LOGGING_MAX_BUFFER_SIZE}
-        max-file: ${LOGGING_MAX_FILE_COUNT}
-        max-size: ${LOGGING_MAX_FILE_SIZE}
+        mode: ${LOGGING_MODE:-non-blocking}
+        max-buffer-size: ${LOGGING_MAX_BUFFER_SIZE:-16m}
+        max-file: ${LOGGING_MAX_FILE_COUNT:-2}
+        max-size: ${LOGGING_MAX_FILE_SIZE:-50m}
   #----------------------------------------
   # Traefik
   #----------------------------------------
@@ -70,10 +70,10 @@ services:
     logging:
       driver: "json-file"
       options:
-        mode: ${LOGGING_MODE}
-        max-buffer-size: ${LOGGING_MAX_BUFFER_SIZE}
-        max-file: ${LOGGING_MAX_FILE_COUNT}
-        max-size: ${LOGGING_MAX_FILE_SIZE}
+        mode: ${LOGGING_MODE:-non-blocking}
+        max-buffer-size: ${LOGGING_MAX_BUFFER_SIZE:-16m}
+        max-file: ${LOGGING_MAX_FILE_COUNT:-2}
+        max-size: ${LOGGING_MAX_FILE_SIZE:-50m}
 
 #----------------------------------------
 # Networks
