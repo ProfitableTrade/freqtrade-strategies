@@ -37,7 +37,7 @@ jobs:
         run: |
           echo "Copy to remote $REMOTE_SERVER:/root/"
           ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "mkdir -p /root/environment"
-          yes | scp -o StrictHostKeyChecking=no -i ./id_rsa -r "./environment" "$REMOTE_SERVER:/root/environment"
+          yes | scp -o StrictHostKeyChecking=no -i ./id_rsa -r "./environment" "$REMOTE_SERVER:/root/"
       
       #------------------------------------------------------------
       # Start docker-compose
