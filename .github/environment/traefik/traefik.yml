@@ -1,0 +1,39 @@
+api:
+  dashboard: true
+  debug: true
+  insecure: true
+
+log:
+  level: DEBUG
+
+entryPoints:
+  http:
+    address: ":80"
+  https:
+    address: ":443"
+  metrics:
+    address: ":8082"
+
+metrics:
+  prometheus:
+    entryPoint: metrics
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+  file:
+    directory: /traefik_configs
+    watch: true
+
+certificatesResolvers:
+  letsEncrypt:
+    acme:
+      email: dorofiy.kolya@gmail.com
+      storage: /acme.json
+      # caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
+      httpChallenge:
+        entryPoint: http
+
+# Let's Encrypt production server: https://acme-v02.api.letsencrypt.org/directory
+# Let's Encrypt staging server: https://acme-staging-v02.api.letsencrypt.org/directory

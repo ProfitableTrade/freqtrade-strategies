@@ -1,0 +1,84 @@
+version: "3"
+name: ${PROJECT_NAME:-ProfitableTrade}
+services:
+  #----------------------------------------
+  # MongoDB
+  #----------------------------------------
+  mongodb:
+    image: mongo:7.0.2
+    ports:
+      - "${MONGODB_PORT:-27017}:27017"
+    environment:
+      "MONGO_INITDB_ROOT_USERNAME": ${MONGODB_USERNAME}
+      "MONGO_INITDB_ROOT_PASSWORD": ${MONGODB_PASSWORD}
+    restart: '${RESTART_POLICY:-on-failure:10}'
+    volumes:
+      - ${MONGODB_DATA_PATH:-./mongodb}:/data/db
+    logging:
+      driver: "json-file"
+      options:
+        mode: ${LOGGING_MODE}
+        max-buffer-size: ${LOGGING_MAX_BUFFER_SIZE}
+        max-file: ${LOGGING_MAX_FILE_COUNT}
+        max-size: ${LOGGING_MAX_FILE_SIZE}
+  #----------------------------------------
+  # Portainer
+  #----------------------------------------
+  portainer:
+    image: portainer/portainer:1.25.0-alpine
+    command: "-H unix:///var/run/docker.sock --no-auth"
+    ports:
+      - "${PORTAINER_PORT:-9000}:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN:?domain_error}`)"
+      - "traefik.http.routers.portainer.entrypoints=https"
+      - "traefik.http.routers.portainer.tls.certresolver=letsEncrypt"
+      - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+    logging:
+      driver: "json-file"
+      options:
+        mode: ${LOGGING_MODE}
+        max-buffer-size: ${LOGGING_MAX_BUFFER_SIZE}
+        max-file: ${LOGGING_MAX_FILE_COUNT}
+        max-size: ${LOGGING_MAX_FILE_SIZE}
+  #----------------------------------------
+  # Traefik
+  #----------------------------------------
+  traefik:
+    image: traefik:v2.10
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/traefik.yml:/traefik.yml:ro
+      - ./traefik/configs/:/traefik_configs/:ro
+      - ./traefik/letsencrypt/:/letsencrypt/:rw
+      - ../.acme.json:/acme.json:rw
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.rule=Host(`monitor.${DOMAIN:-localhost}`)"
+      - "traefik.http.routers.traefik.entrypoints=https"
+      - "traefik.http.routers.traefik.tls.certresolver=letsEncrypt"
+      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+      # - "traefik.http.middlewares.traefik-auth.basicauth.users=admin:$$apr1$$vDSqkf.v$$GTJOtsd9CBiAFFnHTI2Ds1"
+      # - "traefik.http.routers.traefik.middlewares=traefik-auth"
+    logging:
+      driver: "json-file"
+      options:
+        mode: ${LOGGING_MODE}
+        max-buffer-size: ${LOGGING_MAX_BUFFER_SIZE}
+        max-file: ${LOGGING_MAX_FILE_COUNT}
+        max-size: ${LOGGING_MAX_FILE_SIZE}
+
+#----------------------------------------
+# Networks
+#----------------------------------------
+networks:
+  default:
+    driver: bridge
+    name: ${PROJECT_NAME:-ProfitableTrade}

@@ -1,0 +1,52 @@
+name: Environment
+on:
+  workflow_dispatch:
+    inputs:
+      domain:
+        description: 'Domain'
+        required: true
+        default: 'example.com'
+
+jobs:
+  backtesting:
+    runs-on: ubuntu-latest
+    env:
+      REMOTE_SERVER: root@${{ inputs.domain }}
+    steps:
+      #------------------------------------------------------------
+      # Checkout the repository
+      #------------------------------------------------------------
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+          submodules: true
+          
+      #------------------------------------------------------------
+      # Create ssh private key
+      #------------------------------------------------------------
+      - name: 🔑 Prepare ssh private key 🔑
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ./id_rsa
+          chmod 600 ./id_rsa
+
+      #------------------------------------------------------------
+      # Copy to remote
+      #------------------------------------------------------------
+      - name: 📝 Copy to remote 📝
+        run: |
+          echo "Copy to remote $REMOTE_SERVER:/root/"
+          cd ./github
+          ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "mkdir -p /root/environment"
+          yes | scp -o StrictHostKeyChecking=no -i ./id_rsa -r "./environment" "$REMOTE_SERVER:/root/environment"
+          cd ..
+      
+      #------------------------------------------------------------
+      # Start docker-compose
+      #------------------------------------------------------------
+      - name: 🚀 Environment 🚀
+        run: |
+          echo "Stop environment"
+          ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "[[ -d /root/environment ]] && [[ -f /root/environment/stop.sh  ]] && cd /root/environment && ./stop.sh" >> $GITHUB_STEP_SUMMARY | cat
+          echo "Start environment"
+          ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "cd /root/environment && ./start.sh" >> $GITHUB_STEP_SUMMARY | cat
