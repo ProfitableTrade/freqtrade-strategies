@@ -129,6 +129,13 @@ jobs:
           lfs: true
           submodules: true
       #------------------------------------------------------------
+      # Prepare working directory
+      #------------------------------------------------------------
+      - name: 🗂️ Working directory 🗂️
+        run: |
+          cd ./backtesting
+          ls -la
+      #------------------------------------------------------------
       # Create ssh private key
       #------------------------------------------------------------
       - name: 🔑 Prepare ssh private key 🔑
