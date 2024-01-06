@@ -135,11 +135,14 @@ jobs:
         run: |
           cd ./backtesting
           ls -la
+          echo pwd=$(pwd)
       #------------------------------------------------------------
       # Create ssh private key
       #------------------------------------------------------------
       - name: 🔑 Prepare ssh private key 🔑
         run: |
+          ls -la
+          echo pwd=$(pwd)
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ./id_rsa
           chmod 600 ./id_rsa
       #------------------------------------------------------------
@@ -148,6 +151,8 @@ jobs:
       - name: 📝 Copy to remote 📝
         run: |
           echo "Copy to remote $REMOTE_SERVER:/root/"
+          ls -la
+          echo pwd=$(pwd)
           ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "mkdir -p /root/${{ github.run_number }}"
           yes | scp -o StrictHostKeyChecking=no -i ./id_rsa -r "./user_data" "$REMOTE_SERVER:/root/${{ github.run_number }}/user_data"
           yes | scp -o StrictHostKeyChecking=no -i ./id_rsa "./docker-compose-backtesting.yml" "$REMOTE_SERVER:/root/${{ github.run_number }}/"
