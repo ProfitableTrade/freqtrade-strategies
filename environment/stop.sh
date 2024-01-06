@@ -2,6 +2,7 @@
 
 # env
 source .env
+source config.env
 
 # stop
 docker compose down
