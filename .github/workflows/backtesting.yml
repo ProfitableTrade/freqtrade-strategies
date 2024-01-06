@@ -132,7 +132,6 @@ jobs:
       # Create ssh private key
       #------------------------------------------------------------
       - name: 🔑 Prepare ssh private key 🔑
-        working-directory: ./backtesting
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ./id_rsa
           chmod 600 ./id_rsa
@@ -140,17 +139,14 @@ jobs:
       # Copy to remote
       #------------------------------------------------------------
       - name: 📝 Copy to remote 📝
-        working-directory: ./backtesting
         run: |
           echo "Copy to remote $REMOTE_SERVER:/root/"
-          ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "mkdir -p /root/${{ github.run_number }}"
-          yes | scp -o StrictHostKeyChecking=no -i ./id_rsa -r "./user_data" "$REMOTE_SERVER:/root/${{ github.run_number }}/user_data"
-          yes | scp -o StrictHostKeyChecking=no -i ./id_rsa "./docker-compose-backtesting.yml" "$REMOTE_SERVER:/root/${{ github.run_number }}/"
+          ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "mkdir -p /root/backtesting/${{ github.run_number }}"
+          yes | scp -o StrictHostKeyChecking=no -i ./id_rsa -r "./backtesting/." "$REMOTE_SERVER:/root/backtesting/${{ github.run_number }}"
       #------------------------------------------------------------
       # Download data
       #------------------------------------------------------------
       - name: 🗃️ Download data 🗃️
-        working-directory: ./backtesting
         run: |
           echo Download, strategy: ${{ inputs.strategy }} >> $GITHUB_STEP_SUMMARY | cat
           ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" <<'EOF' 
@@ -168,7 +164,6 @@ jobs:
       # Backtesting
       #------------------------------------------------------------
       - name: 🚀 Backtesting 🚀
-        working-directory: ./backtesting
         run: |
           echo Backtesting, strategy: ${{ inputs.strategy }} >> $GITHUB_STEP_SUMMARY | cat
           ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" <<'EOF' 
