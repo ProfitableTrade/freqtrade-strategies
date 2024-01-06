@@ -131,7 +131,7 @@ jobs:
       #------------------------------------------------------------
       # Install rsync
       #------------------------------------------------------------
-      - name: rsync
+      - name: Install rsync
         run: |
           sudo apt-get install -y rsync
       #------------------------------------------------------------
@@ -157,7 +157,7 @@ jobs:
           echo Download, strategy: ${{ inputs.strategy }} >> $GITHUB_STEP_SUMMARY | cat
           ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" <<'EOF' 
           set -e 
-          cd /root/${{ github.run_number }}
+          cd /root/backtesting/${{ github.run_number }}
           docker compose -f docker-compose-backtesting.yml \
             run \
             --rm freqtrade download-data \
@@ -174,7 +174,7 @@ jobs:
           echo Backtesting, strategy: ${{ inputs.strategy }} >> $GITHUB_STEP_SUMMARY | cat
           ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" <<'EOF' 
           set -e 
-          cd /root/${{ github.run_number }}
+          cd /root/backtesting/${{ github.run_number }}
           docker compose -f docker-compose-backtesting.yml \
             run \
             --rm freqtrade backtesting \
