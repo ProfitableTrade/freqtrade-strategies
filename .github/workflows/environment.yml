@@ -26,6 +26,7 @@ jobs:
       # Create ssh private key
       #------------------------------------------------------------
       - name: 🔑 Prepare ssh private key 🔑
+        working-directory: ./environment
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ./id_rsa
           chmod 600 ./id_rsa
@@ -34,6 +35,7 @@ jobs:
       # Copy to remote
       #------------------------------------------------------------
       - name: 📝 Copy to remote 📝
+        working-directory: ./environment
         run: |
           echo "Copy to remote $REMOTE_SERVER:/root/"
           cd ./github
@@ -45,6 +47,7 @@ jobs:
       # Start docker-compose
       #------------------------------------------------------------
       - name: 🚀 Environment 🚀
+        working-directory: ./environment
         run: |
           echo "Stop environment"
           ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "[[ -d /root/environment ]] && [[ -f /root/environment/stop.sh  ]] && cd /root/environment && ./stop.sh" >> $GITHUB_STEP_SUMMARY | cat
