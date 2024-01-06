@@ -5,7 +5,7 @@ on:
       domain:
         description: 'Domain'
         required: true
-        default: 'example.com'
+        default: 'tradebot.example.com'
 
 jobs:
   backtesting:
@@ -38,10 +38,8 @@ jobs:
         working-directory: ./environment
         run: |
           echo "Copy to remote $REMOTE_SERVER:/root/"
-          cd ./github
           ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "mkdir -p /root/environment"
           yes | scp -o StrictHostKeyChecking=no -i ./id_rsa -r "./environment" "$REMOTE_SERVER:/root/environment"
-          cd ..
       
       #------------------------------------------------------------
       # Start docker-compose
