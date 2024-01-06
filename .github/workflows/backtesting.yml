@@ -129,6 +129,12 @@ jobs:
           lfs: true
           submodules: true
       #------------------------------------------------------------
+      # Install rsync
+      #------------------------------------------------------------
+      - name: rsync
+        run: |
+          apt install rsync
+      #------------------------------------------------------------
       # Create ssh private key
       #------------------------------------------------------------
       - name: 🔑 Prepare ssh private key 🔑
@@ -142,7 +148,7 @@ jobs:
         run: |
           echo "Copy to remote $REMOTE_SERVER:/root/"
           ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "mkdir -p /root/backtesting/${{ github.run_number }}"
-          yes | scp -o StrictHostKeyChecking=no -i ./id_rsa -r "./backtesting/*" "$REMOTE_SERVER:/root/backtesting/${{ github.run_number }}"
+          rsync -avh -e "ssh -o StrictHostKeyChecking=no -i ./id_rsa" "./backtesting/" "$REMOTE_SERVER:/root/backtesting/${{ github.run_number }}"
       #------------------------------------------------------------
       # Download data
       #------------------------------------------------------------
