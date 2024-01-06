@@ -142,7 +142,7 @@ jobs:
         run: |
           echo "Copy to remote $REMOTE_SERVER:/root/"
           ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "mkdir -p /root/backtesting/${{ github.run_number }}"
-          yes | scp -o StrictHostKeyChecking=no -i ./id_rsa -r "./backtesting/." "$REMOTE_SERVER:/root/backtesting/${{ github.run_number }}"
+          yes | scp -o StrictHostKeyChecking=no -i ./id_rsa -r "./backtesting/*" "$REMOTE_SERVER:/root/backtesting/${{ github.run_number }}"
       #------------------------------------------------------------
       # Download data
       #------------------------------------------------------------
