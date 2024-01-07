@@ -47,4 +47,4 @@ jobs:
           echo "Stop environment"
           ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "[[ -d /root/environment ]] && [[ -f /root/environment/stop.sh  ]] && cd /root/environment && ./stop.sh" >> $GITHUB_STEP_SUMMARY | cat
           echo "Start environment"
-          ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "cd /root/environment && ./start.sh" >> $GITHUB_STEP_SUMMARY | cat
+          ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "cd /root/environment && export DOMAIN=${{ inputs.domain }} && ./start.sh" >> $GITHUB_STEP_SUMMARY | cat
