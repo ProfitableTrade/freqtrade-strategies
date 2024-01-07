@@ -16,7 +16,7 @@ on:
           - stop
 
 jobs:
-  backtesting:
+  environment:
     runs-on: ubuntu-latest
     env:
       REMOTE_SERVER: root@${{ inputs.domain }}
