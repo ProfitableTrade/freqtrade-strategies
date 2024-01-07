@@ -3,9 +3,17 @@ on:
   workflow_dispatch:
     inputs:
       domain:
-        description: 'Domain'
+        description: "Domain"
         required: true
-        default: 'tradebot.example.com'
+        default: "tradebot.example.com"
+      behaviour:
+        description: "Behaviour"
+        required: true
+        default: "start"
+        type: choice
+        options:
+          - start
+          - stop
 
 jobs:
   backtesting:
@@ -21,7 +29,7 @@ jobs:
           fetch-depth: 0
           lfs: true
           submodules: true
-          
+
       #------------------------------------------------------------
       # Create ssh private key
       #------------------------------------------------------------
@@ -38,7 +46,7 @@ jobs:
           echo "Copy to remote $REMOTE_SERVER:/root/"
           ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "mkdir -p /root/environment"
           yes | scp -o StrictHostKeyChecking=no -i ./id_rsa -r "./environment" "$REMOTE_SERVER:/root/"
-      
+
       #------------------------------------------------------------
       # Start docker-compose
       #------------------------------------------------------------
@@ -47,4 +55,6 @@ jobs:
           echo "Stop environment"
           ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "[[ -d /root/environment ]] && [[ -f /root/environment/stop.sh  ]] && cd /root/environment && ./stop.sh" >> $GITHUB_STEP_SUMMARY | cat
           echo "Start environment"
-          ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "cd /root/environment && export DOMAIN=${{ inputs.domain }} && ./start.sh" >> $GITHUB_STEP_SUMMARY | cat
+          if [[ ${{ inputs.behaviour }} == "start" ]]; then
+            ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "cd /root/environment && export DOMAIN=${{ inputs.domain }} && ./start.sh" >> $GITHUB_STEP_SUMMARY | cat
+          fi
