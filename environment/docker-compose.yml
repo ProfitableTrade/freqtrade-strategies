@@ -1,5 +1,5 @@
-version: "3"
-name: ${PROJECT_NAME:-ProfitableTrade}
+version: "3.8"
+name: ${PROJECT_NAME:-profitable-trade}
 services:
   #----------------------------------------
   # MongoDB
@@ -7,11 +7,8 @@ services:
   mongodb:
     image: mongo:7.0.2
     ports:
-      - "${MONGODB_PORT:-27017}:27017"
-    environment:
-      "MONGO_INITDB_ROOT_USERNAME": ${MONGODB_USERNAME}
-      "MONGO_INITDB_ROOT_PASSWORD": ${MONGODB_PASSWORD}
-    restart: '${RESTART_POLICY:-on-failure:10}'
+      - 27017:27017
+    restart: "${RESTART_POLICY:-on-failure:10}"
     volumes:
       - ${MONGODB_DATA_PATH:-./mongodb}:/data/db
     logging:
@@ -33,7 +30,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN:?domain_error}`)"
+      - "traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN:?portainer_domain_error}`)"
       - "traefik.http.routers.portainer.entrypoints=https"
       - "traefik.http.routers.portainer.tls.certresolver=letsEncrypt"
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
@@ -61,7 +58,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.service=api@internal"
-      - "traefik.http.routers.traefik.rule=Host(`monitor.${DOMAIN:-localhost}`)"
+      - "traefik.http.routers.traefik.rule=Host(`monitor.${DOMAIN:?traefik_domain_error}`)"
       - "traefik.http.routers.traefik.entrypoints=https"
       - "traefik.http.routers.traefik.tls.certresolver=letsEncrypt"
       - "traefik.http.services.traefik.loadbalancer.server.port=8080"
@@ -81,4 +78,4 @@ services:
 networks:
   default:
     driver: bridge
-    name: ${PROJECT_NAME:-ProfitableTrade}
+    name: ${PROJECT_NAME:-profitable-trade}
