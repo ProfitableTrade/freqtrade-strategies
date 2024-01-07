@@ -1,5 +1,5 @@
 version: "3.8"
-name: ${PROJECT_NAME:-profitable-trade}
+name: ${PROJECT_NAME:-pt}
 services:
   #----------------------------------------
   # MongoDB
@@ -54,7 +54,7 @@ services:
       - ./traefik/traefik.yml:/traefik.yml:ro
       - ./traefik/configs/:/traefik_configs/:ro
       - ./traefik/letsencrypt/:/letsencrypt/:rw
-      - ../.acme.json:/acme.json:rw
+      - ./.acme.json:/acme.json:rw
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.service=api@internal"
@@ -78,4 +78,4 @@ services:
 networks:
   default:
     driver: bridge
-    name: ${PROJECT_NAME:-profitable-trade}
+    name: ${PROJECT_NAME:-pt}
