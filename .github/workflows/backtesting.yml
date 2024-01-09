@@ -12,6 +12,7 @@ on:
           - CrossEMAStrategy
           - CustomStoplossWithPSAR
           - HourBasedStrategy
+          - Strategy00plus
       time_frames:
         description: "Timeframes, example: 30m"
         required: true
