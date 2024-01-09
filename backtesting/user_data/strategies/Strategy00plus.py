@@ -18,7 +18,7 @@ class Strategy00plus(IStrategy):
     INTERFACE_VERSION: int = 3
 
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
-    stoploss = -0.03
+    stoploss = -0.08
 
     # Оптимальний таймфрейм для стратегії
     timeframe = '30m'
@@ -86,14 +86,14 @@ class Strategy00plus(IStrategy):
         # Ціна зросла на 2%
         dataframe.loc[
             (
-                (dataframe['close'] / dataframe['open'] - 1) >= 0.02
+                (dataframe['close'] / dataframe['open'] - 1) >= 0.025
             ),
             'exit_long_25'] = 1  # Закриття ще 25% позиції
 
         # Ціна зросла на 3%
         dataframe.loc[
             (
-                (dataframe['close'] / dataframe['open'] - 1) >= 0.03
+                (dataframe['close'] / dataframe['open'] - 1) >= 0.04
             ),
             'exit_long'] = 1  # Повне закриття позиції
 
