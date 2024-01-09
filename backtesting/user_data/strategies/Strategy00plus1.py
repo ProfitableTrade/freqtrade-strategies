@@ -5,9 +5,9 @@ import freqtrade.vendor.qtpylib.indicators as qtpylib
 from pandas import DataFrame
 # --------------------------------
 
-class Strategy00(IStrategy):
+class Strategy00plus1(IStrategy):
     """
-    Strategy 00
+    Strategy 00 plus1
     author@: Yurii Udaltsov
     github@: https://github.com/freqtrade/freqtrade-strategies
 
