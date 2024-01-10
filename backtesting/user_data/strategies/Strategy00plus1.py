@@ -73,18 +73,18 @@ class Strategy00plus1(IStrategy):
         profit = dataframe['close'] / dataframe['open'] - 1
 
         # Ціна зросла на 1.5%
-        dataframe.loc[(profit >= 0.015), 'exit_long_50'] = 1  # Закриття 50% позиції
+        dataframe.loc[(profit >= 0.02), 'exit_long_50'] = 1  # Закриття 50% позиції
 
         # Ціна зросла на 3%
-        dataframe.loc[(profit >= 0.03), 'exit_long_10'] = 1  # Закриття 10% позиції
+        dataframe.loc[(profit >= 0.1), 'exit_long_10'] = 1  # Закриття 10% позиції
 
         # Ціна зросла на 8%
-        dataframe.loc[(profit >= 0.08), 'exit_long_10'] = 1  # Закриття ще 10% позиції
+        dataframe.loc[(profit >= 0.13), 'exit_long_10'] = 1  # Закриття ще 10% позиції
 
         # Ціна зросла на 14%
-        dataframe.loc[(profit >= 0.14), 'exit_long_10'] = 1  # Закриття ще 10% позиції
+        dataframe.loc[(profit >= 0.18), 'exit_long_10'] = 1  # Закриття ще 10% позиції
 
         # Ціна зросла на 16.5%
-        dataframe.loc[(profit >= 0.165), 'exit_long'] = 1  # Повне закриття позиції (100%)
+        dataframe.loc[(profit >= 0.255), 'exit_long'] = 1  # Повне закриття позиції (100%)
 
         return dataframe
