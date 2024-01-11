@@ -80,7 +80,7 @@ jobs:
             run \
             --rm freqtrade trade \
             --strategy ${{ inputs.strategy }} \
-            --config /freqtrade/user_data/${{ inputs.cofig }}.json \
+            --config /freqtrade/user_data/${{ inputs.config }}.json \
             --dry-run \
             --dry-run-wallet ${{ inputs.dry_run_wallet }} 
           EOF | cat >> $GITHUB_STEP_SUMMARY
@@ -96,5 +96,6 @@ jobs:
             run \
             --rm freqtrade trade \
             --strategy ${{ inputs.strategy }} \
-            --config /freqtrade/user_data/${{ inputs.cofig }}.json
+            --config /freqtrade/user_data/${{ inputs.config }}.json
           EOF | cat >> $GITHUB_STEP_SUMMARY
+        if: ${{ !inputs.dry_run }}
