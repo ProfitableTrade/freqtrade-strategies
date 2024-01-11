@@ -96,5 +96,5 @@ jobs:
             run \
             --rm freqtrade trade \
             --strategy ${{ inputs.strategy }} \
-            --config /freqtrade/user_data/${{ inputs.cofig }}.json \
+            --config /freqtrade/user_data/${{ inputs.cofig }}.json
           EOF | cat >> $GITHUB_STEP_SUMMARY
