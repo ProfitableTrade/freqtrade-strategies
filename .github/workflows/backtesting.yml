@@ -149,8 +149,9 @@ jobs:
       - name: 📝 Copy to remote 📝
         run: |
           echo "Copy to remote $REMOTE_SERVER:/root/"
-          ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "mkdir -p /root/backtesting/${{ github.run_number }}"
+          ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "mkdir -p /root/backtesting/${{ github.run_number }}/user_data"
           rsync -avh -e "ssh -o StrictHostKeyChecking=no -i ./id_rsa" "./backtesting/" "$REMOTE_SERVER:/root/backtesting/${{ github.run_number }}"
+          rsync -avh -e "ssh -o StrictHostKeyChecking=no -i ./id_rsa" "./user_data/" "$REMOTE_SERVER:/root/backtesting/${{ github.run_number }}/user_data/"
       #------------------------------------------------------------
       # Download data
       #------------------------------------------------------------
