@@ -106,6 +106,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" <<'EOF' 
           set -e 
           cd /root/trade/${{ inputs.env_name }}
+          export DOMAIN=${{ secrets.REMOTE_SERVER }}
           export TRADE_NAME=${{ inputs.env_name }}
           docker compose -f docker-compose-trade.yml down
           EOF | cat >> $GITHUB_STEP_SUMMARY
@@ -120,6 +121,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" <<'EOF' 
           set -e 
           cd /root/trade/${{ inputs.env_name }}
+          export DOMAIN=${{ secrets.REMOTE_SERVER }}
           export TRADE_NAME=${{ inputs.env_name }}
           docker compose -f docker-compose-trade.yml \
             run \
@@ -137,6 +139,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" <<'EOF' 
           set -e 
           cd /root/trade/${{ inputs.env_name }}
+          export DOMAIN=${{ secrets.REMOTE_SERVER }}
           export TRADE_NAME=${{ inputs.env_name }}
           docker compose -f docker-compose-trade.yml \
             run \
