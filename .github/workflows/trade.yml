@@ -73,7 +73,7 @@ jobs:
           echo "|Behaviour:        | ${{ inputs.behaviour }}       |" >> $GITHUB_STEP_SUMMARY
           echo "|Strategy:         | ${{ inputs.strategy }}        |" >> $GITHUB_STEP_SUMMARY
           echo "|Dry run:          | ${{ inputs.dry_run }}         |" >> $GITHUB_STEP_SUMMARY
-          echo "|Dry run wallet:   | ${{ inputs.dry_run_wallet }} |" >> $GITHUB_STEP_SUMMARY
+          echo "|Dry run wallet:   | ${{ inputs.dry_run_wallet }}  |" >> $GITHUB_STEP_SUMMARY
           echo "|Config:           | ${{ inputs.config }}          |" >> $GITHUB_STEP_SUMMARY
       #------------------------------------------------------------
       # Install rsync
@@ -109,7 +109,7 @@ jobs:
           export DOMAIN=${{ secrets.REMOTE_SERVER }}
           export TRADE_NAME=${{ inputs.env_name }}
           docker compose -f docker-compose-trade.yml down
-          EOF | cat >> $GITHUB_STEP_SUMMARY
+          EOF
         if: ${{ inputs.behaviour }} == "stop"
 
       #------------------------------------------------------------
@@ -117,7 +117,7 @@ jobs:
       #------------------------------------------------------------
       - name: 💰 Trade ( Dry-run ) 💰
         run: |
-          echo Trade, strategy: ${{ inputs.strategy }}, config: ${{ inputs.config }} >> $GITHUB_STEP_SUMMARY | cat
+          echo Trade, strategy: ${{ inputs.strategy }}, config: ${{ inputs.config }}
           ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" <<'EOF' 
           set -e 
           cd /root/trade/${{ inputs.env_name }}
@@ -130,12 +130,12 @@ jobs:
             --config /freqtrade/user_data/${{ inputs.config }}.json \
             --dry-run \
             --dry-run-wallet ${{ inputs.dry_run_wallet }} 
-          EOF | cat >> $GITHUB_STEP_SUMMARY
+          EOF
         if: ${{ inputs.dry_run && inputs.behaviour == 'start' }}
 
       - name: 💰 Trade 💰
         run: |
-          echo Trade, strategy: ${{ inputs.strategy }}, config: ${{ inputs.config }} >> $GITHUB_STEP_SUMMARY | cat
+          echo Trade, strategy: ${{ inputs.strategy }}, config: ${{ inputs.config }}
           ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" <<'EOF' 
           set -e 
           cd /root/trade/${{ inputs.env_name }}
@@ -146,5 +146,5 @@ jobs:
             --rm freqtrade trade \
             --strategy ${{ inputs.strategy }} \
             --config /freqtrade/user_data/${{ inputs.config }}.json
-          EOF | cat >> $GITHUB_STEP_SUMMARY
+          EOF
         if: ${{ !inputs.dry_run && inputs.behaviour == 'start' }}
