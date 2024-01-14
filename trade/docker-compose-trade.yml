@@ -16,3 +16,11 @@ services:
       - "traefik.http.routers.${TRADE_NAME}-freqtrade.entrypoints=https"
       - "traefik.http.routers.${TRADE_NAME}-freqtrade.tls.certresolver=letsEncrypt"
       - "traefik.http.services.${TRADE_NAME}-freqtrade.loadbalancer.server.port=8080"
+#----------------------------------------
+# Networks
+#----------------------------------------
+networks:
+  default:
+    driver: bridge
+    external: true
+    name: trade
