@@ -1,0 +1,228 @@
+name: Trade
+on:
+  workflow_dispatch:
+    inputs:
+      env_name:
+        description: "Environment name of trade"
+        required: true
+        default: trade01
+        type: choice
+        options:
+          - trade01
+          - trade02
+          - trade03
+      behaviour:
+        description: "Behaviour"
+        required: true
+        default: "start"
+        type: choice
+        options:
+          - start
+          - stop
+      strategy:
+        description: "Strategy, example: Strategy0"
+        required: true
+        default: Strategy00
+        type: choice
+        options:
+          - Strategy00
+          - CrossEMAStrategy
+          - CustomStoplossWithPSAR
+          - HourBasedStrategy
+          - Strategy00plus
+          - Strategy00plus1
+      dry_run:
+        description: "Dry run option, fake trades if true"
+        required: true
+        default: true
+        type: boolean
+      dry_run_wallet:
+        description: "Dry run wallet amount"
+        required: false
+        default: "3000"
+      pair:
+        description: "Pair, example: SOL/USDT"
+        required: true
+        type: choice
+        default: SOL/USDT
+        options:
+          - SOL/USDT
+          - INJ/USDT
+          - BTC/USDT
+          - ETH/USDT
+          - DOT/USDT
+          - ADA/USDT
+          - LINK/USDT
+          - XRP/USDT
+          - LTC/USDT
+          - BCH/USDT
+          - BNB/USDT
+          - EOS/USDT
+          - TRX/USDT
+          - XLM/USDT
+          - ETC/USDT
+          - XTZ/USDT
+          - NEO/USDT
+          - ATOM/USDT
+          - IOTA/USDT
+          - VET/USDT
+          - XMR/USDT
+          - DASH/USDT
+          - ZEC/USDT
+          - QTUM/USDT
+          - THETA/USDT
+          - FIL/USDT
+          - UNI/USDT
+          - AAVE/USDT
+          - COMP/USDT
+          - MKR/USDT
+          - SNX/USDT
+          - YFI/USDT
+          - SUSHI/USDT
+          - ZRX/USDT
+          - KNC/USDT
+          - BAND/USDT
+          - REN/USDT
+          - BAL/USDT
+          - OXT/USDT
+          - CRV/USDT
+          - TRB/USDT
+          - UMA/USDT
+          - NMR/USDT
+          - ANT/USDT
+          - LRC/USDT
+          - CVC/USDT
+          - KAVA/USDT
+          - AR/USDT
+          - GRT/USDT
+          - STORJ/USDT
+          - SNM/USDT
+          - CTK/USDT
+          - BNT/USDT
+          - GNO/USDT
+          - REP/USDT
+          - MLN/USDT
+          - CRV/USDT
+          - STORJ/USDT
+          - SNM/USDT
+          - CTK/USDT
+          - BNT/USDT
+          - GNO/USDT
+          - REP/USDT
+          - MLN/USDT
+          - CRV/USDT
+      config:
+        description: "Config, example: binance"
+        required: true
+        type: choice
+        default: binance
+        options:
+          - binance
+
+jobs:
+  trade:
+    runs-on: ubuntu-latest
+    env:
+      REMOTE_SERVER: root@${{ secrets.REMOTE_SERVER }}
+    steps:
+      #------------------------------------------------------------
+      # Checkout the repository
+      #------------------------------------------------------------
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+          submodules: true
+      #------------------------------------------------------------
+      # Info
+      #------------------------------------------------------------
+      - name: 📝 Info 📝
+        run: |
+          echo "|KEY               | VALUE                         |" >> $GITHUB_STEP_SUMMARY
+          echo "|------------------|-------------------------------|" >> $GITHUB_STEP_SUMMARY
+          echo "|Environment name: | ${{ inputs.env_name }}        |" >> $GITHUB_STEP_SUMMARY
+          echo "|Behaviour:        | ${{ inputs.behaviour }}       |" >> $GITHUB_STEP_SUMMARY
+          echo "|Strategy:         | ${{ inputs.strategy }}        |" >> $GITHUB_STEP_SUMMARY
+          echo "|Dry run:          | ${{ inputs.dry_run }}         |" >> $GITHUB_STEP_SUMMARY
+          echo "|Dry run wallet:   | ${{ inputs.dry_run_wallet }}  |" >> $GITHUB_STEP_SUMMARY
+          echo "|Pair:             | ${{ inputs.pair }}            |" >> $GITHUB_STEP_SUMMARY
+          echo "|Config:           | ${{ inputs.config }}          |" >> $GITHUB_STEP_SUMMARY
+      #------------------------------------------------------------
+      # Install rsync
+      #------------------------------------------------------------
+      - name: Install rsync
+        run: |
+          sudo apt-get install -y rsync
+      #------------------------------------------------------------
+      # Create ssh private key
+      #------------------------------------------------------------
+      - name: 🔑 Prepare ssh private key 🔑
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ./id_rsa
+          chmod 600 ./id_rsa
+      #------------------------------------------------------------
+      # Copy to remote
+      #------------------------------------------------------------
+      - name: 📝 Copy to remote 📝
+        run: |
+          echo "Copy to remote $REMOTE_SERVER:/root/"
+          ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "mkdir -p /root/trade/${{ inputs.env_name }}/user_data"
+          rsync -avh -e "ssh -o StrictHostKeyChecking=no -i ./id_rsa" "./trade/" "$REMOTE_SERVER:/root/trade/${{ inputs.env_name }}"
+          rsync -avh -e "ssh -o StrictHostKeyChecking=no -i ./id_rsa" "./user_data/" "$REMOTE_SERVER:/root/trade/${{ inputs.env_name }}/user_data"
+
+      #------------------------------------------------------------
+      # Stop
+      #------------------------------------------------------------
+      - name: 🛑 Stop 🛑
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" <<'EOF' 
+          set -e 
+          cd /root/trade/${{ inputs.env_name }}
+          export DOMAIN=${{ secrets.REMOTE_SERVER }}
+          export TRADE_NAME=${{ inputs.env_name }}
+          docker compose -f docker-compose-trade.yml down
+          EOF
+        if: ${{ inputs.behaviour }} == "stop"
+
+      #------------------------------------------------------------
+      # Trade
+      #------------------------------------------------------------
+      - name: 💰 Trade ( Dry-run ) 💰
+        run: |
+          echo Trade, strategy: ${{ inputs.strategy }}, config: ${{ inputs.config }}
+          ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" <<'EOF' 
+          set -e 
+          cd /root/trade/${{ inputs.env_name }}
+          export DOMAIN=${{ secrets.REMOTE_SERVER }}
+          export TRADE_NAME=${{ inputs.env_name }}
+          docker compose -f docker-compose-trade.yml \
+            run \
+            --detach \
+            --name ${{ inputs.env_name }}-freqtrade \
+            --rm freqtrade trade \
+            --pairs ${{ inputs.pair }} \
+            --strategy ${{ inputs.strategy }} \
+            --config /freqtrade/user_data/${{ inputs.config }}.json \
+            --dry-run \
+            --dry-run-wallet ${{ inputs.dry_run_wallet }} 
+          EOF
+        if: ${{ inputs.dry_run && inputs.behaviour == 'start' }}
+
+      - name: 💰 Trade 💰
+        run: |
+          echo Trade, strategy: ${{ inputs.strategy }}, config: ${{ inputs.config }}
+          ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" <<'EOF' 
+          set -e 
+          cd /root/trade/${{ inputs.env_name }}
+          export DOMAIN=${{ secrets.REMOTE_SERVER }}
+          export TRADE_NAME=${{ inputs.env_name }}
+          docker compose -f docker-compose-trade.yml \
+            run \
+            --detach \
+            --name ${{ inputs.env_name }}-freqtrade \
+            --rm freqtrade trade \
+            --pairs ${{ inputs.pair }} \
+            --strategy ${{ inputs.strategy }} \
+            --config /freqtrade/user_data/${{ inputs.config }}.json
+          EOF
+        if: ${{ !inputs.dry_run && inputs.behaviour == 'start' }}

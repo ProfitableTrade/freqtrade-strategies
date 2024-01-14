@@ -1,0 +1,26 @@
+version: "3.8"
+name: ${TRADE_NAME:?ERROR_TRADE_NAME_IS_NOT_SET}
+services:
+  freqtrade:
+    image: freqtradeorg/freqtrade:stable
+    container_name: freqtrade
+    volumes:
+      - "./user_data:/freqtrade/user_data"
+    command: >
+      trade
+      --logfile /freqtrade/user_data/logs/freqtrade.log
+      --db-url sqlite:////freqtrade/user_data/tradesv3.sqlite
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${TRADE_NAME}-freqtrade.rule=Host(`${TRADE_NAME}.${DOMAIN:?portainer_domain_error}`)"
+      - "traefik.http.routers.${TRADE_NAME}-freqtrade.entrypoints=https"
+      - "traefik.http.routers.${TRADE_NAME}-freqtrade.tls.certresolver=letsEncrypt"
+      - "traefik.http.services.${TRADE_NAME}-freqtrade.loadbalancer.server.port=8080"
+#----------------------------------------
+# Networks
+#----------------------------------------
+networks:
+  default:
+    driver: bridge
+    external: true
+    name: trade

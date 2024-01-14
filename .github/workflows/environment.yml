@@ -2,10 +2,6 @@ name: Environment
 on:
   workflow_dispatch:
     inputs:
-      domain:
-        description: "Domain"
-        required: true
-        default: "tradebot.example.com"
       behaviour:
         description: "Behaviour"
         required: true
@@ -19,7 +15,7 @@ jobs:
   environment:
     runs-on: ubuntu-latest
     env:
-      REMOTE_SERVER: root@${{ inputs.domain }}
+      REMOTE_SERVER: root@${{ secrets.REMOTE_SERVER }}
     steps:
       #------------------------------------------------------------
       # Checkout the repository
@@ -56,5 +52,5 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "[[ -d /root/environment ]] && [[ -f /root/environment/stop.sh  ]] && cd /root/environment && ./stop.sh" >> $GITHUB_STEP_SUMMARY | cat
           echo "Start environment"
           if [[ ${{ inputs.behaviour }} == "start" ]]; then
-            ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "cd /root/environment && export DOMAIN=${{ inputs.domain }} && ./start.sh" >> $GITHUB_STEP_SUMMARY | cat
+            ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "cd /root/environment && export DOMAIN=${{ secrets.REMOTE_SERVER }} && ./start.sh" >> $GITHUB_STEP_SUMMARY | cat
           fi
