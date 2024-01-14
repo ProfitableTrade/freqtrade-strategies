@@ -40,6 +40,77 @@ on:
         description: "Dry run wallet amount"
         required: false
         default: "3000"
+      pair:
+        description: "Pair, example: SOL/USDT"
+        required: true
+        type: choice
+        default: SOL/USDT
+        options:
+          - SOL/USDT
+          - INJ/USDT
+          - BTC/USDT
+          - ETH/USDT
+          - DOT/USDT
+          - ADA/USDT
+          - LINK/USDT
+          - XRP/USDT
+          - LTC/USDT
+          - BCH/USDT
+          - BNB/USDT
+          - EOS/USDT
+          - TRX/USDT
+          - XLM/USDT
+          - ETC/USDT
+          - XTZ/USDT
+          - NEO/USDT
+          - ATOM/USDT
+          - IOTA/USDT
+          - VET/USDT
+          - XMR/USDT
+          - DASH/USDT
+          - ZEC/USDT
+          - QTUM/USDT
+          - THETA/USDT
+          - FIL/USDT
+          - UNI/USDT
+          - AAVE/USDT
+          - COMP/USDT
+          - MKR/USDT
+          - SNX/USDT
+          - YFI/USDT
+          - SUSHI/USDT
+          - ZRX/USDT
+          - KNC/USDT
+          - BAND/USDT
+          - REN/USDT
+          - BAL/USDT
+          - OXT/USDT
+          - CRV/USDT
+          - TRB/USDT
+          - UMA/USDT
+          - NMR/USDT
+          - ANT/USDT
+          - LRC/USDT
+          - CVC/USDT
+          - KAVA/USDT
+          - AR/USDT
+          - GRT/USDT
+          - STORJ/USDT
+          - SNM/USDT
+          - CTK/USDT
+          - BNT/USDT
+          - GNO/USDT
+          - REP/USDT
+          - MLN/USDT
+          - CRV/USDT
+          - STORJ/USDT
+          - SNM/USDT
+          - CTK/USDT
+          - BNT/USDT
+          - GNO/USDT
+          - REP/USDT
+          - MLN/USDT
+          - CRV/USDT
       config:
         description: "Config, example: binance"
         required: true
@@ -74,6 +145,7 @@ jobs:
           echo "|Strategy:         | ${{ inputs.strategy }}        |" >> $GITHUB_STEP_SUMMARY
           echo "|Dry run:          | ${{ inputs.dry_run }}         |" >> $GITHUB_STEP_SUMMARY
           echo "|Dry run wallet:   | ${{ inputs.dry_run_wallet }}  |" >> $GITHUB_STEP_SUMMARY
+          echo "|Pair:             | ${{ inputs.pair }}            |" >> $GITHUB_STEP_SUMMARY
           echo "|Config:           | ${{ inputs.config }}          |" >> $GITHUB_STEP_SUMMARY
       #------------------------------------------------------------
       # Install rsync
@@ -128,6 +200,7 @@ jobs:
             --detach \
             --name ${{ inputs.env_name }}-freqtrade \
             --rm freqtrade trade \
+            --pairs ${{ inputs.pair }} \
             --strategy ${{ inputs.strategy }} \
             --config /freqtrade/user_data/${{ inputs.config }}.json \
             --dry-run \
@@ -148,6 +221,7 @@ jobs:
             --detach \
             --name ${{ inputs.env_name }}-freqtrade \
             --rm freqtrade trade \
+            --pairs ${{ inputs.pair }} \
             --strategy ${{ inputs.strategy }} \
             --config /freqtrade/user_data/${{ inputs.config }}.json
           EOF
