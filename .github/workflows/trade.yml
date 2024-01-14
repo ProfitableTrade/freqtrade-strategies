@@ -111,6 +111,21 @@ on:
           - REP/USDT
           - MLN/USDT
           - CRV/USDT
+      time_frames:
+        description: "Timeframes, example: 30m"
+        required: true
+        default: 30m
+        type: choice
+        options:
+          - 3m
+          - 5m
+          - 15m
+          - 30m
+          - 1h
+          - 2h
+          - 3h
+          - 4h
+          - 12h
       config:
         description: "Config, example: binance"
         required: true
@@ -201,6 +216,7 @@ jobs:
             --name ${{ inputs.env_name }}-freqtrade \
             --rm freqtrade trade \
             --pairs ${{ inputs.pair }} \
+            --timeframes ${{ inputs.time_frames }} \
             --strategy ${{ inputs.strategy }} \
             --config /freqtrade/user_data/${{ inputs.config }}.json \
             --dry-run \
@@ -222,6 +238,7 @@ jobs:
             --name ${{ inputs.env_name }}-freqtrade \
             --rm freqtrade trade \
             --pairs ${{ inputs.pair }} \
+            --timeframes ${{ inputs.time_frames }} \
             --strategy ${{ inputs.strategy }} \
             --config /freqtrade/user_data/${{ inputs.config }}.json
           EOF
