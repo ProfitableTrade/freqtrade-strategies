@@ -45,11 +45,13 @@ on:
         options:
           - SOL/USDT
           - INJ/USDT
+          - KAVA/USDT
           - BTC/USDT
           - ETH/USDT
           - DOT/USDT
           - ADA/USDT
           - LINK/USDT
+          - ETH/BTC
           - XRP/USDT
           - LTC/USDT
           - BCH/USDT
