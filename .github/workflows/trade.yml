@@ -125,6 +125,7 @@ jobs:
           export TRADE_NAME=${{ inputs.env_name }}
           docker compose -f docker-compose-trade.yml \
             run \
+            --detach \
             --rm freqtrade trade \
             --strategy ${{ inputs.strategy }} \
             --config /freqtrade/user_data/${{ inputs.config }}.json \
@@ -143,6 +144,7 @@ jobs:
           export TRADE_NAME=${{ inputs.env_name }}
           docker compose -f docker-compose-trade.yml \
             run \
+            --detach \
             --rm freqtrade trade \
             --strategy ${{ inputs.strategy }} \
             --config /freqtrade/user_data/${{ inputs.config }}.json
