@@ -48,6 +48,7 @@ on:
         options:
           - binance
           - binance1
+          - binance2
 
 jobs:
   trade:
