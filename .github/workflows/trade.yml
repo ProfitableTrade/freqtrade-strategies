@@ -129,6 +129,11 @@ on:
         required: false
         type: string
         default: ""
+      telegram:
+        description: "Telegram bot"
+        required: false
+        type: boolean
+        default: true
 
 jobs:
   trade:
@@ -181,6 +186,13 @@ jobs:
           jq '.exchange.secret = "${{ secrets.BINANCE_SECRET_KEY }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           jq '.exchange.pair_whitelist[0] = "${{ inputs.pair }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           jq '.strategy.timeframe = "${{ inputs.timeframe }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+          jq '.api_server.username = "${{ secrets.USER_LOGIN }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+          jq '.api_server.password = "${{ secrets.USER_PASSWORD }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+          jq '.api_server.jwt_secret_key = "${{ secrets.JWT_SECRET_KEY }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+          jq '.api_server.ws_token = "${{ secrets.WS_TOKEN }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+          jq '.telegram.token = "${{ secrets.TELEGRAM_TOKEN }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+          jq '.telegram.chat_id = "${{ secrets.TELEGRAM_CHAT_ID }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+          jq '.telegram.enabled = "${{ inputs.telegram }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           cat "./user_data/${{ inputs.config }}.json"
 
       #------------------------------------------------------------
@@ -227,7 +239,8 @@ jobs:
             --config /freqtrade/user_data/${{ inputs.config }}.json \
             --config /freqtrade/user_data/credentials.json \
             --dry-run \
-            --dry-run-wallet ${{ inputs.dry_run_wallet }}
+            --dry-run-wallet ${{ inputs.dry_run_wallet }} > uplog.txt
+          docker ps
           EOF
         if: ${{ inputs.runtime_type == 'dry-run' && inputs.behaviour == 'start' }}
 
@@ -246,6 +259,7 @@ jobs:
             --rm freqtrade trade \
             --strategy ${{ inputs.strategy }} \
             --config /freqtrade/user_data/${{ inputs.config }}.json \
-            --config /freqtrade/user_data/credentials.json
+            --config /freqtrade/user_data/credentials.json > uplog.txt
+          docker ps
           EOF
         if: ${{ inputs.runtime_type == 'production' && inputs.behaviour == 'start' }}
