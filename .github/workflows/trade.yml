@@ -163,6 +163,8 @@ jobs:
           echo "|Dry run wallet:   | ${{ inputs.dry_run_wallet }}  |" >> $GITHUB_STEP_SUMMARY
           echo "|Config:           | ${{ inputs.config }}          |" >> $GITHUB_STEP_SUMMARY
           echo "|Pair:             | ${{ inputs.pair }}            |" >> $GITHUB_STEP_SUMMARY
+          echo "|Timeframe:        | ${{ inputs.timeframe }}       |" >> $GITHUB_STEP_SUMMARY
+          echo "|Telegram:         | ${{ inputs.telegram }}        |" >> $GITHUB_STEP_SUMMARY
       #------------------------------------------------------------
       # Install rsync
       #------------------------------------------------------------
