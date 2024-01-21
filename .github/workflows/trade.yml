@@ -47,6 +47,7 @@ on:
         default: binance
         options:
           - binance
+          - binance1
 
 jobs:
   trade:
