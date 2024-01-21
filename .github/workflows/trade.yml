@@ -31,11 +31,86 @@ on:
           - HourBasedStrategy
           - Strategy00plus
           - Strategy00plus1
-      dry_run:
-        description: "Dry run option, fake trades if true"
+      pair:
+        description: "Pair, example: SOL/USDT"
         required: true
-        default: true
-        type: boolean
+        type: choice
+        default: SOL/USDT
+        options:
+          - SOL/USDT
+          - INJ/USDT
+          - KAVA/USDT
+          - BTC/USDT
+          - ETH/USDT
+          - DOT/USDT
+          - ADA/USDT
+          - LINK/USDT
+          - XRP/USDT
+          - LTC/USDT
+          - BCH/USDT
+          - BNB/USDT
+          - EOS/USDT
+          - TRX/USDT
+          - XLM/USDT
+          - ETC/USDT
+          - XTZ/USDT
+          - NEO/USDT
+          - ATOM/USDT
+          - IOTA/USDT
+          - VET/USDT
+          - XMR/USDT
+          - DASH/USDT
+          - ZEC/USDT
+          - QTUM/USDT
+          - THETA/USDT
+          - FIL/USDT
+          - UNI/USDT
+          - AAVE/USDT
+          - COMP/USDT
+          - MKR/USDT
+          - SNX/USDT
+          - YFI/USDT
+          - SUSHI/USDT
+          - ZRX/USDT
+          - KNC/USDT
+          - BAND/USDT
+          - REN/USDT
+          - BAL/USDT
+          - OXT/USDT
+          - CRV/USDT
+          - TRB/USDT
+          - UMA/USDT
+          - NMR/USDT
+          - ANT/USDT
+          - LRC/USDT
+          - CVC/USDT
+          - KAVA/USDT
+          - AR/USDT
+          - GRT/USDT
+          - STORJ/USDT
+          - SNM/USDT
+          - CTK/USDT
+          - BNT/USDT
+          - GNO/USDT
+          - REP/USDT
+          - MLN/USDT
+          - CRV/USDT
+          - STORJ/USDT
+          - SNM/USDT
+          - CTK/USDT
+          - BNT/USDT
+          - GNO/USDT
+          - REP/USDT
+          - MLN/USDT
+          - CRV/USDT
+      runtime_type:
+        description: "dry-run - fake trades, production - real money"
+        required: true
+        default: dry-run
+        type: choice
+        options:
+          - dry-run
+          - production
       dry_run_wallet:
         description: "Dry run wallet amount"
         required: false
@@ -49,6 +124,11 @@ on:
           - binance
           - binance1
           - binance2
+      timeframe:
+        description: "timeframe, (example 1h | 1m | 10m ...), leave blank if you are using the strategy config"
+        required: false
+        type: string
+        default: ""
 
 jobs:
   trade:
@@ -74,15 +154,17 @@ jobs:
           echo "|Environment name: | ${{ inputs.env_name }}        |" >> $GITHUB_STEP_SUMMARY
           echo "|Behaviour:        | ${{ inputs.behaviour }}       |" >> $GITHUB_STEP_SUMMARY
           echo "|Strategy:         | ${{ inputs.strategy }}        |" >> $GITHUB_STEP_SUMMARY
-          echo "|Dry run:          | ${{ inputs.dry_run }}         |" >> $GITHUB_STEP_SUMMARY
+          echo "|Dry run:          | ${{ inputs.runtime_type }}    |" >> $GITHUB_STEP_SUMMARY
           echo "|Dry run wallet:   | ${{ inputs.dry_run_wallet }}  |" >> $GITHUB_STEP_SUMMARY
           echo "|Config:           | ${{ inputs.config }}          |" >> $GITHUB_STEP_SUMMARY
+          echo "|Pair:             | ${{ inputs.pair }}            |" >> $GITHUB_STEP_SUMMARY
       #------------------------------------------------------------
       # Install rsync
       #------------------------------------------------------------
       - name: Install rsync
         run: |
           sudo apt-get install -y rsync
+          sudo apt-get install -y jq
       #------------------------------------------------------------
       # Create ssh private key
       #------------------------------------------------------------
@@ -90,6 +172,17 @@ jobs:
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ./id_rsa
           chmod 600 ./id_rsa
+      #------------------------------------------------------------
+      # Change config file
+      #------------------------------------------------------------
+      - name: Change config file ${{ inputs.config }}.json
+        run: |
+          jq '.exchange.key = "${{ secrets.BINANCE_API }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+          jq '.exchange.secret = "${{ secrets.BINANCE_SECRET_KEY }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+          jq '.exchange.pair_whitelist[0] = "${{ inputs.pair }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+          jq '.strategy.timeframe = "${{ inputs.timeframe }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+          cat "./user_data/${{ inputs.config }}.json"
+
       #------------------------------------------------------------
       # Copy to remote
       #------------------------------------------------------------
@@ -132,10 +225,11 @@ jobs:
             --rm freqtrade trade \
             --strategy ${{ inputs.strategy }} \
             --config /freqtrade/user_data/${{ inputs.config }}.json \
+            --config /freqtrade/user_data/credentials.json \
             --dry-run \
-            --dry-run-wallet ${{ inputs.dry_run_wallet }} 
+            --dry-run-wallet ${{ inputs.dry_run_wallet }}
           EOF
-        if: ${{ inputs.dry_run && inputs.behaviour == 'start' }}
+        if: ${{ inputs.runtime_type == 'dry-run' && inputs.behaviour == 'start' }}
 
       - name: 💰 Trade 💰
         run: |
@@ -151,6 +245,7 @@ jobs:
             --name ${{ inputs.env_name }}-freqtrade \
             --rm freqtrade trade \
             --strategy ${{ inputs.strategy }} \
-            --config /freqtrade/user_data/${{ inputs.config }}.json
+            --config /freqtrade/user_data/${{ inputs.config }}.json \
+            --config /freqtrade/user_data/credentials.json
           EOF
-        if: ${{ !inputs.dry_run && inputs.behaviour == 'start' }}
+        if: ${{ inputs.runtime_type == 'production' && inputs.behaviour == 'start' }}
