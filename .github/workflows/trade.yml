@@ -149,6 +149,7 @@ jobs:
           fetch-depth: 0
           lfs: true
           submodules: true
+
       #------------------------------------------------------------
       # Info
       #------------------------------------------------------------
@@ -165,6 +166,7 @@ jobs:
           echo "|Pair:             | ${{ inputs.pair }}            |" >> $GITHUB_STEP_SUMMARY
           echo "|Timeframe:        | ${{ inputs.timeframe }}       |" >> $GITHUB_STEP_SUMMARY
           echo "|Telegram:         | ${{ inputs.telegram }}        |" >> $GITHUB_STEP_SUMMARY
+
       #------------------------------------------------------------
       # Install rsync
       #------------------------------------------------------------
@@ -172,6 +174,7 @@ jobs:
         run: |
           sudo apt-get install -y rsync
           sudo apt-get install -y jq
+
       #------------------------------------------------------------
       # Create ssh private key
       #------------------------------------------------------------
@@ -179,6 +182,7 @@ jobs:
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ./id_rsa
           chmod 600 ./id_rsa
+
       #------------------------------------------------------------
       # Change config file
       #------------------------------------------------------------
@@ -197,6 +201,21 @@ jobs:
           jq '.telegram.enabled = "${{ inputs.telegram }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           cat "./user_data/${{ inputs.config }}.json"
 
+      #------------------------------------------------------------
+      # Make ENV file
+      #------------------------------------------------------------
+      - name: Make ENV file
+        run: |
+          echo '' > ./trade/.env
+          echo 'export DOMAIN=${{ secrets.REMOTE_SERVER }}' >> ./trade/.env
+          echo 'export TRADE_NAME=${{ inputs.env_name }}' >> ./trade/.env
+          echo 'export ENV_NAME=${{ inputs.env_name }}' >> ./trade/.env
+          echo 'export STRATEGY=${{ inputs.strategy }}' >> ./trade/.env
+          echo 'export CONFIG_NAME=${{ inputs.config }}' >> ./trade/.env
+          echo 'export DRY_RUN_WALLET=${{ inputs.dry_run_wallet }}' >> ./trade/.env
+          echo 'export RUNTIME_TYPE=${{ inputs.runtime_type }}' >> ./trade/.env
+          chmod 777 ./trade/.env
+          
       #------------------------------------------------------------
       # Copy to remote
       #------------------------------------------------------------
@@ -222,46 +241,19 @@ jobs:
         if: ${{ inputs.behaviour }} == "stop"
 
       #------------------------------------------------------------
-      # Trade
+      # Trade dry-run
       #------------------------------------------------------------
       - name: 💰 Trade ( Dry-run ) 💰
-        run: |
-          echo Trade, strategy: ${{ inputs.strategy }}, config: ${{ inputs.config }}
-          ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" <<'EOF' 
-          set -e 
-          cd /root/trade/${{ inputs.env_name }}
-          export DOMAIN=${{ secrets.REMOTE_SERVER }}
-          export TRADE_NAME=${{ inputs.env_name }}
-          docker compose -f docker-compose-trade.yml \
-            run \
-            --detach \
-            --name ${{ inputs.env_name }}-freqtrade \
-            --rm freqtrade trade \
-            --strategy ${{ inputs.strategy }} \
-            --config /freqtrade/user_data/${{ inputs.config }}.json \
-            --config /freqtrade/user_data/credentials.json \
-            --dry-run \
-            --dry-run-wallet ${{ inputs.dry_run_wallet }} > uplog.txt
-          docker ps
-          EOF
         if: ${{ inputs.runtime_type == 'dry-run' && inputs.behaviour == 'start' }}
-
-      - name: 💰 Trade 💰
         run: |
           echo Trade, strategy: ${{ inputs.strategy }}, config: ${{ inputs.config }}
-          ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" <<'EOF' 
-          set -e 
-          cd /root/trade/${{ inputs.env_name }}
-          export DOMAIN=${{ secrets.REMOTE_SERVER }}
-          export TRADE_NAME=${{ inputs.env_name }}
-          docker compose -f docker-compose-trade.yml \
-            run \
-            --detach \
-            --name ${{ inputs.env_name }}-freqtrade \
-            --rm freqtrade trade \
-            --strategy ${{ inputs.strategy }} \
-            --config /freqtrade/user_data/${{ inputs.config }}.json \
-            --config /freqtrade/user_data/credentials.json > uplog.txt
-          docker ps
-          EOF
+          ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "cd /root/trade/${{ inputs.env_name }} && ./trade.sh"
+
+      #------------------------------------------------------------
+      # Trade production
+      #------------------------------------------------------------
+      - name: 💰 Trade 💰
         if: ${{ inputs.runtime_type == 'production' && inputs.behaviour == 'start' }}
+        run: |
+          echo Trade, strategy: ${{ inputs.strategy }}, config: ${{ inputs.config }}
+          ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "cd /root/trade/${{ inputs.env_name }} && ./trade.sh"
