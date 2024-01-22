@@ -191,6 +191,7 @@ jobs:
       - name: Change config file ${{ inputs.config }}.json
         run: |
           export TELEGRAM_CHAT_ID=$(echo "TELEGRAM_CHAT_ID_${{ inputs.env_name }}" | tr '[:lower:]' '[:upper:]')
+          echo TELEGRAM_CHAT_ID=$TELEGRAM_CHAT_ID
           jq '.exchange.key = "${{ secrets.BINANCE_API }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           jq '.exchange.secret = "${{ secrets.BINANCE_SECRET_KEY }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           jq '.exchange.pair_whitelist[0] = "${{ inputs.pair }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
@@ -201,7 +202,7 @@ jobs:
           jq '.api_server.jwt_secret_key = "${{ secrets.JWT_SECRET_KEY }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           jq '.api_server.ws_token = "${{ secrets.WS_TOKEN }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           jq '.telegram.token = "${{ secrets.TELEGRAM_TOKEN }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
-          jq '.telegram.chat_id = "${TELEGRAM_CHAT_ID}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+          jq --arg key "$TELEGRAM_CHAT_ID" '.telegram.chat_id = $key' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           jq '.telegram.enabled = ${{ inputs.telegram }}' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           cat "./user_data/${{ inputs.config }}.json"
 
