@@ -18,13 +18,13 @@ else
   export DRY_RUN_WALLET=${DRY_RUN_WALLET}
   export RUNTIME_TYPE=${RUNTIME_TYPE}
 
-  function stop_docker_compose {
-    docker stop ${TRADE_NAME}-freqtrade
-  }
+  export CONTAINER_NAME=${TRADE_NAME}-freqtrade
 
-  stop_docker_compose &&
-    echo "--------------------------------------------------------------------" &&
-    docker logs ${ENV_NAME}-freqtrade &&
-    echo "--------------------------------------------------------------------"
+  if [[ "$(docker ps -a -q -f name=$CONTAINER_NAME)" != "" ]]; then
+    echo "stop container"
+    docker stop $CONTAINER_NAME
+  else
+    echo "The container $CONTAINER_NAME is not working"
+  fi
 
 fi
