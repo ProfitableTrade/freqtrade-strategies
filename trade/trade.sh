@@ -41,9 +41,15 @@ function start_docker_compose {
 }
 
 start_docker_compose \
-  && sleep 5 \
-  && docker logs ${ENV_NAME}-freqtrade \
-  && sleep 5 \
-  && docker logs ${ENV_NAME}-freqtrade \
-  && sleep 5 \
+  && echo "--------------------------------------------------------------------"
   && docker logs ${ENV_NAME}-freqtrade
+  && echo "--------------------------------------------------------------------"
+  && sleep 5 \
+  && docker logs ${ENV_NAME}-freqtrade --since 5s \
+  && echo "--------------------------------------------------------------------"
+  && sleep 5 \
+  && docker logs ${ENV_NAME}-freqtrade --since 5s \
+  && echo "--------------------------------------------------------------------"
+  && sleep 5 \
+  && docker logs ${ENV_NAME}-freqtrade --since 5s
+  && echo "--------------------------------------------------------------------"
