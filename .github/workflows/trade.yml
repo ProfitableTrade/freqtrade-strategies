@@ -192,6 +192,7 @@ jobs:
           jq '.exchange.secret = "${{ secrets.BINANCE_SECRET_KEY }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           jq '.exchange.pair_whitelist[0] = "${{ inputs.pair }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           jq '.strategy.timeframe = "${{ inputs.timeframe }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+          jq '.timeframe = "${{ inputs.timeframe }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           jq '.api_server.username = "${{ secrets.USER_LOGIN }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           jq '.api_server.password = "${{ secrets.USER_PASSWORD }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           jq '.api_server.jwt_secret_key = "${{ secrets.JWT_SECRET_KEY }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
