@@ -19,7 +19,7 @@ else
   export RUNTIME_TYPE=${RUNTIME_TYPE}
 
   function stop_docker_compose {
-    docker compose -f docker-compose-trade.yml down
+    docker stop ${TRADE_NAME}-freqtrade
   }
 
   stop_docker_compose &&

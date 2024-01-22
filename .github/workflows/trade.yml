@@ -189,8 +189,13 @@ jobs:
       # Change config file
       #------------------------------------------------------------
       - name: Change config file ${{ inputs.config }}.json
+        env:
+          TELEGRAM_CHAT_ID_TRADE01: ${{ secrets.TELEGRAM_CHAT_ID_TRADE01 }}
+          TELEGRAM_CHAT_ID_TRADE02: ${{ secrets.TELEGRAM_CHAT_ID_TRADE02 }}
+          TELEGRAM_CHAT_ID_TRADE03: ${{ secrets.TELEGRAM_CHAT_ID_TRADE03 }}
         run: |
-          export TELEGRAM_CHAT_ID=$(echo "TELEGRAM_CHAT_ID_${{ inputs.env_name }}" | tr '[:lower:]' '[:upper:]')
+          export TELEGRAM_CHAT_ID_NAME=$(echo "TELEGRAM_CHAT_ID_${{ inputs.env_name }}" | tr '[:lower:]' '[:upper:]')
+          export TELEGRAM_CHAT_ID=${!TELEGRAM_CHAT_ID_NAME}
           echo TELEGRAM_CHAT_ID=$TELEGRAM_CHAT_ID
           jq '.exchange.key = "${{ secrets.BINANCE_API }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           jq '.exchange.secret = "${{ secrets.BINANCE_SECRET_KEY }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"

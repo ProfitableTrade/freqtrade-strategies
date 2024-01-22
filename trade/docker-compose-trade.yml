@@ -1,5 +1,4 @@
 version: "3.8"
-name: ${TRADE_NAME:?ERROR_TRADE_NAME_IS_NOT_SET}
 services:
   freqtrade:
     image: freqtradeorg/freqtrade:stable
