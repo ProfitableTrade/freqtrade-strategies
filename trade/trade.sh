@@ -13,6 +13,18 @@ export DRY_RUN_WALLET=${DRY_RUN_WALLET}
 export RUNTIME_TYPE=${RUNTIME_TYPE}
 
 function start_docker_compose {
+
+  echo '' > ./trade.env
+  echo 'export DOMAIN=$DOMAIN' >> ./trade.env
+  echo 'export TRADE_NAME=$TRADE_NAME' >> ./trade.env
+  echo 'export ENV_NAME=$ENV_NAME' >> ./trade.env
+  echo 'export STRATEGY=$STRATEGY' >> ./trade.env
+  echo 'export CONFIG_NAME=$CONFIG_NAME' >> ./trade.env
+  echo 'export DRY_RUN_WALLET=$DRY_RUN_WALLET' >> ./trade.env
+  echo 'export RUNTIME_TYPE=$RUNTIME_TYPE' >> ./trade.env
+  chmod 777 ./trade.env
+
+
   if [[ "$RUNTIME_TYPE" == "dry-run" ]]; then
     docker compose -f docker-compose-trade.yml \
       run \
