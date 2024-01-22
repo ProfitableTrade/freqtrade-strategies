@@ -198,7 +198,7 @@ jobs:
           jq '.api_server.ws_token = "${{ secrets.WS_TOKEN }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           jq '.telegram.token = "${{ secrets.TELEGRAM_TOKEN }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           jq '.telegram.chat_id = "${{ secrets.TELEGRAM_CHAT_ID }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
-          jq '.telegram.enabled = "${{ inputs.telegram }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+          jq '.telegram.enabled = ${{ inputs.telegram }}' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           cat "./user_data/${{ inputs.config }}.json"
 
       #------------------------------------------------------------
@@ -215,7 +215,7 @@ jobs:
           echo 'export DRY_RUN_WALLET=${{ inputs.dry_run_wallet }}' >> ./trade/.env
           echo 'export RUNTIME_TYPE=${{ inputs.runtime_type }}' >> ./trade/.env
           chmod 777 ./trade/.env
-          
+
       #------------------------------------------------------------
       # Copy to remote
       #------------------------------------------------------------

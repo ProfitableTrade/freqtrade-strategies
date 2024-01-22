@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e 
+set -e
 
 source .env
 
@@ -12,7 +12,6 @@ export CONFIG_NAME=${CONFIG_NAME}
 export DRY_RUN_WALLET=${DRY_RUN_WALLET}
 export RUNTIME_TYPE=${RUNTIME_TYPE}
 
-
 if [[ "$RUNTIME_TYPE" == "dry-run" ]]; then
   docker compose -f docker-compose-trade.yml \
     run \
@@ -21,9 +20,8 @@ if [[ "$RUNTIME_TYPE" == "dry-run" ]]; then
     --rm freqtrade trade \
     --strategy ${STRATEGY} \
     --config /freqtrade/user_data/${CONFIG_NAME}.json \
-    --config /freqtrade/user_data/credentials.json \
     --dry-run \
-    --dry-run-wallet ${DRY_RUN_WALLET} > output.txt 2> error.txt 
+    --dry-run-wallet ${DRY_RUN_WALLET}
 
 elif [[ "$RUNTIME_TYPE" == "production" ]]; then
   docker compose -f docker-compose-trade.yml \
@@ -32,13 +30,10 @@ elif [[ "$RUNTIME_TYPE" == "production" ]]; then
     --name ${ENV_NAME}-freqtrade \
     --rm freqtrade trade \
     --strategy ${STRATEGY} \
-    --config /freqtrade/user_data/${CONFIG_NAME}.json \
-    --config /freqtrade/user_data/credentials.json > output.txt 2> error.txt 
+    --config /freqtrade/user_data/${CONFIG_NAME}.json
 
 else
   echo "RUNTIME_TYPE value is unknown: $RUNTIME_TYPE"
   exit 1
 
 fi
-
-
