@@ -18,7 +18,7 @@ class Strategy00(IStrategy):
     INTERFACE_VERSION: int = 3
 
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
-    stoploss = -0.065
+    stoploss = -0.02
 
     # Оптимальний таймфрейм для стратегії
     timeframe = '30m'
