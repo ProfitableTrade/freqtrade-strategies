@@ -5,7 +5,7 @@ from pandas import DataFrame
 class CrossEMAStrategy(IStrategy):
     INTERFACE_VERSION = 2
     minimal_roi = {"0": 50}
-    stoploss = -0.05
+    stoploss = -0.01
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         dataframe['ema_fast'] = ta.EMA(dataframe, timeperiod=28)
