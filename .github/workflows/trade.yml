@@ -131,11 +131,26 @@ on:
         default: "1h"
         # do not change, binance works with this list of timeframes only 
         options: ['1s', '1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M']
-      telegram:
-        description: "Telegram bot, work on only one bot"
+      max_open_trades:
+        description: "Max open trades"
         required: false
-        type: boolean
-        default: false
+        default: 3
+        type: number
+      stoploss:
+        description: "Stoploss"
+        required: true
+        default: 0.05
+        type: number
+      # cancel_open_orders_on_exit:
+      #   description: "Cancel open orders on exit"
+      #   required: false
+      #   type: boolean
+      #   default: false
+      # telegram:
+      #   description: "Telegram bot, work on only one bot"
+      #   required: false
+      #   type: boolean
+      #   default: false
 
 jobs:
   trade:
@@ -167,6 +182,9 @@ jobs:
           echo "|Config:           | ${{ inputs.config }}          |" >> $GITHUB_STEP_SUMMARY
           echo "|Pair:             | ${{ inputs.pair }}            |" >> $GITHUB_STEP_SUMMARY
           echo "|Timeframe:        | ${{ inputs.timeframe }}       |" >> $GITHUB_STEP_SUMMARY
+          echo "|Max open trades:  | ${{ inputs.max_open_trades }} |" >> $GITHUB_STEP_SUMMARY
+          echo "|Stoploss:         | ${{ inputs.stoploss }}        |" >> $GITHUB_STEP_SUMMARY
+          echo "|Cancel open orders on exit: | ${{ inputs.cancel_open_orders_on_exit }} |" >> $GITHUB_STEP_SUMMARY
           echo "|Telegram:         | ${{ inputs.telegram }}        |" >> $GITHUB_STEP_SUMMARY
 
       #------------------------------------------------------------
@@ -189,14 +207,7 @@ jobs:
       # Change config file
       #------------------------------------------------------------
       - name: Change config file ${{ inputs.config }}.json
-        env:
-          TELEGRAM_CHAT_ID_TRADE01: ${{ secrets.TELEGRAM_CHAT_ID_TRADE01 }}
-          TELEGRAM_CHAT_ID_TRADE02: ${{ secrets.TELEGRAM_CHAT_ID_TRADE02 }}
-          TELEGRAM_CHAT_ID_TRADE03: ${{ secrets.TELEGRAM_CHAT_ID_TRADE03 }}
         run: |
-          export TELEGRAM_CHAT_ID_NAME=$(echo "TELEGRAM_CHAT_ID_${{ inputs.env_name }}" | tr '[:lower:]' '[:upper:]')
-          export TELEGRAM_CHAT_ID=${!TELEGRAM_CHAT_ID_NAME}
-          echo TELEGRAM_CHAT_ID=$TELEGRAM_CHAT_ID
           jq '.exchange.key = "${{ secrets.BINANCE_API }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           jq '.exchange.secret = "${{ secrets.BINANCE_SECRET_KEY }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           jq '.exchange.pair_whitelist[0] = "${{ inputs.pair }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
@@ -206,11 +217,52 @@ jobs:
           jq '.api_server.password = "${{ secrets.USER_PASSWORD }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           jq '.api_server.jwt_secret_key = "${{ secrets.JWT_SECRET_KEY }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           jq '.api_server.ws_token = "${{ secrets.WS_TOKEN }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
-          jq '.telegram.token = "${{ secrets.TELEGRAM_TOKEN }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
-          jq --arg key "$TELEGRAM_CHAT_ID" '.telegram.chat_id = $key' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
-          jq '.telegram.enabled = ${{ inputs.telegram }}' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
-          cat "./user_data/${{ inputs.config }}.json"
+          jq '.max_open_trades = ${{ inputs.max_open_trades }}' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+          jq '.strategy.stoploss = ${{ inputs.stoploss }}' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+      #------------------------------------------------------------
+      # cancel_open_orders_on_exit
+      #------------------------------------------------------------
+      # - name: cancel_open_orders_on_exit
+      #   run: |
+      #     jq '.cancel_open_orders_on_exit = ${{ inputs.cancel_open_orders_on_exit }}' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+      #------------------------------------------------------------
+      # Telegram config
+      #------------------------------------------------------------    
+      # - name: Telegram
+      #   env:
+      #     TELEGRAM_CHAT_ID_TRADE01: ${{ secrets.TELEGRAM_CHAT_ID_TRADE01 }}
+      #     TELEGRAM_CHAT_ID_TRADE02: ${{ secrets.TELEGRAM_CHAT_ID_TRADE02 }}
+      #     TELEGRAM_CHAT_ID_TRADE03: ${{ secrets.TELEGRAM_CHAT_ID_TRADE03 }}
+      #   run: |
+      #     export TELEGRAM_CHAT_ID_NAME=$(echo "TELEGRAM_CHAT_ID_${{ inputs.env_name }}" | tr '[:lower:]' '[:upper:]')
+      #     export TELEGRAM_CHAT_ID=${!TELEGRAM_CHAT_ID_NAME}
+      #     echo TELEGRAM_CHAT_ID=$TELEGRAM_CHAT_ID
+      #     jq '.telegram.token = "${{ secrets.TELEGRAM_TOKEN }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+      #     jq --arg key "$TELEGRAM_CHAT_ID" '.telegram.chat_id = $key' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+      #     jq '.telegram.enabled = ${{ inputs.telegram }}' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
 
+      #------------------------------------------------------------
+      # Production config
+      #------------------------------------------------------------
+      - name: Production config
+        if: ${{ inputs.runtime_type == 'production' }}
+        run: |
+          jq '.exchange.dry_run = false' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+          jq '.exchange.dry_run_wallet = 0' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+      #------------------------------------------------------------
+      # Dry run config
+      #------------------------------------------------------------
+      - name: Dry-run config
+        if: ${{ inputs.runtime_type == 'dry-run' }}
+        run: |
+          jq '.exchange.dry_run = true' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+          jq --arg key "${{ inputs.dry_run_wallet }}" '.exchange.dry_run_wallet = $key' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+      #------------------------------------------------------------
+      # Log config file
+      #------------------------------------------------------------
+      - name: Log config file
+        run: |
+          cat "./user_data/${{ inputs.config }}.json"
       #------------------------------------------------------------
       # Make ENV file
       #------------------------------------------------------------
@@ -240,24 +292,14 @@ jobs:
       # Stop
       #------------------------------------------------------------
       - name: 🛑 Stop 🛑
-        if: ${{ inputs.behaviour }} == "stop"
         run: |
           ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "cd /root/trade/${{ inputs.env_name }} && ./stop.sh"
 
       #------------------------------------------------------------
-      # Trade dry-run
+      # Trade or dry-run
       #------------------------------------------------------------
-      - name: 💰 Trade ( Dry-run ) 💰
-        if: ${{ inputs.runtime_type == 'dry-run' && inputs.behaviour == 'start' }}
-        run: |
-          echo Trade, strategy: ${{ inputs.strategy }}, config: ${{ inputs.config }}
-          ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "cd /root/trade/${{ inputs.env_name }} && ./trade.sh"
-
-      #------------------------------------------------------------
-      # Trade production
-      #------------------------------------------------------------
-      - name: 💰 Trade 💰
-        if: ${{ inputs.runtime_type == 'production' && inputs.behaviour == 'start' }}
+      - name: 💰 Trade ${{ inputs.runtime_type }} ${{ inputs.strategy }} ${{ inputs.config }} 💰
+        if: ${{ inputs.behaviour == 'start' }}
         run: |
           echo Trade, strategy: ${{ inputs.strategy }}, config: ${{ inputs.config }}
           ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "cd /root/trade/${{ inputs.env_name }} && ./trade.sh"
