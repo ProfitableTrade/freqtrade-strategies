@@ -4,6 +4,8 @@
   "stake_amount": 20,
   "tradable_balance_ratio": 0.99,
   "fiat_display_currency": "USD",
+  "dry_run": true,
+  "dry_run_wallet": 3000,
   "cancel_open_orders_on_exit": false,
   "trading_mode": "spot",
   "margin_mode": "",
@@ -74,6 +76,7 @@
     "process_throttle_secs": 5
   },
   "strategy": {
+    "stoploss": 0.05,
     "timeframe": "1h"
   },
   "timeframe": "1h"

@@ -5,8 +5,12 @@ services:
     container_name: ${TRADE_NAME}-freqtrade
     volumes:
       - "./user_data:/freqtrade/user_data"
+    env_file:
+      - ./trade.env
     command: >
       trade
+      --strategy ${STRATEGY}
+      --config /freqtrade/user_data/${CONFIG_NAME}.json
       --logfile /freqtrade/user_data/logs/freqtrade.log
       --db-url sqlite:////freqtrade/user_data/tradesv3.sqlite
     labels:

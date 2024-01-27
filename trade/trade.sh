@@ -24,32 +24,7 @@ function start_docker_compose {
   echo "export RUNTIME_TYPE=$RUNTIME_TYPE" >> ./trade.env
   chmod 777 ./trade.env
 
-
-  if [[ "$RUNTIME_TYPE" == "dry-run" ]]; then
-    docker compose -f docker-compose-trade.yml \
-      run \
-      --detach \
-      --name ${ENV_NAME}-freqtrade \
-      --rm freqtrade trade \
-      --strategy ${STRATEGY} \
-      --config /freqtrade/user_data/${CONFIG_NAME}.json \
-      --dry-run \
-      --dry-run-wallet ${DRY_RUN_WALLET}
-
-  elif [[ "$RUNTIME_TYPE" == "production" ]]; then
-    docker compose -f docker-compose-trade.yml \
-      run \
-      --detach \
-      --name ${ENV_NAME}-freqtrade \
-      --rm freqtrade trade \
-      --strategy ${STRATEGY} \
-      --config /freqtrade/user_data/${CONFIG_NAME}.json
-
-  else
-    echo "RUNTIME_TYPE value is unknown: $RUNTIME_TYPE"
-    exit 1
-
-  fi
+  docker compose -f docker-compose-trade.yml up -d
 }
 
 start_docker_compose \
