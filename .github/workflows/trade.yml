@@ -141,16 +141,16 @@ on:
         required: true
         default: 0.05
         type: number
-      cancel_open_orders_on_exit:
-        description: "Cancel open orders on exit"
-        required: false
-        type: boolean
-        default: false
-      telegram:
-        description: "Telegram bot, work on only one bot"
-        required: false
-        type: boolean
-        default: false
+      # cancel_open_orders_on_exit:
+      #   description: "Cancel open orders on exit"
+      #   required: false
+      #   type: boolean
+      #   default: false
+      # telegram:
+      #   description: "Telegram bot, work on only one bot"
+      #   required: false
+      #   type: boolean
+      #   default: false
 
 jobs:
   trade:
@@ -219,22 +219,27 @@ jobs:
           jq '.api_server.ws_token = "${{ secrets.WS_TOKEN }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           jq '.max_open_trades = ${{ inputs.max_open_trades }}' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           jq '.strategy.stoploss = ${{ inputs.stoploss }}' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
-          jq '.cancel_open_orders_on_exit = ${{ inputs.cancel_open_orders_on_exit }}' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+      #------------------------------------------------------------
+      # cancel_open_orders_on_exit
+      #------------------------------------------------------------
+      # - name: cancel_open_orders_on_exit
+      #   run: |
+      #     jq '.cancel_open_orders_on_exit = ${{ inputs.cancel_open_orders_on_exit }}' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
       #------------------------------------------------------------
       # Telegram config
       #------------------------------------------------------------    
-      - name: Telegram
-        env:
-          TELEGRAM_CHAT_ID_TRADE01: ${{ secrets.TELEGRAM_CHAT_ID_TRADE01 }}
-          TELEGRAM_CHAT_ID_TRADE02: ${{ secrets.TELEGRAM_CHAT_ID_TRADE02 }}
-          TELEGRAM_CHAT_ID_TRADE03: ${{ secrets.TELEGRAM_CHAT_ID_TRADE03 }}
-        run: |
-          export TELEGRAM_CHAT_ID_NAME=$(echo "TELEGRAM_CHAT_ID_${{ inputs.env_name }}" | tr '[:lower:]' '[:upper:]')
-          export TELEGRAM_CHAT_ID=${!TELEGRAM_CHAT_ID_NAME}
-          echo TELEGRAM_CHAT_ID=$TELEGRAM_CHAT_ID
-          jq '.telegram.token = "${{ secrets.TELEGRAM_TOKEN }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
-          jq --arg key "$TELEGRAM_CHAT_ID" '.telegram.chat_id = $key' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
-          jq '.telegram.enabled = ${{ inputs.telegram }}' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+      # - name: Telegram
+      #   env:
+      #     TELEGRAM_CHAT_ID_TRADE01: ${{ secrets.TELEGRAM_CHAT_ID_TRADE01 }}
+      #     TELEGRAM_CHAT_ID_TRADE02: ${{ secrets.TELEGRAM_CHAT_ID_TRADE02 }}
+      #     TELEGRAM_CHAT_ID_TRADE03: ${{ secrets.TELEGRAM_CHAT_ID_TRADE03 }}
+      #   run: |
+      #     export TELEGRAM_CHAT_ID_NAME=$(echo "TELEGRAM_CHAT_ID_${{ inputs.env_name }}" | tr '[:lower:]' '[:upper:]')
+      #     export TELEGRAM_CHAT_ID=${!TELEGRAM_CHAT_ID_NAME}
+      #     echo TELEGRAM_CHAT_ID=$TELEGRAM_CHAT_ID
+      #     jq '.telegram.token = "${{ secrets.TELEGRAM_TOKEN }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+      #     jq --arg key "$TELEGRAM_CHAT_ID" '.telegram.chat_id = $key' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+      #     jq '.telegram.enabled = ${{ inputs.telegram }}' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
 
       #------------------------------------------------------------
       # Production config
