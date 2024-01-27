@@ -292,24 +292,14 @@ jobs:
       # Stop
       #------------------------------------------------------------
       - name: 🛑 Stop 🛑
-        if: ${{ inputs.behaviour }} == "stop"
         run: |
           ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "cd /root/trade/${{ inputs.env_name }} && ./stop.sh"
 
       #------------------------------------------------------------
-      # Trade dry-run
+      # Trade or dry-run
       #------------------------------------------------------------
-      - name: 💰 Trade ( Dry-run ) 💰
-        if: ${{ inputs.runtime_type == 'dry-run' && inputs.behaviour == 'start' }}
-        run: |
-          echo Trade, strategy: ${{ inputs.strategy }}, config: ${{ inputs.config }}
-          ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "cd /root/trade/${{ inputs.env_name }} && ./trade.sh"
-
-      #------------------------------------------------------------
-      # Trade production
-      #------------------------------------------------------------
-      - name: 💰 Trade 💰
-        if: ${{ inputs.runtime_type == 'production' && inputs.behaviour == 'start' }}
+      - name: 💰 Trade ${{ inputs.runtime_type }} ${{ inputs.strategy }} ${{ inputs.config }} 💰
+        if: ${{ inputs.behaviour == 'start' }}
         run: |
           echo Trade, strategy: ${{ inputs.strategy }}, config: ${{ inputs.config }}
           ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "cd /root/trade/${{ inputs.env_name }} && ./trade.sh"
