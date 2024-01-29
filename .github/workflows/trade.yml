@@ -245,16 +245,16 @@ jobs:
       - name: Production config
         if: ${{ inputs.runtime_type == 'production' }}
         run: |
-          jq '.exchange.dry_run = false' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
-          jq '.exchange.dry_run_wallet = 0' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+          jq '.dry_run = false' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+          jq '.dry_run_wallet = 0' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
       #------------------------------------------------------------
       # Dry run config
       #------------------------------------------------------------
       - name: Dry-run config
         if: ${{ inputs.runtime_type == 'dry-run' }}
         run: |
-          jq '.exchange.dry_run = true' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
-          jq --arg key "${{ inputs.dry_run_wallet }}" '.exchange.dry_run_wallet = $key' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+          jq '.dry_run = true' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+          jq --arg key "${{ inputs.dry_run_wallet }}" '.dry_run_wallet = $key' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
       #------------------------------------------------------------
       # Log config file
       #------------------------------------------------------------
