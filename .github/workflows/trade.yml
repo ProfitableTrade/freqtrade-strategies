@@ -132,7 +132,7 @@ on:
       max_open_trades:
         description: "Max open trades"
         required: false
-        default: 3
+        default: 1
         type: number
       stoploss:
         description: "Stoploss"
