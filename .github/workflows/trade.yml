@@ -122,6 +122,7 @@ on:
         default: binance
         options:
           - binance
+          - binance1
       timeframe:
         description: "Timeframe"
         required: true
