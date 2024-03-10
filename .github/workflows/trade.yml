@@ -18,6 +18,16 @@ on:
           - trade08
           - trade09
           - trade10
+          - trade11
+          - trade12
+          - trade13
+          - trade14
+          - trade15
+          - trade16
+          - trade17
+          - trade18
+          - trade19
+          - trade20
       behaviour:
         description: "Behaviour"
         required: true
