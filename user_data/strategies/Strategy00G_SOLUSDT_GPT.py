@@ -19,8 +19,8 @@ class Strategy00G_SOLUSDT_GPT(IStrategy):
 
     # Dynamic trailing stop loss is not initially enabled
     trailing_stop = True
-    trailing_stop_positive = 0.0
-    trailing_stop_positive_offset = 0.01  # Trigger trailing stop as soon as in profit
+    trailing_stop_positive = 0.01
+    trailing_stop_positive_offset = 0.02  # Trigger trailing stop as soon as in profit
 
     process_only_new_candles = True
 
