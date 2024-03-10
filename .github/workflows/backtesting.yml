@@ -10,6 +10,7 @@ on:
         options:
           - Strategy00
           - CrossEMAStrategy
+          - Strategy00G_SOLUSDT_GPT
           - Strategy00G_SOLUSDT
           - CustomStoplossWithPSAR
           - HourBasedStrategy
