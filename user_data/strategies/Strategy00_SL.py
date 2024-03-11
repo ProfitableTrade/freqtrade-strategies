@@ -23,8 +23,11 @@ class Strategy00_SL(IStrategy):
     # Оптимальний таймфрейм для стратегії
     timeframe = '30m'
 
-    # trailing stoploss або змінний стоплосс.  
-    trailing_stop = True
+    # Налаштування трейлінг стоп-лосу
+    trailing_stop = True  # Включення трейлінг стоп-лосу
+    trailing_stop_positive = 0.033  # Трейлінг стоп активується, коли прибуток досягає 2%
+    trailing_stop_positive_offset = 0.035  # Трейлінг стоп починає діяти, коли прибуток перевищує 3%
+    trailing_only_offset_is_reached = True  # Трейлінг стоп активується тільки після досягнення offset
 
     # запускати "populate_indicators" тільки для нової свічки
     process_only_new_candles = True
