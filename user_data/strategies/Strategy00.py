@@ -24,9 +24,9 @@ class Strategy00(IStrategy):
     timeframe = '30m'
 
     # trailing stoploss або змінний стоплосс.  
-    trailing_stop = False
-    trailing_stop_positive = 0.5
-    trailing_stop_positive_offset = 0.6
+    trailing_stop = True
+    trailing_stop_positive = 0.4
+    trailing_stop_positive_offset = 0.45
 
     # запускати "populate_indicators" тільки для нової свічки
     process_only_new_candles = True
