@@ -18,7 +18,7 @@ class Strategy00(IStrategy):
     INTERFACE_VERSION: int = 3
 
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
-    stoploss = -0.05
+    stoploss = -0.065
 
     # Оптимальний таймфрейм для стратегії
     timeframe = '30m'
@@ -26,7 +26,7 @@ class Strategy00(IStrategy):
     # trailing stoploss або змінний стоплосс.  
     trailing_stop = True
     trailing_stop_positive = 0.4
-    trailing_stop_positive_offset = 0.45
+    trailing_stop_positive_offset = 0.5
 
     # запускати "populate_indicators" тільки для нової свічки
     process_only_new_candles = True
