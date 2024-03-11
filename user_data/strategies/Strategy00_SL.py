@@ -1,8 +1,8 @@
 # --- Do not remove these libs ---
-from freqtrade.strategy.interface import IStrategy
-from pandas import DataFrame
+from freqtrade.strategy import IStrategy
 import talib.abstract as ta
 import freqtrade.vendor.qtpylib.indicators as qtpylib
+from pandas import DataFrame
 # --------------------------------
 
 class Strategy00_SL(IStrategy):
@@ -18,15 +18,13 @@ class Strategy00_SL(IStrategy):
     INTERFACE_VERSION: int = 3
 
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
-    stoploss = -0.05
+    stoploss = -0.04
 
     # Оптимальний таймфрейм для стратегії
     timeframe = '30m'
 
-    # Налаштування трейлінг стоп-лосу
+    # trailing stoploss або змінний стоплосс.  
     trailing_stop = True
-    trailing_stop_positive = 0.0  # стоплос переміщається на рівень ціни відкриття
-    trailing_stop_positive_offset = 0.015  # активація трейлінг стопу, коли ціна зростає на 1.5%
 
     # запускати "populate_indicators" тільки для нової свічки
     process_only_new_candles = True
@@ -48,7 +46,7 @@ class Strategy00_SL(IStrategy):
         Adds EMA 15 and EMA 30 indicators to the given DataFrame
         """
         # Calculate and add EMA 15
-        dataframe['ema15'] = ta.EMA(dataframe, timeperiod=15)
+        dataframe['ema15'] = ta.EMA(dataframe, timeperiod=20)
 
         # Calculate and add EMA 30
         dataframe['ema30'] = ta.EMA(dataframe, timeperiod=30)
@@ -80,18 +78,4 @@ class Strategy00_SL(IStrategy):
             'exit_long'] = 1
 
         return dataframe
-
-    def custom_stoploss(self, pair: str, trade: 'Trade', current_time: 'datetime', current_rate: float, current_profit: float, **kwargs) -> float:
-        """
-        Реалізація користувацького стоплосу, який переміщається на рівень ціни відкриття, коли прибуток становить 1.5%,
-        і задає стоплос на 3.5% нижче від максимальної ціни після активації трейлінг стопу.
-        """
-        if current_profit > 0.015:
-            # Якщо прибуток перевищує 1.5%, встановлюємо стоплос на 3.5% нижче максимальної ціни
-            sl_from_max = trade.max_rate * (1 - 0.035)
-            sl_from_entry = trade.open_rate
-            # Встановлюємо стоплос на вищий з двох рівнів: 3.5% нижче максимуму або на рівні ціни відкриття
-            return max(sl_from_max, sl_from_entry) / current_rate - 1
-
-        # Поки прибуток не перевищив 1.5%, використовуємо заданий стоплос
-        return self.stoploss
+      
