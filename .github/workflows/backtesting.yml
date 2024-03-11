@@ -9,6 +9,7 @@ on:
         type: choice
         options:
           - Strategy00
+          - Strategy00_SL
           - CrossEMAStrategy
           - Strategy00G_SOLUSDT_GPT
           - Strategy00G_SOLUSDT
