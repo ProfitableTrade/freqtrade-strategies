@@ -5,7 +5,14 @@ from pandas import DataFrame
 class CrossEMAStrategy(IStrategy):
     INTERFACE_VERSION = 2
     minimal_roi = {"0": 50}
-    stoploss = -0.05
+    stoploss = -0.04
+
+    # Параметри для плаваючого стоплоса
+    trailing_stop = True
+    trailing_stop_positive = 0.045  # 1%
+    trailing_stop_positive_offset = 0.048  # 2%
+    trailing_only_offset_is_reached = True
+
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         dataframe['ema_fast'] = ta.EMA(dataframe, timeperiod=28)
