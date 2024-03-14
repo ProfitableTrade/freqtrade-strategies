@@ -45,6 +45,7 @@ on:
           - Strategy00
           - Strategy00_SL
           - Strategy00_SL_LUNCUSDT
+          - Strategy00_SL_PHBUSDT
           - CrossEMAStrategy
           - CustomStoplossWithPSAR
           - HourBasedStrategy
@@ -62,6 +63,7 @@ on:
           - LUNC/USDT
           - BTC/USDT
           - ETH/USDT
+          - PHB/USDT
           - DOT/USDT
           - ADA/USDT
           - LINK/USDT
