@@ -43,6 +43,7 @@ on:
         type: choice
         options:
           - Strategy00
+          - Strategy00_SL
           - CrossEMAStrategy
           - CustomStoplossWithPSAR
           - HourBasedStrategy
