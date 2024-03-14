@@ -5,7 +5,7 @@ import freqtrade.vendor.qtpylib.indicators as qtpylib
 from pandas import DataFrame
 # --------------------------------
 
-class Strategy00_SL_LUNKUSDT(IStrategy):
+class Strategy00_SL_LUNCUSDT(IStrategy):
     """
     Strategy 00
     author@: Yurii Udaltsov

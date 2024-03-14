@@ -44,7 +44,7 @@ on:
         options:
           - Strategy00
           - Strategy00_SL
-          - Strategy00_SL_LUNKUSDT
+          - Strategy00_SL_LUNCUSDT
           - CrossEMAStrategy
           - CustomStoplossWithPSAR
           - HourBasedStrategy
@@ -59,6 +59,7 @@ on:
           - SOL/USDT
           - INJ/USDT
           - KAVA/USDT
+          - LUNC/USDT
           - BTC/USDT
           - ETH/USDT
           - DOT/USDT
