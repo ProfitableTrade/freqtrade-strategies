@@ -17,7 +17,7 @@ on:
           - HourBasedStrategy
           - Strategy00plus
           - Strategy00plus1
-          - sample_strategy
+          - SampleStrategy
       time_frames:
         description: "Timeframes, example: 30m"
         required: true
