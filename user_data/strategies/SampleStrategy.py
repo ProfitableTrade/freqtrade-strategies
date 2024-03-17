@@ -51,7 +51,7 @@ class SampleStrategy(IStrategy):
 
     # Optimal stoploss designed for the strategy.
     # This attribute will be overridden if the config file contains "stoploss".
-    stoploss = -0.10
+    stoploss = -0.005
 
     # Trailing stoploss
     trailing_stop = False
