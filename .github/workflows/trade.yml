@@ -44,6 +44,7 @@ on:
         options:
           - Strategy00
           - Strategy00_SL
+          - Strategy00_SL_ATOMUSDT
           - Strategy00_SL_INJUSDT
           - Strategy00_SL_LUNCUSDT
           - Strategy00_SL_PHBUSDT
