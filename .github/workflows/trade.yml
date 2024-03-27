@@ -325,4 +325,5 @@ jobs:
         if: ${{ inputs.behaviour == 'start' }}
         run: |
           echo Trade, strategy: ${{ inputs.strategy }}, config: ${{ inputs.config }}
+          ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "cd /root/trade/${{ inputs.env_name }} && mkdir -p ./user_data/logs && chmod 777 ./user_data/logs"
           ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" "cd /root/trade/${{ inputs.env_name }} && ./trade.sh"

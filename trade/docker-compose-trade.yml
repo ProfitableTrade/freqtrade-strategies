@@ -5,7 +5,7 @@ services:
     container_name: ${TRADE_NAME}-freqtrade
     volumes:
       - "./user_data:/freqtrade/user_data:rw"
-      - "./user_data/logs:/freqtrade/user_data/logs:rw"
+      # - "./user_data/logs:/freqtrade/user_data/logs:rw"
     env_file:
       - ./trade.env
     command: >
