@@ -48,6 +48,7 @@ on:
           - Strategy00_SL_INJUSDT
           - Strategy00_SL_LUNCUSDT
           - Strategy00_SL_PHBUSDT
+          - Strategy00_SL_BNBUSDT
           - CrossEMAStrategy
           - CustomStoplossWithPSAR
           - HourBasedStrategy
