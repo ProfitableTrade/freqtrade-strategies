@@ -8,7 +8,7 @@ import freqtrade.vendor.qtpylib.indicators as qtpylib
 from pandas import DataFrame
 # --------------------------------
 
-class Strategy_SLpart_SOLUSDT(IStrategy):
+class Strategy_SLpart_SPELLUSDT(IStrategy):
     """
     Strategy 00
     author@: Yurii Udaltsov
@@ -101,8 +101,8 @@ class Strategy_SLpart_SOLUSDT(IStrategy):
                               **kwargs
                               ) -> Union[Optional[float], Tuple[Optional[float], Optional[str]]]:
         biggest_profit = trade.get_custom_data(self.BIGGEST_PROFIT_KEY, default=0)
-        half_closed = trade.get_custom_data(self.PL_SELL_HALF_KEY, default=False)
-        closed_3_4 = trade.get_all_custom_data(self.PL_SELL_3_4_KEY, default=False)
+        half_closed = trade.get_custom_data(self.PL_SELL_HALF_KEY, default=True)
+        closed_3_4 = trade.get_all_custom_data(self.PL_SELL_3_4_KEY, default=True)
         
         if not biggest_profit:
             biggest_profit = current_profit
