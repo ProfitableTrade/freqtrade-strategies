@@ -150,6 +150,7 @@ on:
         options:
           - binance
           - binance1
+          - binance2
       timeframe:
         description: "Timeframe"
         required: true
