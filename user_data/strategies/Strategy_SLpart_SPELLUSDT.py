@@ -6,6 +6,8 @@ from freqtrade.persistence import Trade
 import talib.abstract as ta
 import freqtrade.vendor.qtpylib.indicators as qtpylib
 from pandas import DataFrame
+import logging
+
 # --------------------------------
 
 class Strategy_SLpart_SPELLUSDT(IStrategy):
@@ -19,7 +21,7 @@ class Strategy_SLpart_SPELLUSDT(IStrategy):
     """
 
     INTERFACE_VERSION: int = 3
-    BIGGEST_PROFIT_KEY: str = "biggest_profit"
+    BEST_PRICE_KEY: str = "best_price"
     PL_SELL_HALF_KEY: str = "pl_sell_half"
     PL_SELL_3_4_KEY: str = "pl_sell_3_4"
     
@@ -54,6 +56,10 @@ class Strategy_SLpart_SPELLUSDT(IStrategy):
         'stoploss': 'market',
         'stoploss_on_exchange': False
     }
+    
+    
+    def bot_start(self, **kwargs) -> None:
+        self.logger = logging.getLogger(__name__)
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
@@ -100,35 +106,54 @@ class Strategy_SLpart_SPELLUSDT(IStrategy):
                               current_entry_profit: float, current_exit_profit: float,
                               **kwargs
                               ) -> Union[Optional[float], Tuple[Optional[float], Optional[str]]]:
-        biggest_profit = trade.get_custom_data(self.BIGGEST_PROFIT_KEY, default=0)
+        best_price = trade.get_custom_data(self.BEST_PRICE_KEY, default=0)
         half_closed = trade.get_custom_data(self.PL_SELL_HALF_KEY, default=False)
         closed_3_4 = trade.get_custom_data(self.PL_SELL_3_4_KEY, default=False)
         
-        if not biggest_profit:
-            biggest_profit = current_profit
-            trade.set_custom_data(self.BIGGEST_PROFIT_KEY, biggest_profit)
+        if not best_price:
+            best_price = current_rate
+            trade.set_custom_data(self.BEST_PRICE_KEY, best_price)
             return None
-        else:
-            if current_profit > biggest_profit:
-                trade.set_custom_data(self.BIGGEST_PROFIT_KEY, current_profit)
+        
+        profit_loss = 0
+        
+        if trade.trade_direction == "long":
+            if current_rate > best_price:
+                trade.set_custom_data(self.BEST_PRICE_KEY, current_rate)
                 if half_closed:
                     trade.set_custom_data(self.PL_SELL_HALF_KEY, False)
                 if closed_3_4:
                     trade.set_custom_data(self.PL_SELL_3_4_KEY, False)
                 return None
             else:
-                profit_loss = 1 - current_profit / biggest_profit
-                if profit_loss > self.pl:
-                    return -trade.stake_amount
-                elif profit_loss > (self.pl / 2 + self.pl / 4) and not closed_3_4:
-                    trade.set_custom_data(self.PL_SELL_3_4_KEY, True)
-                    return - (trade.stake_amount / 2)
-                elif profit_loss > self.pl / 2 and not half_closed:
-                    trade.set_custom_data(self.PL_SELL_HALF_KEY, True)
-                    return - (trade.stake_amount / 2)
-                else:
-                    return None
-                    
+                profit_loss = 1 - current_rate / best_price
+        elif trade.trade_direction == "short":
+            if current_rate < best_price:
+                trade.set_custom_data(self.BEST_PRICE_KEY, current_rate)
+                if half_closed:
+                    trade.set_custom_data(self.PL_SELL_HALF_KEY, False)
+                if closed_3_4:
+                    trade.set_custom_data(self.PL_SELL_3_4_KEY, False)
+                return None
+            else:
+                profit_loss = 1 - best_price / current_rate     
+        else:
+            return None
+        
+                
+        if profit_loss > self.pl:
+            self.logger.info(f"Profit loss for trade {trade.id} is reached {profit_loss}. Sell all. Type: {trade.trade_direction}")
+            return -trade.stake_amount
+        elif profit_loss > (self.pl / 2 + self.pl / 4) and not closed_3_4:
+            self.logger.info(f"Profit loss for trade {trade.id} is reached {profit_loss}. Sell 3/4 of stake. Type: {trade.trade_direction}")
+            trade.set_custom_data(self.PL_SELL_3_4_KEY, True)
+            return - (trade.stake_amount / 2)
+        elif profit_loss > self.pl / 2 and not half_closed:
+            self.logger.info(f"Profit loss for trade {trade.id} is reached {profit_loss}. Sell half of stake. Type: {trade.trade_direction}")
+            trade.set_custom_data(self.PL_SELL_HALF_KEY, True)
+            return - (trade.stake_amount / 2)
+        else:
+            return None
                     
                 
       
