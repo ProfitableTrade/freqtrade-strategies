@@ -34,9 +34,9 @@ class Strategy_SLpart_SPELLUSDT(IStrategy):
     use_custom_stoploss = True
     
     # TODO: Change for on start callback with ENV provision
-    pl = 0.025
+    pl = 0.035
     
-    brakeeven = 0.012
+    brakeeven = 0.01
 
     # Оптимальний таймфрейм для стратегії
     timeframe = '30m'
