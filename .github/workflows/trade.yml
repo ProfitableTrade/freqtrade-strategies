@@ -43,6 +43,7 @@ on:
         type: choice
         options:
           - Strategy_SLpart_SPELLUSDT
+          - Strategy_SLpart_ETHUSDT
           - Strategy00
           - Strategy00_SL
           - Strategy00_SL_ATOMUSDT
