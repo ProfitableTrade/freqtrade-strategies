@@ -11,7 +11,7 @@ import logging
 
 # --------------------------------
 
-class Strategy_PLpart_BE_BNBUSDT(IStrategy):
+class Strategy_PLpart_BE_INJUSDT(IStrategy):
     """
     Strategy 00
     author@: Yurii Udaltsov
@@ -29,17 +29,17 @@ class Strategy_PLpart_BE_BNBUSDT(IStrategy):
     position_adjustment_enable = True
 
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
-    stoploss = -0.0045
+    stoploss = -0.006
     
     use_custom_stoploss = True
     
     # TODO: Change for on start callback with ENV provision
-    pl = 0.017
+    pl = 0.026
     
-    brakeeven = 0.0055
+    brakeeven = 0.008
 
     # Оптимальний таймфрейм для стратегії
-    timeframe = '3m'
+    timeframe = '5m'
 
     # Налаштування трейлінг стоп-лосу
     trailing_stop = False  # Включення трейлінг стоп-лосу
@@ -168,5 +168,6 @@ class Strategy_PLpart_BE_BNBUSDT(IStrategy):
             return - (trade.stake_amount / 2)
         else:
             return None
-        
-        
+                    
+                
+      

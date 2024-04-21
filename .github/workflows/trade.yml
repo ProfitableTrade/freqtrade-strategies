@@ -45,6 +45,7 @@ on:
           - Strategy_SLpart_SPELLUSDT
           - Strategy_SLpart_ETHUSDT
           - Strategy_PLpart_BE_BNBUSDT
+          - Strategy_PLpart_BE_INJUSDT
           - Strategy00
           - Strategy00_SL
           - Strategy00_SL_ATOMUSDT
