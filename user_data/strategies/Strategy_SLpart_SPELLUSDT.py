@@ -56,9 +56,12 @@ class Strategy_SLpart_SPELLUSDT(IStrategy):
 
     # Optional order type mapping
     order_types = {
-        'entry': 'limit',
-        'exit': 'limit',
+        'entry': 'market',
+        'exit': 'market',
         'stoploss': 'market',
+        "emergency_exit": "market",
+        "force_entry": "market",
+        "force_exit": "market",
         'stoploss_on_exchange': False
     }
     
