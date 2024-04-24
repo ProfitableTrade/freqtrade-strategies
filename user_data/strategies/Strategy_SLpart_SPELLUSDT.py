@@ -29,7 +29,7 @@ class Strategy_SLpart_SPELLUSDT(IStrategy):
     position_adjustment_enable = True
 
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
-    stoploss = -0.0125
+    stoploss = -0.005
     
     use_custom_stoploss = True
     
