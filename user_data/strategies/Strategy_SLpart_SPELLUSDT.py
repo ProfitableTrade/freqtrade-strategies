@@ -64,15 +64,6 @@ class Strategy_SLpart_SPELLUSDT(IStrategy):
         "force_exit": "market",
         'stoploss_on_exchange': False
     }
-    # Entry price side should be "other" to comply with market order execution
-    entry_pricing = {
-        "price_side": "bid", 
-    }
-
-    # Exit price side should be "other" to comply with market order execution
-    exit_pricing = {
-         "price_side": "ask", 
-    }
     
     def bot_start(self, **kwargs) -> None:
         self.logger = logging.getLogger(__name__)
