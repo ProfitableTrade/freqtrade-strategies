@@ -25,6 +25,7 @@ class Strategy_SLpart_SPELLUSDT(IStrategy):
     BEST_PRICE_KEY: str = "best_price"
     PL_SELL_HALF_KEY: str = "pl_sell_half"
     PL_SELL_3_4_KEY: str = "pl_sell_3_4"
+    BE_ACTIVATED: str = "be_activated"
     
     position_adjustment_enable = True
 
@@ -109,8 +110,12 @@ class Strategy_SLpart_SPELLUSDT(IStrategy):
     def custom_stoploss(self, pair: str, trade: 'Trade', current_time: datetime,
                         current_rate: float, current_profit: float, after_fill: bool,
                         **kwargs) -> Optional[float]:
+        be_activated = trade.get_custom_data(self.BE_ACTIVATED, default=False)
 
-        if current_profit > self.brakeeven:
+        if current_profit >= self.brakeeven or be_activated:
+            if not be_activated: 
+                trade.set_custom_data(self.BE_ACTIVATED, True)
+                
             return stoploss_from_open(0, current_profit, is_short=trade.is_short, leverage=trade.leverage)
 
         return self.stoploss
