@@ -5,13 +5,12 @@ from freqtrade.strategy import IStrategy
 from freqtrade.persistence import Trade
 import talib.abstract as ta
 import freqtrade.vendor.qtpylib.indicators as qtpylib
-from freqtrade.strategy import stoploss_from_open
 from pandas import DataFrame
 import logging
 
 # --------------------------------
 
-class Strategy_PLpart_BE_INJUSDT(IStrategy):
+class Strategy_SLpart_ETHUSDT(IStrategy):
     """
     Strategy 00
     author@: Yurii Udaltsov
@@ -29,17 +28,13 @@ class Strategy_PLpart_BE_INJUSDT(IStrategy):
     position_adjustment_enable = True
 
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
-    stoploss = -0.006
-    
-    use_custom_stoploss = True
+    stoploss = -0.01
     
     # TODO: Change for on start callback with ENV provision
-    pl = 0.026
-    
-    brakeeven = 0.008
+    pl = 0.06
 
     # Оптимальний таймфрейм для стратегії
-    timeframe = '5m'
+    timeframe = '15m'
 
     # Налаштування трейлінг стоп-лосу
     trailing_stop = False  # Включення трейлінг стоп-лосу
@@ -103,15 +98,6 @@ class Strategy_PLpart_BE_INJUSDT(IStrategy):
             'exit_long'] = 1
 
         return dataframe
-    
-    def custom_stoploss(self, pair: str, trade: 'Trade', current_time: datetime,
-                        current_rate: float, current_profit: float, after_fill: bool,
-                        **kwargs) -> Optional[float]:
-
-        if current_profit > self.brakeeven:
-            return stoploss_from_open(0, current_profit, is_short=trade.is_short, leverage=trade.leverage)
-
-        return self.stoploss
     
     def adjust_trade_position(self, trade: Trade, current_time: datetime,
                               current_rate: float, current_profit: float,
