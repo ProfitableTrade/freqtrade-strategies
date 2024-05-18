@@ -111,8 +111,10 @@ class Strategy_SLpart_SPELLUSDT(IStrategy):
                         current_rate: float, current_profit: float, after_fill: bool,
                         **kwargs) -> Optional[float]:
         be_activated = trade.get_custom_data(self.BE_ACTIVATED, default=False)
+        
+        current_price_rate = current_rate / trade.open_rate - 1
 
-        if current_profit >= self.brakeeven or be_activated:
+        if current_price_rate >= self.brakeeven or be_activated:
             if not be_activated: 
                 trade.set_custom_data(self.BE_ACTIVATED, True)
                 
