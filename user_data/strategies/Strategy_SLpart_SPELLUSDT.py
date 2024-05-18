@@ -30,12 +30,12 @@ class Strategy_SLpart_SPELLUSDT(IStrategy):
     position_adjustment_enable = True
 
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
-    stoploss = -0.005
+    stoploss = -0.015
     
     use_custom_stoploss = True
     
     # TODO: Change for on start callback with ENV provision
-    pl = 0.035
+    pl = 0.03
     
     brakeeven = 0.01
 
