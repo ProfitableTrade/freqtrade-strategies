@@ -10,6 +10,7 @@ on:
         options:
           - Strategy00
           - Strategy00_SL
+          - Strategy_SLpart_SPELLUSDT_leverage
           - CrossEMAStrategy
           - Strategy00G_SOLUSDT_GPT
           - Strategy00G_SOLUSDT
@@ -121,6 +122,7 @@ on:
         options:
           - binance
           - binance1
+          - binance1_leverage
 
 jobs:
   backtesting:

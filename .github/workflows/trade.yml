@@ -43,6 +43,7 @@ on:
         type: choice
         options:
           - Strategy_SLpart_SPELLUSDT
+          - Strategy_SLpart_SPELLUSDT_leverage
           - Strategy_SLpart_ETHUSDT
           - Strategy_PLpart_BE_BNBUSDT
           - Strategy_PLpart_BE_INJUSDT
@@ -153,6 +154,7 @@ on:
         options:
           - binance
           - binance1
+          - binance1_leverage
           - binance2
           - binance3
       timeframe:
