@@ -48,6 +48,7 @@ on:
         type: choice
         default: SOL/USDT
         options:
+          - SOL/USDT:USDT
           - SOL/USDT
           - INJ/USDT
           - KAVA/USDT
