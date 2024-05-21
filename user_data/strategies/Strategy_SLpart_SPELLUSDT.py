@@ -118,7 +118,7 @@ class Strategy_SLpart_SPELLUSDT(IStrategy):
             if not be_activated: 
                 trade.set_custom_data(self.BE_ACTIVATED, True)
                 
-            return stoploss_from_open(0.001, current_profit, is_short=trade.is_short, leverage=trade.leverage)
+            return stoploss_from_open(0.002, current_profit, is_short=trade.is_short, leverage=trade.leverage)
 
         return None
     
