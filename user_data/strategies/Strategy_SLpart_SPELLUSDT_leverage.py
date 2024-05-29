@@ -131,13 +131,13 @@ class Strategy_SLpart_SPELLUSDT_leverage(IStrategy):
         
         current_price_rate = current_rate / trade.open_rate - 1
 
-        if current_price_rate >= self.brakeeven or be_activated:
+        if be_activated or current_price_rate > self.brakeeven:
             if not be_activated: 
                 trade.set_custom_data(self.BE_ACTIVATED, True)
                 
-            return stoploss_from_open(0, current_profit, is_short=trade.is_short, leverage=trade.leverage)
+            return stoploss_from_open(0.002, current_profit, is_short=trade.is_short, leverage=trade.leverage)
 
-        return self.stoploss
+        return None
     
     def adjust_trade_position(self, trade: Trade, current_time: datetime,
                               current_rate: float, current_profit: float,
