@@ -30,7 +30,7 @@ class Strategy_SLpart_SPELLUSDT_leverage(IStrategy):
     position_adjustment_enable = True
 
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
-    stoploss = -0.015
+    stoploss = -0.013
     
     use_custom_stoploss = True
     
@@ -39,7 +39,7 @@ class Strategy_SLpart_SPELLUSDT_leverage(IStrategy):
     # TODO: Change for on start callback with ENV provision
     pl = 0.026
     
-    brakeeven = 0.08
+    brakeeven = 0.01
 
     # Оптимальний таймфрейм для стратегії
     timeframe = '30m'
@@ -137,7 +137,7 @@ class Strategy_SLpart_SPELLUSDT_leverage(IStrategy):
             if not be_activated: 
                 trade.set_custom_data(self.BE_ACTIVATED, True)
                 
-            return stoploss_from_open(0.002, current_profit, is_short=trade.is_short, leverage=trade.leverage)
+            return stoploss_from_open(0.003, current_profit, is_short=trade.is_short, leverage=trade.leverage)
 
         return None
     
