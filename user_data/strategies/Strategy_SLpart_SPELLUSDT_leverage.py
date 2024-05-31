@@ -34,6 +34,8 @@ class Strategy_SLpart_SPELLUSDT_leverage(IStrategy):
     
     use_custom_stoploss = True
     
+    can_short = True
+    
     # TODO: Change for on start callback with ENV provision
     pl = 0.026
     
