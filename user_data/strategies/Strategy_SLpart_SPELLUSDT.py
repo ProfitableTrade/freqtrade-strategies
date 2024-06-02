@@ -107,7 +107,7 @@ class Strategy_SLpart_SPELLUSDT(IStrategy):
 
         return dataframe
     
-    def custom_stoploss(self, pair: str, trade: 'Trade', current_time: datetime,
+    def custom_stoploss(self, pair: str, trade: Trade, current_time: datetime,
                         current_rate: float, current_profit: float, after_fill: bool,
                         **kwargs) -> Optional[float]:
         be_activated = trade.get_custom_data(self.BE_ACTIVATED, default=False)
