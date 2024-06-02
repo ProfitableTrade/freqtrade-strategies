@@ -93,7 +93,13 @@ class Strategy_SLpart_SPELLUSDT_leverage(IStrategy):
                 qtpylib.crossed_above(dataframe['ema15'], dataframe['ema30'])
             ),
             'enter_long'] = 1
-
+        
+        dataframe.loc[
+            (
+                qtpylib.crossed_below(dataframe['ema15'], dataframe['ema30'])
+            ),
+            'enter_short'] = 1
+      
         return dataframe
 
     def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
@@ -106,6 +112,12 @@ class Strategy_SLpart_SPELLUSDT_leverage(IStrategy):
                 qtpylib.crossed_below(dataframe['ema15'], dataframe['ema30'])
             ),
             'exit_long'] = 1
+
+        dataframe.loc[
+            (
+                qtpylib.crossed_above(dataframe['ema15'], dataframe['ema30'])
+            ),
+            'exit_short'] = 1
 
         return dataframe
     
