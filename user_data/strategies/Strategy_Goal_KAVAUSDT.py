@@ -54,12 +54,15 @@ class Strategy_Goal_KAVAUSDT(IStrategy):
     }
     
     # Settings for target reaching logic
-    target_percent = 30.0
+    target_percent = 0.3
     
     target_stage_1 = 0.1
     target_stage_2 = 0.3
     target_stage_3 = 0.65
-    target_stage_4 = 1
+    
+    stage_1_sell_amount = 0.3
+    stage_2_sell_amount = 0.3
+    stage_3_sell_amount = 0.25
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
@@ -129,14 +132,14 @@ class Strategy_Goal_KAVAUSDT(IStrategy):
         
         if not stage_1_sold and current_price_rate >= self.target_percent * self.target_stage_1:
             trade.get_custom_data(self.STAGE_1_SOLD, default=True)
-            return - ( trade.stake_amount * 0.3 )
+            return - ( trade.stake_amount * self.stage_1_sell_amount )
         elif not stage_2_sold and current_price_rate >= self.target_percent * self.target_stage_2:
             trade.get_custom_data(self.STAGE_2_SOLD, default=True)
-            return - ( trade.stake_amount * 0.3 )
+            return - ( trade.stake_amount * self.stage_2_sell_amount )
         elif not stage_3_sold and current_price_rate >= self.target_percent * self.target_stage_3:
             trade.get_custom_data(self.STAGE_3_SOLD, default=True)
-            return - ( trade.stake_amount * 0.25 )
-        elif current_price_rate >= self.target_percent * self.target_stage_4:
+            return - ( trade.stake_amount * self.stage_2_sell_amount )
+        elif current_price_rate >= self.target_percent:
             return - trade.stake_amount
         else:
             return None
