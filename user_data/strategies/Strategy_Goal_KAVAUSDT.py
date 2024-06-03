@@ -54,7 +54,7 @@ class Strategy_Goal_KAVAUSDT(IStrategy):
     }
     
     # Settings for target reaching logic
-    target_percent = 0.3
+    target_percent = 0.109
     
     target_stage_1 = 0.1
     target_stage_2 = 0.3
