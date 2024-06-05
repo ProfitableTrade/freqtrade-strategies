@@ -1,5 +1,6 @@
 # --- Do not remove these libs ---
 import datetime
+import logging
 from typing import Optional, Tuple, Union
 from freqtrade.strategy import IStrategy
 import talib.abstract as ta
@@ -27,7 +28,7 @@ class Strategy_Goal_KAVAUSDT(IStrategy):
     
 
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
-    stoploss = -0.05
+    stoploss = -0.02
 
     # Оптимальний таймфрейм для стратегії
     timeframe = '30m'
@@ -63,6 +64,9 @@ class Strategy_Goal_KAVAUSDT(IStrategy):
     stage_1_sell_amount = 0.3
     stage_2_sell_amount = 0.3
     stage_3_sell_amount = 0.25
+    
+    def bot_start(self, **kwargs) -> None:
+        self.logger = logging.getLogger(__name__)
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
@@ -131,14 +135,17 @@ class Strategy_Goal_KAVAUSDT(IStrategy):
         current_price_rate = current_rate / trade.open_rate - 1
         
         if not stage_1_sold and current_price_rate >= self.target_percent * self.target_stage_1:
-            trade.get_custom_data(self.STAGE_1_SOLD, default=True)
+            self.logger.info(f"Price rise up bigger than {self.target_percent * self.target_stage_1}, closing first target {self.stage_1_sell_amount}")
+            trade.set_custom_data(self.STAGE_1_SOLD, True)
             return - ( trade.stake_amount * self.stage_1_sell_amount )
         elif not stage_2_sold and current_price_rate >= self.target_percent * self.target_stage_2:
-            trade.get_custom_data(self.STAGE_2_SOLD, default=True)
+            self.logger.info(f"Price rise up bigger than {self.target_percent * self.target_stage_2}, closing second target {self.stage_2_sell_amount}")
+            trade.set_custom_data(self.STAGE_2_SOLD, True)
             return - ( trade.stake_amount * self.stage_2_sell_amount )
         elif not stage_3_sold and current_price_rate >= self.target_percent * self.target_stage_3:
-            trade.get_custom_data(self.STAGE_3_SOLD, default=True)
-            return - ( trade.stake_amount * self.stage_2_sell_amount )
+            self.logger.info(f"Price rise up bigger than {self.target_percent * self.target_stage_3}, closing third target {self.stage_3_sell_amount}")
+            trade.set_custom_data(self.STAGE_3_SOLD, True)
+            return - ( trade.stake_amount * self.stage_3_sell_amount )
         elif current_price_rate >= self.target_percent:
             return - trade.stake_amount
         else:
