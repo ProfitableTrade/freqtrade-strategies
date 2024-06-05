@@ -28,7 +28,7 @@ class Strategy_Goal_KAVAUSDT(IStrategy):
     
 
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
-    stoploss = -0.02
+    stoploss = -0.03
 
     # Оптимальний таймфрейм для стратегії
     timeframe = '30m'
