@@ -143,7 +143,13 @@ class Strategy_SLpart_SPELLUSDT_leverage(IStrategy):
                         **kwargs) -> Optional[float]:
         be_activated = trade.get_custom_data(self.BE_ACTIVATED, default=False)
         
-        current_price_rate = current_rate / trade.open_rate - 1
+        current_price_rate = 0
+        if trade.trade_direction == "long":
+            current_price_rate = current_rate / trade.open_rate - 1
+        elif trade.trade_direction == "short":
+            current_price_rate = trade.open_rate / current_rate - 1
+        else:
+            return None
 
         if be_activated or current_price_rate > self.brakeeven:
             if not be_activated: 
