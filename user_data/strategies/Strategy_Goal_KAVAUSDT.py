@@ -26,9 +26,12 @@ class Strategy_Goal_KAVAUSDT(IStrategy):
     STAGE_2_SOLD: str = "stage_2_sold"
     STAGE_3_SOLD: str = "stage_3_sold"
     
+    position_adjustment_enable = True
 
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
     stoploss = -0.03
+    
+    use_custom_stoploss = True
 
     # Оптимальний таймфрейм для стратегії
     timeframe = '30m'
