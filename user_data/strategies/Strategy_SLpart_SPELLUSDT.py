@@ -13,12 +13,12 @@ import logging
 
 class Strategy_SLpart_SPELLUSDT(IStrategy):
     """
-    Strategy 00
+    Strategy_SLpart_SPELLUSDT
     author@: Yurii Udaltsov
     github@: https://github.com/freqtrade/freqtrade-strategies
 
     How to use it?
-    > python3 ./freqtrade/main.py -s Strategy00
+    > python3 ./freqtrade/main.py -s Strategy_SLpart_SPELLUSDT
     """
 
     INTERFACE_VERSION: int = 3
@@ -110,17 +110,21 @@ class Strategy_SLpart_SPELLUSDT(IStrategy):
     def custom_stoploss(self, pair: str, trade: Trade, current_time: datetime,
                         current_rate: float, current_profit: float, after_fill: bool,
                         **kwargs) -> Optional[float]:
-        be_activated = trade.get_custom_data(self.BE_ACTIVATED, default=False)
-        
-        current_price_rate = current_rate / trade.open_rate - 1
+        try:
+            be_activated = trade.get_custom_data(self.BE_ACTIVATED, default=False)
+            
+            current_price_rate = current_rate / trade.open_rate - 1
 
-        if be_activated or current_price_rate > self.brakeeven:
-            if not be_activated: 
-                trade.set_custom_data(self.BE_ACTIVATED, True)
-                
-            return stoploss_from_open(0.002, current_profit, is_short=trade.is_short, leverage=trade.leverage)
+            if be_activated or current_price_rate > self.brakeeven:
+                if not be_activated:
+                    trade.set_custom_data(self.BE_ACTIVATED, True)
+                    
+                return stoploss_from_open(0.002, current_profit, is_short=trade.is_short, leverage=trade.leverage)
 
-        return None
+            return None
+        except Exception as e:
+            self.logger.info(f"Error occured during custom stoploss definition: {str(e)}")
+            return None
     
     def adjust_trade_position(self, trade: Trade, current_time: datetime,
                               current_rate: float, current_profit: float,
@@ -129,18 +133,18 @@ class Strategy_SLpart_SPELLUSDT(IStrategy):
                               current_entry_profit: float, current_exit_profit: float,
                               **kwargs
                               ) -> Union[Optional[float], Tuple[Optional[float], Optional[str]]]:
-        best_price = trade.get_custom_data(self.BEST_PRICE_KEY, default=0)
-        half_closed = trade.get_custom_data(self.PL_SELL_HALF_KEY, default=False)
-        closed_3_4 = trade.get_custom_data(self.PL_SELL_3_4_KEY, default=False)
-        
-        if not best_price:
-            best_price = current_rate
-            trade.set_custom_data(self.BEST_PRICE_KEY, best_price)
-            return None
-        
-        profit_loss = 0
-        
-        if trade.trade_direction == "long":
+        try:
+            best_price = trade.get_custom_data(self.BEST_PRICE_KEY, default=0)
+            half_closed = trade.get_custom_data(self.PL_SELL_HALF_KEY, default=False)
+            closed_3_4 = trade.get_custom_data(self.PL_SELL_3_4_KEY, default=False)
+            
+            if not best_price:
+                best_price = current_rate
+                trade.set_custom_data(self.BEST_PRICE_KEY, best_price)
+                return None
+            
+            profit_loss = 0
+            
             if current_rate > best_price:
                 trade.set_custom_data(self.BEST_PRICE_KEY, current_rate)
                 if half_closed:
@@ -150,32 +154,23 @@ class Strategy_SLpart_SPELLUSDT(IStrategy):
                 return None
             else:
                 profit_loss = 1 - current_rate / best_price
-        elif trade.trade_direction == "short":
-            if current_rate < best_price:
-                trade.set_custom_data(self.BEST_PRICE_KEY, current_rate)
-                if half_closed:
-                    trade.set_custom_data(self.PL_SELL_HALF_KEY, False)
-                if closed_3_4:
-                    trade.set_custom_data(self.PL_SELL_3_4_KEY, False)
-                return None
+            
+                    
+            if profit_loss > self.pl:
+                self.logger.info(f"Profit loss for trade {trade.id} is reached {profit_loss}. Sell all. Type: {trade.trade_direction}")
+                return - trade.stake_amount
+            elif not closed_3_4 and profit_loss > (self.pl / 2 + self.pl / 4):
+                self.logger.info(f"Profit loss for trade {trade.id} is reached {profit_loss}. Sell 3/4 of stake. Type: {trade.trade_direction}")
+                trade.set_custom_data(self.PL_SELL_3_4_KEY, True)
+                return - (trade.stake_amount / 2)
+            elif not half_closed and profit_loss > self.pl / 2:
+                self.logger.info(f"Profit loss for trade {trade.id} is reached {profit_loss}. Sell half of stake. Type: {trade.trade_direction}")
+                trade.set_custom_data(self.PL_SELL_HALF_KEY, True)
+                return - (trade.stake_amount / 2)
             else:
-                profit_loss = 1 - best_price / current_rate     
-        else:
-            return None
-        
-                
-        if profit_loss > self.pl:
-            self.logger.info(f"Profit loss for trade {trade.id} is reached {profit_loss}. Sell all. Type: {trade.trade_direction}")
-            return -trade.stake_amount
-        elif profit_loss > (self.pl / 2 + self.pl / 4) and not closed_3_4:
-            self.logger.info(f"Profit loss for trade {trade.id} is reached {profit_loss}. Sell 3/4 of stake. Type: {trade.trade_direction}")
-            trade.set_custom_data(self.PL_SELL_3_4_KEY, True)
-            return - (trade.stake_amount / 2)
-        elif profit_loss > self.pl / 2 and not half_closed:
-            self.logger.info(f"Profit loss for trade {trade.id} is reached {profit_loss}. Sell half of stake. Type: {trade.trade_direction}")
-            trade.set_custom_data(self.PL_SELL_HALF_KEY, True)
-            return - (trade.stake_amount / 2)
-        else:
+                return None
+        except Exception as e:
+            self.logger.info(f"Error occured during trade position adjustment: {str(e)}")
             return None
                     
                 

@@ -109,17 +109,21 @@ class Strategy_Goal_KAVAUSDT(IStrategy):
     def custom_stoploss(self, pair: str, trade: Trade, current_time: datetime,
                         current_rate: float, current_profit: float, after_fill: bool,
                         **kwargs) -> Optional[float]:
-        be_activated = trade.get_custom_data(self.BE_ACTIVATED, default=False)
-        
-        current_price_rate = current_rate / trade.open_rate - 1
+        try:
+            be_activated = trade.get_custom_data(self.BE_ACTIVATED, default=False)
+            
+            current_price_rate = current_rate / trade.open_rate - 1
 
-        if be_activated or current_price_rate >= self.target_percent * self.target_stage_1:
-            if not be_activated: 
-                trade.set_custom_data(self.BE_ACTIVATED, True)
-                
-            return stoploss_from_open(0.002, current_profit, is_short=trade.is_short, leverage=trade.leverage)
+            if be_activated or current_price_rate >= self.target_percent * self.target_stage_1:
+                if not be_activated: 
+                    trade.set_custom_data(self.BE_ACTIVATED, True)
+                    
+                return stoploss_from_open(0.002, current_profit, is_short=trade.is_short, leverage=trade.leverage)
 
-        return None
+            return None
+        except Exception as e:
+            self.logger.info(f"Error occured during custom stoploss definition: {str(e)}")
+            return None
     
     def adjust_trade_position(self, trade: Trade, current_time: datetime,
                               current_rate: float, current_profit: float,
@@ -128,25 +132,32 @@ class Strategy_Goal_KAVAUSDT(IStrategy):
                               current_entry_profit: float, current_exit_profit: float,
                               **kwargs
                               ) -> Union[Optional[float], Tuple[Optional[float], Optional[str]]]:
-        stage_1_sold = trade.get_custom_data(self.STAGE_1_SOLD, default=False)
-        stage_2_sold = trade.get_custom_data(self.STAGE_2_SOLD, default=False)
-        stage_3_sold = trade.get_custom_data(self.STAGE_3_SOLD, default=False)
-        
-        current_price_rate = current_rate / trade.open_rate - 1
-        
-        if not stage_1_sold and current_price_rate >= self.target_percent * self.target_stage_1:
-            self.logger.info(f"Price rise up bigger than {self.target_percent * self.target_stage_1}, closing first target {self.stage_1_sell_amount}")
-            trade.set_custom_data(self.STAGE_1_SOLD, True)
-            return - ( trade.stake_amount * self.stage_1_sell_amount )
-        elif not stage_2_sold and current_price_rate >= self.target_percent * self.target_stage_2:
-            self.logger.info(f"Price rise up bigger than {self.target_percent * self.target_stage_2}, closing second target {self.stage_2_sell_amount}")
-            trade.set_custom_data(self.STAGE_2_SOLD, True)
-            return - ( trade.stake_amount * self.stage_2_sell_amount )
-        elif not stage_3_sold and current_price_rate >= self.target_percent * self.target_stage_3:
-            self.logger.info(f"Price rise up bigger than {self.target_percent * self.target_stage_3}, closing third target {self.stage_3_sell_amount}")
-            trade.set_custom_data(self.STAGE_3_SOLD, True)
-            return - ( trade.stake_amount * self.stage_3_sell_amount )
-        elif current_price_rate >= self.target_percent:
-            return - trade.stake_amount
-        else:
+        try:
+            stage_1_sold = trade.get_custom_data(self.STAGE_1_SOLD, default=False)
+            stage_2_sold = trade.get_custom_data(self.STAGE_2_SOLD, default=False)
+            stage_3_sold = trade.get_custom_data(self.STAGE_3_SOLD, default=False)
+            
+            current_price_rate = current_rate / trade.open_rate - 1
+            
+            
+            self.logger.info(f"Check for goal to be closed, price rate {current_price_rate}")
+            
+            if not stage_1_sold and current_price_rate >= self.target_percent * self.target_stage_1:
+                self.logger.info(f"Price rise up bigger than {self.target_percent * self.target_stage_1}, closing first target {self.stage_1_sell_amount}")
+                trade.set_custom_data(self.STAGE_1_SOLD, True)
+                return - ( trade.stake_amount * self.stage_1_sell_amount )
+            elif not stage_2_sold and current_price_rate >= self.target_percent * self.target_stage_2:
+                self.logger.info(f"Price rise up bigger than {self.target_percent * self.target_stage_2}, closing second target {self.stage_2_sell_amount}")
+                trade.set_custom_data(self.STAGE_2_SOLD, True)
+                return - ( trade.stake_amount * self.stage_2_sell_amount )
+            elif not stage_3_sold and current_price_rate >= self.target_percent * self.target_stage_3:
+                self.logger.info(f"Price rise up bigger than {self.target_percent * self.target_stage_3}, closing third target {self.stage_3_sell_amount}")
+                trade.set_custom_data(self.STAGE_3_SOLD, True)
+                return - ( trade.stake_amount * self.stage_3_sell_amount )
+            elif current_price_rate >= self.target_percent:
+                return - trade.stake_amount
+            else:
+                return None
+        except Exception as e:
+            self.logger.info(f"Error occured during trade position adjustment: {str(e)}")
             return None
