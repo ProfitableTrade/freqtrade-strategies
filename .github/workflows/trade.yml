@@ -44,6 +44,7 @@ on:
         options:
           - Strategy_SLpart_SPELLUSDT
           - Strategy_SLpart_SPELLUSDT_leverage
+          - Strategy_SLpart_LEVERUSDT_futures
           - Strategy_SLpart_ETHUSDT
           - Strategy_PLpart_BE_BNBUSDT
           - Strategy_PLpart_BE_INJUSDT
@@ -68,6 +69,7 @@ on:
         options:
           - SOL/USDT:USDT
           - SPELL/USDT:USDT
+          - LEVER/USDT:USDT
           - SOL/USDT
           - INJ/USDT
           - KAVA/USDT
