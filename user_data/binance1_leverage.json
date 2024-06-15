@@ -42,7 +42,7 @@
       "SOL/USDT:USDT"
     ],
     "pair_blacklist": [
-      "LEVER/.*"
+      "DOT/.*"
     ]
   },
   "pairlists": [

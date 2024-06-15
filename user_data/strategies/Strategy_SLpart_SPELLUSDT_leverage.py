@@ -30,14 +30,14 @@ class Strategy_SLpart_SPELLUSDT_leverage(IStrategy):
     position_adjustment_enable = True
 
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
-    stoploss = -0.04
+    stoploss = -0.06
     
     use_custom_stoploss = True
     
     can_short = True
     
     # TODO: Change for on start callback with ENV provision
-    pl = 0.026
+    pl = 0.03
     
     brakeeven = 0.01
 
@@ -65,7 +65,7 @@ class Strategy_SLpart_SPELLUSDT_leverage(IStrategy):
         "emergency_exit": "market",
         "force_entry": "market",
         "force_exit": "market",
-        'stoploss_on_exchange': False
+        'stoploss_on_exchange': True
     }
     
     def bot_start(self, **kwargs) -> None:
