@@ -18,7 +18,7 @@ class Strategy_SLpart_LEVERUSDT_futures(IStrategy):
     github@: https://github.com/freqtrade/freqtrade-strategies
 
     How to use it?
-    > python3 ./freqtrade/main.py -s Strategy_SLpart_LEVERUSDT_leverage
+    > python3 ./freqtrade/main.py -s Strategy_SLpart_SPELLUSDT_leverage
     """
 
     INTERFACE_VERSION: int = 3
@@ -43,6 +43,12 @@ class Strategy_SLpart_LEVERUSDT_futures(IStrategy):
 
     # Оптимальний таймфрейм для стратегії
     timeframe = '30m'
+
+    # Налаштування трейлінг стоп-лосу
+    # trailing_stop = False  # Включення трейлінг стоп-лосу
+    # trailing_stop_positive = 0.05  # Трейлінг стоп активується, коли прибуток досягає 3,3%
+    # trailing_stop_positive_offset = 0.035  # Трейлінг стоп починає діяти, коли прибуток перевищує 3,5%
+    # trailing_only_offset_is_reached = True  # Трейлінг стоп активується тільки після досягнення offset
 
     # запускати "populate_indicators" тільки для нової свічки
     process_only_new_candles = True
@@ -69,7 +75,7 @@ class Strategy_SLpart_LEVERUSDT_futures(IStrategy):
         """
         Adds EMA 20 and EMA 30 indicators to the given DataFrame
         """
-        # Calculate and add EMA 20
+        # Calculate and add EMA 15
         dataframe['ema20'] = ta.EMA(dataframe, timeperiod=20)
 
         # Calculate and add EMA 30
@@ -80,7 +86,7 @@ class Strategy_SLpart_LEVERUSDT_futures(IStrategy):
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
         Generates buy signal based on EMA indicators
-        A buy signal is generated when EMA 20 crosses above EMA 30
+        A buy signal is generated when EMA 15 crosses above EMA 30
         """
         dataframe.loc[
             (
@@ -99,7 +105,7 @@ class Strategy_SLpart_LEVERUSDT_futures(IStrategy):
     def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
         Generates sell signal based on EMA indicators
-        A sell signal is generated when EMA 20 crosses below EMA 30
+        A sell signal is generated when EMA 15 crosses below EMA 30
         """
         dataframe.loc[
             (
@@ -124,7 +130,7 @@ class Strategy_SLpart_LEVERUSDT_futures(IStrategy):
         :param pair: пара, яка зараз аналізується
         :param current_time: об’єкт datetime, що містить поточну дату й час
         :param current_rate: Ставка, розрахована на основі налаштувань ціни в exit_pricing.
-        :param proposed_leverage: кредитне плече, запропоноване ботом.
+        :param offers_leverage: кредитне плече, запропоноване ботом.
         :param max_leverage: максимальне кредитне плече, дозволене для цієї пари
         :param entry_tag: Необов’язковий entry_tag (buy_tag), якщо надається разом із сигналом покупки.
         :param side: 'long' або 'short' - вказує напрямок запропонованої торгівлі
@@ -160,7 +166,8 @@ class Strategy_SLpart_LEVERUSDT_futures(IStrategy):
                               min_stake: Optional[float], max_stake: float,
                               current_entry_rate: float, current_exit_rate: float,
                               current_entry_profit: float, current_exit_profit: float,
-                              **kwargs) -> Union[Optional[float], Tuple[Optional[float], Optional[str]]]:
+                              **kwargs
+                              ) -> Union[Optional[float], Tuple[Optional[float], Optional[str]]]:
         try:
             best_price = trade.get_custom_data(self.BEST_PRICE_KEY, default=0)
             half_closed = trade.get_custom_data(self.PL_SELL_HALF_KEY, default=False)
@@ -211,3 +218,6 @@ class Strategy_SLpart_LEVERUSDT_futures(IStrategy):
         except Exception as e:
             self.logger.info(f"Error occured during trade position adjustment: {str(e)}")
             return None
+                    
+                
+      
