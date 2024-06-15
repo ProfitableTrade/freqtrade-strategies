@@ -162,6 +162,7 @@ on:
           - binance1_leverage
           - binance2
           - binance3
+          - for_futures
       timeframe:
         description: "Timeframe"
         required: true
