@@ -45,6 +45,7 @@ on:
           - Strategy_SLpart_SPELLUSDT
           - Strategy_SLpart_SPELLUSDT_leverage
           - Strategy_SLpart_LEVERUSDT_futures
+          - Strategy_SLpart_1INCHUSDT_futures
           - Strategy_SLpart_ETHUSDT
           - Strategy_PLpart_BE_BNBUSDT
           - Strategy_PLpart_BE_INJUSDT
@@ -70,6 +71,7 @@ on:
           - SOL/USDT:USDT
           - SPELL/USDT:USDT
           - LEVER/USDT:USDT
+          - 1INCH/USDT:USDT
           - SOL/USDT
           - INJ/USDT
           - KAVA/USDT
