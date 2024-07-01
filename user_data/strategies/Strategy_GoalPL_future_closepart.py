@@ -10,9 +10,9 @@ from freqtrade.persistence import Trade
 from freqtrade.strategy import stoploss_from_open
 # --------------------------------
 
-class Strategy_Goal_KAVAUSDT_leverage(IStrategy):
+class Strategy_GoalPL_future_closepart(IStrategy):
     """
-    Strategy_Goal_KAVAUSDT_leverage
+    Strategy_GoalPL_future_closepart
     author@: Yurii Udaltsov
     github@: https://github.com/freqtrade/freqtrade-strategies
 

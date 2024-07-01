@@ -42,6 +42,7 @@ on:
         default: Strategy00
         type: choice
         options:
+          - Strategy_GoalPL_future_closepart
           - Strategy_SLpart_SPELLUSDT
           - Strategy_SLpart_SPELLUSDT_leverage
           - Strategy_SLpart_LEVERUSDT_futures
