@@ -36,7 +36,7 @@ class Strategy_GoalPL_future_closepart(IStrategy):
     can_short = True
 
     # Оптимальний таймфрейм для стратегії
-    timeframe = '30m'
+    timeframe = '15m'
 
     # Налаштування трейлінг стоп-лосу
     # trailing_stop = True  # Включення трейлінг стоп-лосу
