@@ -56,7 +56,7 @@ class Strategy_GoalPL_future_closepart(IStrategy):
         'entry': 'limit',
         'exit': 'limit',
         'stoploss': 'market',
-        'stoploss_on_exchange': False
+        'stoploss_on_exchange': True
     }
     
     # Settings for target reaching logic
