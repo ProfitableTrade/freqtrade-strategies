@@ -95,6 +95,12 @@ class Strategy_GoalPL_future_closepart(IStrategy):
                 qtpylib.crossed_above(dataframe['ema20'], dataframe['ema30'])
             ),
             'enter_long'] = 1
+        
+        dataframe.loc[
+            (
+                qtpylib.crossed_below(dataframe['ema20'], dataframe['ema30'])
+            ),
+            'enter_short'] = 1
 
         return dataframe
 
@@ -108,6 +114,12 @@ class Strategy_GoalPL_future_closepart(IStrategy):
                 qtpylib.crossed_below(dataframe['ema20'], dataframe['ema30'])
             ),
             'exit_long'] = 1
+        
+        dataframe.loc[
+            (
+                qtpylib.crossed_above(dataframe['ema20'], dataframe['ema30'])
+            ),
+            'exit_short'] = 1
 
         return dataframe
     
