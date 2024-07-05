@@ -29,7 +29,7 @@ class Strategy_GoalPL_future_closepart(IStrategy):
     position_adjustment_enable = True
 
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
-    stoploss = -0.03
+    stoploss = -0.05
     
     use_custom_stoploss = True
     
