@@ -94,7 +94,7 @@ class Strategy_Goal_Depth(IStrategy):
         Generates buy signal based on EMA indicators
         A buy signal is generated when EMA 15 crosses above EMA 30
         """
-        order_book = self.dp.orderbook(metadata['pair'])
+        order_book = self.dp.orderbook(metadata['pair'], self.depth + 1)
 
         dataframe.loc[
             ((self.check_depth_of_market(order_book)) &
@@ -121,11 +121,15 @@ class Strategy_Goal_Depth(IStrategy):
         total_bids = sum([bid[1] for bid in order_book['bids'][:self.depth]])
         total_asks = sum([ask[1] for ask in order_book['asks'][:self.depth]])
         
+        self.logger.info(f"Analyzing depth of market... Results: total bids / total asks is {total_bids / total_asks}, configured delta is {self.bids_to_ask_delta}")
+        
         return (total_bids / total_asks) > self.bids_to_ask_delta
 
     def analyze_large_orders(self, order_book) -> bool:
-        large_orders = [order for order in order_book['bids'] if order[1] >= self.threshold] + \
-                       [order for order in order_book['asks'] if order[1] >= self.threshold]
+        large_orders = [order for order in order_book['bids'] if order[1] >= self.volume_threshold] + \
+                       [order for order in order_book['asks'] if order[1] >= self.volume_threshold]
+
+        self.logger.info(f"Analyzing large orders for threshold {self.volume_threshold}, found {len(large_orders)}")
         
         return len(large_orders) > 0
     
