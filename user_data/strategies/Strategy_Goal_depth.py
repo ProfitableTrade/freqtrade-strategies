@@ -70,9 +70,9 @@ class Strategy_Goal_Depth(IStrategy):
     
     # Settings for check market depth on enter 
     
-    bids_to_ask_delta = 1.5
-    depth = 5
-    volume_threshold = 1000
+    bids_to_ask_delta = 1.2
+    depth = 7
+    volume_threshold = 500
     
     def bot_start(self, **kwargs) -> None:
         self.logger = logging.getLogger(__name__)
