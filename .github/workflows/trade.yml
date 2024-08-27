@@ -8,6 +8,26 @@ on:
         default: trade01
         type: choice
         options:
+          - yuri1
+          - yuri2
+          - yuri3
+          - yuri4
+          - yuri5
+          - illia1
+          - illia2
+          - illia3
+          - illia4
+          - illia5
+          - ihor1
+          - ihor2
+          - ihor3
+          - ihor4
+          - ihor5
+          - mykola1
+          - mykola2
+          - mykola3
+          - mykola4
+          - mykola5
           - trade01
           - trade02
           - trade03
@@ -18,16 +38,6 @@ on:
           - trade08
           - trade09
           - trade10
-          - trade11
-          - trade12
-          - trade13
-          - trade14
-          - trade15
-          - trade16
-          - trade17
-          - trade18
-          - trade19
-          - trade20
       behaviour:
         description: "Behaviour"
         required: true
@@ -252,8 +262,28 @@ jobs:
       #------------------------------------------------------------
       - name: Change config file ${{ inputs.config }}.json
         run: |
-          jq '.exchange.key = "${{ secrets.BINANCE_API }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
-          jq '.exchange.secret = "${{ secrets.BINANCE_SECRET_KEY }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+          
+          input = ${{ inputs.env_name }}
+
+          BINANCE_API="${{ secrets.BINANCE_API }}"
+          BINANCE_SECRET_KEY="${{ secrets.BINANCE_SECRET_KEY }}"
+
+          if [[ "$input" == "yuri*" ]]; then
+            BINANCE_API="${{ secrets.BINANCE_API_YURI }}"
+            BINANCE_SECRET_KEY="${{ secrets.BINANCE_SECRET_KEY_YURI }}"
+          elif [[ "$input" == "ihor*" ]]
+            BINANCE_API="${{ secrets.BINANCE_API_IHOR }}"
+            BINANCE_SECRET_KEY="${{ secrets.BINANCE_SECRET_KEY_IHOR }}"
+          elif [[ "$input" == "illia*" ]]
+            BINANCE_API="${{ secrets.BINANCE_API_ILLIA }}"
+            BINANCE_SECRET_KEY="${{ secrets.BINANCE_SECRET_KEY_ILLIA }}"
+          elif [[ "$input" == "mykola*" ]]
+            BINANCE_API="${{ secrets.BINANCE_API_MYKOLA }}"
+            BINANCE_SECRET_KEY="${{ secrets.BINANCE_SECRET_KEY_MYKOLA }}"
+          fi
+
+          jq --arg key "$BINANCE_API" '.exchange.key = "$key"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
+          jq --arg key "$BINANCE_SECRET_KEY" '.exchange.secret = "$key"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           jq '.exchange.pair_whitelist[0] = "${{ inputs.pair }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           jq '.strategy.timeframe = "${{ inputs.timeframe }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
           jq '.timeframe = "${{ inputs.timeframe }}"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
