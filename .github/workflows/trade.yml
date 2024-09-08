@@ -178,6 +178,7 @@ on:
           - binance
           - binance1
           - binance1_leverage
+          - binance1_leverage_unlim
           - binance2
           - binance3
           - for_futures
