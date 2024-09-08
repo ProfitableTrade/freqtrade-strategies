@@ -30,6 +30,8 @@ class Strategy_Goal_Depth_Futures(IStrategy):
     stoploss = -0.02
     
     use_custom_stoploss = True
+    
+    can_short = True
 
     # Оптимальний таймфрейм для стратегії
     timeframe = '5m'
@@ -52,7 +54,7 @@ class Strategy_Goal_Depth_Futures(IStrategy):
         'entry': 'limit',
         'exit': 'limit',
         'stoploss': 'market',
-        'stoploss_on_exchange': False
+        'stoploss_on_exchange': True
     }
     
     # Settings for target reaching logic
@@ -130,6 +132,12 @@ class Strategy_Goal_Depth_Futures(IStrategy):
                        [order for order in order_book['asks'] if order[1] >= volume_threshold]
         
         return len(large_orders) > 0
+    
+    def leverage(self, pair: str, current_time: datetime, current_rate: float,
+                 proposed_leverage: float, max_leverage: float, entry_tag: Optional[str], side: str,
+                 **kwargs) -> float:
+        
+        return 3.0
     
     def custom_stoploss(self, pair: str, trade: Trade, current_time: datetime,
                         current_rate: float, current_profit: float, after_fill: bool,
