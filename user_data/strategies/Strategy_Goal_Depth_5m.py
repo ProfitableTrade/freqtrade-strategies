@@ -4,15 +4,14 @@ import logging
 from typing import Optional, Tuple, Union
 from freqtrade.strategy import IStrategy
 import talib.abstract as ta
-import freqtrade.vendor.qtpylib.indicators as qtpylib
 from pandas import DataFrame
 from freqtrade.persistence import Trade
 from freqtrade.strategy import stoploss_from_open
 # --------------------------------
 
-class Strategy_Goal_Depth(IStrategy):
+class Strategy_Goal_Depth_5m(IStrategy):
     """
-    Strategy_Goal_Depth
+    Strategy_Goal_Depth 5m
     author@: Yurii Udaltsov
     github@: https://github.com/freqtrade/freqtrade-strategies
 
@@ -34,7 +33,7 @@ class Strategy_Goal_Depth(IStrategy):
     use_custom_stoploss = True
 
     # Оптимальний таймфрейм для стратегії
-    timeframe = '30m'
+    timeframe = '5m'
 
     # Налаштування трейлінг стоп-лосу
     # trailing_stop = True  # Включення трейлінг стоп-лосу
@@ -78,14 +77,6 @@ class Strategy_Goal_Depth(IStrategy):
         self.logger = logging.getLogger(__name__)
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        """
-        Adds EMA 20 and EMA 30 indicators to the given DataFrame
-        """
-        # Calculate and add EMA 15
-        dataframe['ema20'] = ta.EMA(dataframe, timeperiod=20)
-
-        # Calculate and add EMA 30
-        dataframe['ema30'] = ta.EMA(dataframe, timeperiod=30)
 
         return dataframe
 
