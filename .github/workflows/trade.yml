@@ -268,21 +268,30 @@ jobs:
         run: |
           INPUT_ENV="${{ inputs.env_name }}"
 
-          BINANCE_API="${{ secrets.BINANCE_API }}"
-          BINANCE_SECRET_KEY="${{ secrets.BINANCE_SECRET_KEY }}"
-
-          if [[ "$INPUT_ENV" == "yuri*" ]]; then
+          if [[ "$INPUT_ENV" == "yuri*" ]]
+          then
             BINANCE_API="${{ secrets.BINANCE_API_YURI }}"
             BINANCE_SECRET_KEY="${{ secrets.BINANCE_SECRET_KEY_YURI }}"
+            echo "INPUT_ENV_YURI"
           elif [[ "$INPUT_ENV" == "ihor*" ]]
+          then
             BINANCE_API="${{ secrets.BINANCE_API_IHOR }}"
             BINANCE_SECRET_KEY="${{ secrets.BINANCE_SECRET_KEY_IHOR }}"
+            echo "INPUT_ENV_IHOR"
           elif [[ "$INPUT_ENV" == "illia*" ]]
+          then
             BINANCE_API="${{ secrets.BINANCE_API_ILLIA }}"
             BINANCE_SECRET_KEY="${{ secrets.BINANCE_SECRET_KEY_ILLIA }}"
+            echo "INPUT_ENV_ILLIA"
           elif [[ "$INPUT_ENV" == "mykola*" ]]
+          then
             BINANCE_API="${{ secrets.BINANCE_API_MYKOLA }}"
             BINANCE_SECRET_KEY="${{ secrets.BINANCE_SECRET_KEY_MYKOLA }}"
+            echo "INPUT_ENV_MYKOLA"
+          else
+            BINANCE_API="${{ secrets.BINANCE_API }}"
+            BINANCE_SECRET_KEY="${{ secrets.BINANCE_SECRET_KEY }}"
+            echo "INPUT_ENV_DEFAULT"
           fi
 
           jq --arg key "$BINANCE_API" '.exchange.key = "$key"' "./user_data/${{ inputs.config }}.json" > tmp-config.json && mv tmp-config.json "./user_data/${{ inputs.config }}.json"
