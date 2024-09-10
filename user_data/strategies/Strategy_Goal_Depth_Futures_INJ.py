@@ -8,9 +8,9 @@ from freqtrade.persistence import Trade
 from freqtrade.strategy import stoploss_from_open
 # --------------------------------
 
-class Strategy_Goal_Depth_Futures(IStrategy):
+class Strategy_Goal_Depth_Futures_ING(IStrategy):
     """
-    Strategy_Goal_Depth_Futures
+    Strategy_Goal_Depth_Futures_ING
     author@: Yurii Udaltsov and Illia
     github@: https://github.com/freqtrade/freqtrade-strategies
 

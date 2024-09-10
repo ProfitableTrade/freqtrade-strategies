@@ -61,8 +61,10 @@ on:
           - Strategy_PLpart_BE_BNBUSDT
           - Strategy_PLpart_BE_INJUSDT
           - Strategy_Goal_KAVAUSDT
-          - Strategy_Goal_Depth
-          - Strategy_Goal_Depth_Futures
+          - Strategy_Goal_Depth_SOL
+          - Strategy_Goal_Depth_INJ
+          - Strategy_Goal_Depth_Futures_ING
+          - Strategy_Goal_Depth_Futures_SOL
           - Strategy00
           - Strategy00_SL
           - Strategy00_SL_ATOMUSDT

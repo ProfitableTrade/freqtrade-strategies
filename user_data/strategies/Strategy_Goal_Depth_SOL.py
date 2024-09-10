@@ -37,7 +37,7 @@ class SettingsObject:
 #         return self.timeframes_dics[timeframe]
 # --------------------------------
 
-class Strategy_Goal_Depth(IStrategy):
+class Strategy_Goal_Depth_SOL(IStrategy):
     """
     Strategy_Goal_Depth 
     author@: Yurii Udaltsov
@@ -56,7 +56,7 @@ class Strategy_Goal_Depth(IStrategy):
     
     STRATEGY_SETTINGS = {
         "5m": SettingsObject(1.3, 10 , 1000),
-        "1h": SettingsObject(1.3, 7 , 500)
+        "1h": SettingsObject(1.3, 20 , 500)
     }
     
     position_adjustment_enable = True
