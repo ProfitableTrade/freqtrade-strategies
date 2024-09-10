@@ -98,7 +98,7 @@ class Strategy_Goal_Depth_Futures(IStrategy):
             (self.analyze_large_orders(order_book, self.volume_threshold_long)) &  
             (dataframe['volume'] > dataframe['volume'].shift(1)) &  
             (dataframe['close'] < dataframe['close'].shift(1)) &  
-            (dataframe['funding_rate'] < 0),  
+            (dataframe[f'funding_rate_{self.timeframe}'] < 0),  
             'enter_long'
             ] = 1
             
@@ -109,7 +109,7 @@ class Strategy_Goal_Depth_Futures(IStrategy):
             (self.analyze_large_orders(order_book, self.volume_threshold_short)) &  
             (dataframe['volume'] > dataframe['volume'].shift(1)) &  
             (dataframe['close'] > dataframe['close'].shift(1)) &  
-            (dataframe['funding_rate'] > 0),  
+            (dataframe[f'funding_rate_{self.timeframe}'] > 0),  
             'enter_short'
             ] = 1
 
