@@ -79,9 +79,9 @@ class Strategy_Goal_Depth_Futures(IStrategy):
     def bot_start(self, **kwargs) -> None:
         self.logger = logging.getLogger(__name__)
         
-    @informative("5m", candle_type='funding_rate')
+    @informative(timeframe, candle_type="funding_rate")
     def populate_indicators_funding_rate(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        self.logger.info(dataframe.to_string())
+        self.logger.info(dataframe.head(10).to_string())
         dataframe['funding_rate'] = dataframe['open']
         return dataframe
 
