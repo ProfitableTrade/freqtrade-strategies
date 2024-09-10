@@ -79,11 +79,11 @@ class Strategy_Goal_Depth_Futures(IStrategy):
     def bot_start(self, **kwargs) -> None:
         self.logger = logging.getLogger(__name__)
         
-    @informative(timeframe, candle_type="funding_rate")
-    def populate_indicators_funding_rate(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        self.logger.info(dataframe.head(10).to_string())
-        dataframe['funding_rate'] = dataframe['open']
-        return dataframe
+    # @informative(timeframe, candle_type="funding_rate")
+    # def populate_indicators_funding_rate(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    #     self.logger.info(dataframe.head(10).to_string())
+    #     dataframe['funding_rate'] = dataframe['open']
+    #     return dataframe
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         
@@ -97,8 +97,7 @@ class Strategy_Goal_Depth_Futures(IStrategy):
             (self.check_depth_of_market(order_book, self.bids_to_ask_delta_long, self.depth_long)) &  
             (self.analyze_large_orders(order_book, self.volume_threshold_long)) &  
             (dataframe['volume'] > dataframe['volume'].shift(1)) &  
-            (dataframe['close'] < dataframe['close'].shift(1)) &  
-            (dataframe[f'funding_rate_{self.timeframe}'] < 0),  
+            (dataframe['close'] < dataframe['close'].shift(1)),  
             'enter_long'
             ] = 1
             
@@ -108,18 +107,14 @@ class Strategy_Goal_Depth_Futures(IStrategy):
             (self.check_depth_of_market(order_book, self.bids_to_ask_delta_short, self.depth_short, is_short=True)) &  
             (self.analyze_large_orders(order_book, self.volume_threshold_short)) &  
             (dataframe['volume'] > dataframe['volume'].shift(1)) &  
-            (dataframe['close'] > dataframe['close'].shift(1)) &  
-            (dataframe[f'funding_rate_{self.timeframe}'] > 0),  
+            (dataframe['close'] > dataframe['close'].shift(1)),  
             'enter_short'
             ] = 1
 
         return dataframe
     
     def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        """
-        Generates sell signal based on EMA indicators
-        A sell signal is generated when EMA 15 crosses below EMA 30
-        """
+        
 
         return dataframe
 
