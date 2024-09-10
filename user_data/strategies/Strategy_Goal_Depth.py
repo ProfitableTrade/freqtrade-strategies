@@ -54,6 +54,11 @@ class Strategy_Goal_Depth(IStrategy):
     
     STRATEGY_SHEET_NAME = "DepthSpot"
     
+    STRATEGY_SETTINGS = {
+        "5m": SettingsObject(1.3, 10 , 1000),
+        "1h": SettingsObject(1.3, 7 , 500)
+    }
+    
     position_adjustment_enable = True
 
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
@@ -98,7 +103,7 @@ class Strategy_Goal_Depth(IStrategy):
     def bot_start(self, **kwargs) -> None:
         self.logger = logging.getLogger(__name__)
         
-        self.settings = SettingsObject(1.3, 10 , 1000)
+        self.settings = self.STRATEGY_SETTINGS[self.timeframe]
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         
