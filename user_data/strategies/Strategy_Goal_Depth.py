@@ -6,10 +6,9 @@ from freqtrade.strategy import IStrategy
 from pandas import DataFrame
 from freqtrade.persistence import Trade
 from freqtrade.strategy import stoploss_from_open
-from pydantic import BaseModel
 
 
-class SettingsObject(BaseModel):
+class SettingsObject:
     bids_ask_delta: float
     depth: int
     volume_threshold: int
