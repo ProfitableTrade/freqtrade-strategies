@@ -61,9 +61,7 @@ on:
           - Strategy_PLpart_BE_BNBUSDT
           - Strategy_PLpart_BE_INJUSDT
           - Strategy_Goal_KAVAUSDT
-          - Strategy_Goal_Depth_1m
-          - Strategy_Goal_Depth_5m
-          - Strategy_Goal_Depth_15s
+          - Strategy_Goal_Depth
           - Strategy_Goal_Depth_Futures
           - Strategy00
           - Strategy00_SL
@@ -81,7 +79,7 @@ on:
         description: "Pair, example: SOL/USDT"
         required: true
         type: choice
-        default: SOL/USDT
+        default: INJ/USDT
         options:
           - SOL/USDT:USDT
           - INJ/USDT:USDT
@@ -168,7 +166,7 @@ on:
       dry_run_wallet:
         description: "Dry run wallet amount"
         required: false
-        default: "3000"
+        default: "0"
       config:
         description: "Config, example: binance"
         required: true

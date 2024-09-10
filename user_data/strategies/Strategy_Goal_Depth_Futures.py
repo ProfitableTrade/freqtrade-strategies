@@ -10,8 +10,8 @@ from freqtrade.strategy import stoploss_from_open
 
 class Strategy_Goal_Depth_Futures(IStrategy):
     """
-    Strategy_Goal_Depth
-    author@: Yurii Udaltsov
+    Strategy_Goal_Depth_Futures
+    author@: Yurii Udaltsov and Illia
     github@: https://github.com/freqtrade/freqtrade-strategies
 
     How to use it?
@@ -22,7 +22,6 @@ class Strategy_Goal_Depth_Futures(IStrategy):
     BE_ACTIVATED: str = "be_activated"
     STAGE_1_SOLD: str = "stage_1_sold"
     STAGE_2_SOLD: str = "stage_2_sold"
-    STAGE_3_SOLD: str = "stage_3_sold"
     
     position_adjustment_enable = True
 
@@ -80,8 +79,9 @@ class Strategy_Goal_Depth_Futures(IStrategy):
     def bot_start(self, **kwargs) -> None:
         self.logger = logging.getLogger(__name__)
         
-    @informative(timeframe, candle_type='funding_rate')
+    @informative("5m", candle_type='funding_rate')
     def populate_indicators_funding_rate(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        self.logger.info(dataframe.to_string())
         dataframe['funding_rate'] = dataframe['open']
         return dataframe
 

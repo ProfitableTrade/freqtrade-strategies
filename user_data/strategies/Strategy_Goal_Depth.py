@@ -7,11 +7,13 @@ import talib.abstract as ta
 from pandas import DataFrame
 from freqtrade.persistence import Trade
 from freqtrade.strategy import stoploss_from_open
+
+from user_data.strategies.googlesheets.googlesheets import GoogleSheetsImporter
 # --------------------------------
 
-class Strategy_Goal_Depth_5m(IStrategy):
+class Strategy_Goal_Depth_15s(IStrategy):
     """
-    Strategy_Goal_Depth 5m
+    Strategy_Goal_Depth 15s
     author@: Yurii Udaltsov
     github@: https://github.com/freqtrade/freqtrade-strategies
 
@@ -23,7 +25,8 @@ class Strategy_Goal_Depth_5m(IStrategy):
     BE_ACTIVATED: str = "be_activated"
     STAGE_1_SOLD: str = "stage_1_sold"
     STAGE_2_SOLD: str = "stage_2_sold"
-    STAGE_3_SOLD: str = "stage_3_sold"
+    
+    STRATEGY_SHEET_NAME = "DepthSpot"
     
     position_adjustment_enable = True
 
@@ -33,7 +36,7 @@ class Strategy_Goal_Depth_5m(IStrategy):
     use_custom_stoploss = True
 
     # Оптимальний таймфрейм для стратегії
-    timeframe = '5m'
+    #timeframe = '15s'
 
     # Налаштування трейлінг стоп-лосу
     # trailing_stop = True  # Включення трейлінг стоп-лосу
@@ -57,27 +60,22 @@ class Strategy_Goal_Depth_5m(IStrategy):
     }
     
     # Settings for target reaching logic
-    target_percent = 0.109
+    target_percent = 0.10
     
-    target_stage_1 = 0.1
-    target_stage_2 = 0.3
-    target_stage_3 = 0.65
+    target_stage_1 = 0.03
+    target_stage_2 = 0.06
     
     stage_1_sell_amount = 0.3
     stage_2_sell_amount = 0.3
-    stage_3_sell_amount = 0.25
-    
-    # Settings for check market depth on enter 
-    
-    bids_to_ask_delta = 1.2
-    depth = 7
-    volume_threshold = 500
+
     
     def bot_start(self, **kwargs) -> None:
         self.logger = logging.getLogger(__name__)
+        
+        self.sheets = GoogleSheetsImporter()
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-
+        
         return dataframe
 
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
@@ -85,11 +83,13 @@ class Strategy_Goal_Depth_5m(IStrategy):
         Generates buy signal based on EMA indicators
         A buy signal is generated when EMA 15 crosses above EMA 30
         """
-        order_book = self.dp.orderbook(metadata['pair'], self.depth + 1)
+        settings = self.sheets.get_timeframe_settings(self.STRATEGY_SHEET_NAME, self.timeframe)
+        
+        order_book = self.dp.orderbook(metadata['pair'], settings.depth + 1)
 
         dataframe.loc[
-            ((self.check_depth_of_market(order_book)) &
-            (self.analyze_large_orders(order_book)) &
+            ((self.check_depth_of_market(order_book, settings.depth, settings.bids_ask_delta)) &
+            (self.analyze_large_orders(order_book, settings.volume_threshold)) &
             (dataframe['volume'] > dataframe['volume'].shift(1)) &
             (dataframe['close'] < dataframe['close'].shift(1))),
             'enter_long'] = 1
@@ -105,22 +105,22 @@ class Strategy_Goal_Depth_5m(IStrategy):
 
         return dataframe
     
-    def check_depth_of_market(self, order_book) -> bool:
-        if len(order_book['bids']) < self.depth or len(order_book['asks']) < self.depth:
+    def check_depth_of_market(self, order_book, depth, delta) -> bool:
+        if len(order_book['bids']) < depth or len(order_book['asks']) < depth:
             return False
         
-        total_bids = sum([bid[1] for bid in order_book['bids'][:self.depth]])
-        total_asks = sum([ask[1] for ask in order_book['asks'][:self.depth]])
+        total_bids = sum([bid[1] for bid in order_book['bids'][:depth]])
+        total_asks = sum([ask[1] for ask in order_book['asks'][:depth]])
         
-        self.logger.info(f"Analyzing depth of market... Results: total bids / total asks is {total_bids / total_asks}, configured delta is {self.bids_to_ask_delta}")
+        self.logger.info(f"Analyzing depth of market... Results: total bids / total asks is {total_bids / total_asks}, configured delta is {delta}")
         
-        return (total_bids / total_asks) > self.bids_to_ask_delta
+        return (total_bids / total_asks) > delta
 
-    def analyze_large_orders(self, order_book) -> bool:
-        large_orders = [order for order in order_book['bids'] if order[1] >= self.volume_threshold] + \
-                       [order for order in order_book['asks'] if order[1] >= self.volume_threshold]
+    def analyze_large_orders(self, order_book, threshold) -> bool:
+        large_orders = [order for order in order_book['bids'] if order[1] >= threshold] + \
+                       [order for order in order_book['asks'] if order[1] >= threshold]
 
-        self.logger.info(f"Analyzing large orders for threshold {self.volume_threshold}, found {len(large_orders)}")
+        self.logger.info(f"Analyzing large orders for threshold {threshold}, found {len(large_orders)}")
         
         return len(large_orders) > 0
     
@@ -153,25 +153,19 @@ class Strategy_Goal_Depth_5m(IStrategy):
         try:
             stage_1_sold = trade.get_custom_data(self.STAGE_1_SOLD, default=False)
             stage_2_sold = trade.get_custom_data(self.STAGE_2_SOLD, default=False)
-            stage_3_sold = trade.get_custom_data(self.STAGE_3_SOLD, default=False)
             
             current_price_rate = current_rate / trade.open_rate - 1
             
-            
             self.logger.info(f"Check for goal to be closed, price rate {current_price_rate}")
             
-            if not stage_1_sold and current_price_rate >= self.target_percent * self.target_stage_1:
+            if not stage_1_sold and current_price_rate >= self.target_stage_1:
                 self.logger.info(f"Price rise up bigger than {self.target_percent * self.target_stage_1}, closing first target {self.stage_1_sell_amount}")
                 trade.set_custom_data(self.STAGE_1_SOLD, True)
                 return - ( trade.stake_amount * self.stage_1_sell_amount )
-            elif not stage_2_sold and current_price_rate >= self.target_percent * self.target_stage_2:
+            elif not stage_2_sold and current_price_rate >= self.target_stage_2:
                 self.logger.info(f"Price rise up bigger than {self.target_percent * self.target_stage_2}, closing second target {self.stage_2_sell_amount}")
                 trade.set_custom_data(self.STAGE_2_SOLD, True)
                 return - ( trade.stake_amount * self.stage_2_sell_amount )
-            elif not stage_3_sold and current_price_rate >= self.target_percent * self.target_stage_3:
-                self.logger.info(f"Price rise up bigger than {self.target_percent * self.target_stage_3}, closing third target {self.stage_3_sell_amount}")
-                trade.set_custom_data(self.STAGE_3_SOLD, True)
-                return - ( trade.stake_amount * self.stage_3_sell_amount )
             elif current_price_rate >= self.target_percent:
                 return - trade.stake_amount
             else:
