@@ -8,11 +8,17 @@ from freqtrade.persistence import Trade
 from freqtrade.strategy import stoploss_from_open
 from pydantic import BaseModel
 
+
 class SettingsObject(BaseModel):
     bids_ask_delta: float
     depth: int
     volume_threshold: int
-
+    
+    def __init__(self, bids_ask_delta: float, depth: int, volume_threshold: int):
+        self.bids_ask_delta = bids_ask_delta
+        self.depth = depth
+        self.volume_threshold = volume_threshold
+        
 
 # class GoogleSheetsImporter:
 #     SCOPES = ['https://www.googleapis.com/auth/spreadsheets',
