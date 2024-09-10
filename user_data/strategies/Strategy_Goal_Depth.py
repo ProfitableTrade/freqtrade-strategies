@@ -11,9 +11,9 @@ from freqtrade.strategy import stoploss_from_open
 from user_data.strategies.googlesheets.googlesheets import GoogleSheetsImporter
 # --------------------------------
 
-class Strategy_Goal_Depth_15s(IStrategy):
+class Strategy_Goal_Depth(IStrategy):
     """
-    Strategy_Goal_Depth 15s
+    Strategy_Goal_Depth 
     author@: Yurii Udaltsov
     github@: https://github.com/freqtrade/freqtrade-strategies
 
