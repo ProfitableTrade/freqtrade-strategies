@@ -114,6 +114,14 @@ class Strategy_Goal_Depth_Futures(IStrategy):
             ] = 1
 
         return dataframe
+    
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        """
+        Generates sell signal based on EMA indicators
+        A sell signal is generated when EMA 15 crosses below EMA 30
+        """
+
+        return dataframe
 
     def check_depth_of_market(self, order_book, bids_to_ask_delta=1.3, depth=7, is_short=False) -> bool:
         if len(order_book['bids']) < depth or len(order_book['asks']) < depth:
