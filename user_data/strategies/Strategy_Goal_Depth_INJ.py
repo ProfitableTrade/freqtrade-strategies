@@ -166,7 +166,7 @@ class Strategy_Goal_Depth_INJ(IStrategy):
             
             current_price_rate = current_rate / trade.open_rate - 1
 
-            if be_activated or current_price_rate >= self.target_percent * self.target_stage_1:
+            if be_activated or current_price_rate >= self.target_stage_1:
                 if not be_activated: 
                     trade.set_custom_data(self.BE_ACTIVATED, True)
                     
