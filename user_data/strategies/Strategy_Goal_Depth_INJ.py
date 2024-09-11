@@ -125,7 +125,7 @@ class Strategy_Goal_Depth_INJ(IStrategy):
         self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value.head(5)}, close check: {close_value.head(5)}")
 
         dataframe.loc[
-            (depth_value) & (large_orders_value) & (volume_value) & (close_value),
+            (depth_value) & (large_orders_value) & (volume_value).iloc[1] & (close_value).iloc[1] ,
             'enter_long'] = 1
         
         return dataframe
