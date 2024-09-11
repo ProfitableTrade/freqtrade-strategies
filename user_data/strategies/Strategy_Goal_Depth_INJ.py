@@ -116,13 +116,17 @@ class Strategy_Goal_Depth_INJ(IStrategy):
         """
         
         order_book = self.dp.orderbook(metadata['pair'], self.settings.depth + 1)
+        
+        depth_value = (self.check_depth_of_market(order_book, self.settings.depth, self.settings.bids_ask_delta))
+        large_orders_value = (self.analyze_large_orders(order_book, self.settings.volume_threshold))
+        volume_value = (dataframe['volume'] > dataframe['volume'].shift(1))
+        close_value = (dataframe['close'] < dataframe['close'].shift(1))
 
         dataframe.loc[
-            ((self.check_depth_of_market(order_book, self.settings.depth, self.settings.bids_ask_delta)) &
-            (self.analyze_large_orders(order_book, self.settings.volume_threshold)) &
-            (dataframe['volume'] > dataframe['volume'].shift(1)) &
-            (dataframe['close'] < dataframe['close'].shift(1))),
+            (depth_value & large_orders_value & volume_value & close_value),
             'enter_long'] = 1
+        
+        self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value}, close check: {close_value}")
 
         return dataframe
 
