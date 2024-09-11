@@ -119,15 +119,14 @@ class Strategy_Goal_Depth_SOL(IStrategy):
 
         depth_value = (self.check_depth_of_market(order_book, self.settings.depth, self.settings.bids_ask_delta))
         large_orders_value = (self.analyze_large_orders(order_book, self.settings.volume_threshold))
-        volume_value = (dataframe['volume'].iloc[:self.settings.depth] > dataframe['volume'].shift(1).iloc[:self.settings.depth])
-        close_value = (dataframe['close'].iloc[:self.settings.depth]  < dataframe['close'].shift(1).iloc[:self.settings.depth])
+        volume_value = (dataframe['volume'].head(self.settings.depth) > dataframe['volume'].shift(1).head(self.settings.depth))
+        close_value = (dataframe['close'].head(self.settings.depth)  < dataframe['close'].shift(1).head(self.settings.depth))
+        
+        self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value}, close check: {close_value}")
 
         dataframe.loc[
             (depth_value & large_orders_value & volume_value & close_value),
             'enter_long'] = 1
-        
-        self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value}, close check: {close_value}")
-
 
         return dataframe
 
