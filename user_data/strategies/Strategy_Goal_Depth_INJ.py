@@ -56,7 +56,7 @@ class Strategy_Goal_Depth_INJ(IStrategy):
     
     STRATEGY_SETTINGS = {
         "5m": SettingsObject(1.3, 10 , 1000),
-        "1h": SettingsObject(1.3, 7 , 500)
+        "30m": SettingsObject(1.3, 8 , 800)
     }
     
     position_adjustment_enable = True
