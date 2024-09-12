@@ -86,11 +86,13 @@ on:
         options:
           - SOL/USDT:USDT
           - INJ/USDT:USDT
+          - SUI/USDT:USDT
           - SPELL/USDT:USDT
           - LEVER/USDT:USDT
           - 1INCH/USDT:USDT
           - SOL/USDT
           - INJ/USDT
+          - SUI/USDT
           - KAVA/USDT
           - LUNC/USDT
           - BTC/USDT
