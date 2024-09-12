@@ -63,6 +63,7 @@ on:
           - Strategy_Goal_KAVAUSDT
           - Strategy_Goal_Depth_SOL
           - Strategy_Goal_Depth_INJ
+          - Strategy_Goal_Depth_SUI
           - Strategy_Goal_Depth_Futures_ING
           - Strategy_Goal_Depth_Futures_SOL
           - Strategy_Goal_Depth_Futures_SUI
