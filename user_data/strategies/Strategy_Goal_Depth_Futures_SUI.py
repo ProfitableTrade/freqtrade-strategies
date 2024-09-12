@@ -102,14 +102,14 @@ class Strategy_Goal_Depth_Futures_SUI(IStrategy):
             ] = 1
             
 
-        # Відкриття шортової позиції
-        dataframe.loc[
-            (self.check_depth_of_market(order_book, self.bids_to_ask_delta_short, self.depth_short, is_short=True)) &  
-            (self.analyze_large_orders(order_book, self.volume_threshold_short)) &  
-            (dataframe['volume'] > dataframe['volume'].shift(1)) &  
-            (dataframe['close'] > dataframe['close'].shift(1)),  
-            'enter_short'
-            ] = 1
+        # # Відкриття шортової позиції
+        # dataframe.loc[
+        #     (self.check_depth_of_market(order_book, self.bids_to_ask_delta_short, self.depth_short, is_short=True)) &  
+        #     (self.analyze_large_orders(order_book, self.volume_threshold_short)) &  
+        #     (dataframe['volume'] > dataframe['volume'].shift(1)) &  
+        #     (dataframe['close'] > dataframe['close'].shift(1)),  
+        #     'enter_short'
+        #     ] = 1
 
         return dataframe
     
