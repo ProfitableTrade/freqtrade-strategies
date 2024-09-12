@@ -55,7 +55,7 @@ class Strategy_Goal_Depth_SOL(IStrategy):
     STRATEGY_SHEET_NAME = "DepthSpot"
     
     STRATEGY_SETTINGS = {
-        "5m": SettingsObject(1.3, 10 , 1000),
+        "5m": SettingsObject(1.3, 15 , 500),
         "1h": SettingsObject(1.3, 20 , 500)
     }
     
