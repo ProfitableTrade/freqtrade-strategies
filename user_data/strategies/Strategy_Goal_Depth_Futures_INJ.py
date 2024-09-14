@@ -57,12 +57,12 @@ class Strategy_Goal_Depth_Futures_ING(IStrategy):
     }
     
     # Settings for target reaching logic
-    target_percent = 0.10
+    target_percent = 0.8
     
-    target_stage_1 = 0.03
-    target_stage_2 = 0.06
+    target_stage_1 = 0.02
+    target_stage_2 = 0.05
     
-    stage_1_sell_amount = 0.3
+    stage_1_sell_amount = 0.2
     stage_2_sell_amount = 0.3
     
     # Settings for check market depth on enter 

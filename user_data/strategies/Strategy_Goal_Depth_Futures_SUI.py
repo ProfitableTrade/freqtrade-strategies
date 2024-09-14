@@ -57,10 +57,10 @@ class Strategy_Goal_Depth_Futures_SUI(IStrategy):
     }
     
     # Settings for target reaching logic
-    target_percent = 0.10
+    target_percent = 0.8
     
-    target_stage_1 = 0.03
-    target_stage_2 = 0.06
+    target_stage_1 = 0.02
+    target_stage_2 = 0.05
     
     stage_1_sell_amount = 0.3
     stage_2_sell_amount = 0.3
@@ -128,7 +128,7 @@ class Strategy_Goal_Depth_Futures_SUI(IStrategy):
         if is_short:
             return ( total_asks / total_bids ) > bids_to_ask_delta  
         else:
-            return (total_bids / total_asks) > bids_to_ask_delta  
+            return ( total_bids / total_asks ) > bids_to_ask_delta  
 
     def analyze_large_orders(self, order_book, volume_threshold ) -> bool:
         large_orders = [order for order in order_book['bids'] if order[1] >= volume_threshold] + \
