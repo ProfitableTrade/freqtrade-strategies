@@ -68,13 +68,13 @@ class Strategy_Goal_Depth_Futures_SUI(IStrategy):
     # Settings for check market depth on enter 
     
     bids_to_ask_delta_long = 1.3
-    bids_to_ask_delta_short = 1.3
+    bids_to_ask_delta_short = 1.4
     
     depth_long = 15
     depth_short = 15
     
-    volume_threshold_long = 30000
-    volume_threshold_short = 30000
+    volume_threshold_long = 50000
+    volume_threshold_short = 100000
     
     def bot_start(self, **kwargs) -> None:
         self.logger = logging.getLogger(__name__)
@@ -102,14 +102,14 @@ class Strategy_Goal_Depth_Futures_SUI(IStrategy):
             ] = 1
             
 
-        # # Відкриття шортової позиції
-        # dataframe.loc[
-        #     (self.check_depth_of_market(order_book, self.bids_to_ask_delta_short, self.depth_short, is_short=True)) &  
-        #     (self.analyze_large_orders(order_book, self.volume_threshold_short)) &  
-        #     (dataframe['volume'] > dataframe['volume'].shift(1)) &  
-        #     (dataframe['close'] > dataframe['close'].shift(1)),  
-        #     'enter_short'
-        #     ] = 1
+        # Відкриття шортової позиції
+        dataframe.loc[
+            (self.check_depth_of_market(order_book, self.bids_to_ask_delta_short, self.depth_short, is_short=True)) &  
+            (self.analyze_large_orders(order_book, self.volume_threshold_short)) &  
+            (dataframe['volume'] > dataframe['volume'].shift(1)) &  
+            (dataframe['close'] > dataframe['close'].shift(1)),  
+            'enter_short'
+            ] = 1
 
         return dataframe
     
@@ -126,7 +126,7 @@ class Strategy_Goal_Depth_Futures_SUI(IStrategy):
         total_asks = sum([ask[1] for ask in order_book['asks'][:depth]])
         
         if is_short:
-            return (total_bids / total_asks) < bids_to_ask_delta  
+            return ( total_asks / total_bids ) > bids_to_ask_delta  
         else:
             return (total_bids / total_asks) > bids_to_ask_delta  
 

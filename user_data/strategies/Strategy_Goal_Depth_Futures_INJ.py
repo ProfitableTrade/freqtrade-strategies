@@ -126,7 +126,7 @@ class Strategy_Goal_Depth_Futures_ING(IStrategy):
         total_asks = sum([ask[1] for ask in order_book['asks'][:depth]])
         
         if is_short:
-            return (total_bids / total_asks) < bids_to_ask_delta  
+            return ( total_asks / total_bids ) > bids_to_ask_delta  
         else:
             return (total_bids / total_asks) > bids_to_ask_delta  
 
