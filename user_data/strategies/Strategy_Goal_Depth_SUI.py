@@ -55,13 +55,13 @@ class Strategy_Goal_Depth_SUI(IStrategy):
     STRATEGY_SHEET_NAME = "DepthSpot"
     
     STRATEGY_SETTINGS = {
-        "5m": SettingsObject(1.3, 15 , 50000),
+        "5m": SettingsObject(1.3, 15 , 40000),
     }
     
     position_adjustment_enable = True
 
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
-    stoploss = -0.03
+    stoploss = -0.02
     
     use_custom_stoploss = True
 
@@ -131,14 +131,21 @@ class Strategy_Goal_Depth_SUI(IStrategy):
 
 
     def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        """
-        Generates sell signal based on EMA indicators
-        A sell signal is generated when EMA 15 crosses below EMA 30
-        """
+        
+        order_book = self.dp.orderbook(metadata['pair'], self.settings.depth + 1)
+        
+        # Вихід по признакам входу в шорт шортової позиції
+        dataframe.loc[
+            (self.check_depth_of_market(order_book, self.settings.depth, self.settings.bids_ask_delta, exit=True)) &  
+            (self.analyze_large_orders(order_book, self.settings.volume_threshold)) &  
+            (dataframe['volume'] > dataframe['volume'].shift(1)) &  
+            (dataframe['close'] > dataframe['close'].shift(1)),  
+            'exit_long'
+            ] = 1
 
         return dataframe
     
-    def check_depth_of_market(self, order_book, depth, delta) -> bool:
+    def check_depth_of_market(self, order_book, depth, delta, exit=False) -> bool:
         if len(order_book['bids']) < depth or len(order_book['asks']) < depth:
             return False
         
@@ -147,7 +154,10 @@ class Strategy_Goal_Depth_SUI(IStrategy):
         
         self.logger.info(f"Analyzing depth of market... Results: total bids / total asks is {total_bids / total_asks}, configured delta is {delta}")
         
-        return (total_bids / total_asks) > delta
+        if exit:
+            return ( total_asks / total_bids ) > delta  
+        else:
+            return ( total_bids / total_asks ) > delta  
 
     def analyze_large_orders(self, order_book, threshold) -> bool:
         large_orders = [order for order in order_book['bids'] if order[1] >= threshold] + \

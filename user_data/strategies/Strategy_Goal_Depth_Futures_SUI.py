@@ -57,13 +57,13 @@ class Strategy_Goal_Depth_Futures_SUI(IStrategy):
     }
     
     # Settings for target reaching logic
-    target_percent = 0.8
+    target_percent = 0.03
     
-    target_stage_1 = 0.02
-    target_stage_2 = 0.05
+    target_stage_1 = 0.01
+    target_stage_2 = 0.02
     
-    stage_1_sell_amount = 0.3
-    stage_2_sell_amount = 0.3
+    stage_1_sell_amount = 0.4
+    stage_2_sell_amount = 0.6
     
     # Settings for check market depth on enter 
     
@@ -73,8 +73,8 @@ class Strategy_Goal_Depth_Futures_SUI(IStrategy):
     depth_long = 15
     depth_short = 15
     
-    volume_threshold_long = 50000
-    volume_threshold_short = 100000
+    volume_threshold_long = 40000
+    volume_threshold_short = 50000
     
     def bot_start(self, **kwargs) -> None:
         self.logger = logging.getLogger(__name__)
@@ -114,7 +114,26 @@ class Strategy_Goal_Depth_Futures_SUI(IStrategy):
         return dataframe
     
     def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        order_book = self.dp.orderbook(metadata['pair'], max(self.depth_long, self.depth_short) + 1)
         
+        # Вихід із шорту по признакам лонгу
+        dataframe.loc[
+            (self.check_depth_of_market(order_book, self.bids_to_ask_delta_long, self.depth_long)) &  
+            (self.analyze_large_orders(order_book, self.volume_threshold_long)) &  
+            (dataframe['volume'] > dataframe['volume'].shift(1)) &  
+            (dataframe['close'] < dataframe['close'].shift(1)),  
+            'exit_short'
+            ] = 1
+            
+
+        # Вихід із лонгу по признакам шорту 
+        dataframe.loc[
+            (self.check_depth_of_market(order_book, self.bids_to_ask_delta_short, self.depth_short, is_short=True)) &  
+            (self.analyze_large_orders(order_book, self.volume_threshold_short)) &  
+            (dataframe['volume'] > dataframe['volume'].shift(1)) &  
+            (dataframe['close'] > dataframe['close'].shift(1)),  
+            'exit_long'
+            ] = 1
 
         return dataframe
 
