@@ -38,7 +38,7 @@ class Strategy_Goal_Vidra_SOL(IStrategy):
     STRATEGY_SHEET_NAME = "DepthSpot"
     
     STRATEGY_SETTINGS = {
-        "5m": SettingsObject(1.3, 15 , 500)
+        "5m": SettingsObject(1.3, 15 , 300)
     }
     
     position_adjustment_enable = True

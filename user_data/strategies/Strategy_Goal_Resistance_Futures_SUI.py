@@ -8,14 +8,14 @@ from freqtrade.persistence import Trade
 from freqtrade.strategy import stoploss_from_open
 # --------------------------------
 
-class Strategy_Goal_Resistance_Futures_SOL(IStrategy):
+class Strategy_Goal_Resistance_Futures_SUI(IStrategy):
     """
-    Strategy_Goal_Resistance_Futures_SOL
+    Strategy_Goal_Resistance_Futures_SUI
     author@: Yurii Udaltsov and Illia
     github@: https://github.com/freqtrade/freqtrade-strategies
 
     How to use it?
-    > python3 ./freqtrade/main.py -s Strategy_Goal_Resistance_Futures_SOL
+    > python3 ./freqtrade/main.py -s Strategy_Goal_Resistance_Futures_SUI
     """
 
     INTERFACE_VERSION: int = 3
