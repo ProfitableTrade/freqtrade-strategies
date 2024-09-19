@@ -67,6 +67,7 @@ on:
           - Strategy_Goal_Depth_Futures_ING
           - Strategy_Goal_Depth_Futures_SOL
           - Strategy_Goal_Depth_Futures_SUI
+          - Strategy_Goal_Resistance_Futures_SOL
           - Strategy00
           - Strategy00_SL
           - Strategy00_SL_ATOMUSDT
