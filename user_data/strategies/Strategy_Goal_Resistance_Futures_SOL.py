@@ -56,7 +56,7 @@ class Strategy_Goal_Resistance_Futures_SOL(IStrategy):
     target_stage_1 = 0.01
     target_stage_2 = 0.02
     
-    stage_1_sell_amount = 0.33
+    stage_1_sell_amount = 0.32
     stage_2_sell_amount = 0.55
     
     
