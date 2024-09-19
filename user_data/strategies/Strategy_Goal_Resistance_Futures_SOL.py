@@ -92,7 +92,7 @@ class Strategy_Goal_Resistance_Futures_SOL(IStrategy):
             'enter_short'
             ] = 1
         
-        self.logger.info(f"Support: {dataframe['support'].head(5)}, Resistance: {dataframe['resistance'].head(5)}")
+        self.logger.info(f"Support: {dataframe['support'].head(30)}, Resistance: {dataframe['resistance'].head(30)}")
 
         return dataframe
 
