@@ -46,7 +46,6 @@ class Strategy_Goal_Vidra_SUI(IStrategy):
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
     stoploss = -0.1
     
-    use_custom_stoploss = True
 
     # запускати "populate_indicators" тільки для нової свічки
     process_only_new_candles = True
@@ -135,24 +134,6 @@ class Strategy_Goal_Vidra_SUI(IStrategy):
         
         return len(large_orders) > 0
     
-    def custom_stoploss(self, pair: str, trade: Trade, current_time: datetime,
-                        current_rate: float, current_profit: float, after_fill: bool,
-                        **kwargs) -> Optional[float]:
-        try:
-            be_activated = trade.get_custom_data(self.BE_ACTIVATED, default=False)
-            
-            current_price_rate = current_rate / trade.open_rate - 1
-
-            if be_activated or current_price_rate >= self.target_stage_1:
-                if not be_activated: 
-                    trade.set_custom_data(self.BE_ACTIVATED, True)
-                    
-                return stoploss_from_open(0.002, current_profit, is_short=trade.is_short, leverage=trade.leverage)
-
-            return None
-        except Exception as e:
-            self.logger.info(f"Error occured during custom stoploss definition: {str(e)}")
-            return None
     
     def adjust_trade_position(self, trade: Trade, current_time: datetime,
                               current_rate: float, current_profit: float,
