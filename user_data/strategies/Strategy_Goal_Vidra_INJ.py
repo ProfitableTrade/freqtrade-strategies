@@ -156,12 +156,12 @@ class Strategy_Goal_Vidra_INJ(IStrategy):
 
             
             if not trade.get_custom_data(self.STAGE_SOLD.format(stage=1), default=False) and current_price_rate >= self.target_stage_1:
-                self.logger.info(f"Price rise up bigger than {self.target_percent * self.target_stage_1}, closing first target {self.stage_1_sell_amount}")
+                self.logger.info(f"Price rise up bigger than {self.target_stage_1}, closing first target {self.stage_1_sell_amount}")
                 trade.set_custom_data(self.STAGE_SOLD.format(stage=1), True)
                 return - ( trade.stake_amount * self.stage_1_sell_amount )
             elif not trade.get_custom_data(self.STAGE_SOLD.format(stage=2), default=False) and current_price_rate >= self.target_stage_2:
-                self.logger.info(f"Price rise up bigger than {self.target_percent * self.target_stage_2}, closing second target {self.stage_2_sell_amount}")
-                trade.set_custom_data(self.STAGE_SOLD.format(stage=1), True)
+                self.logger.info(f"Price rise up bigger than {self.target_stage_2}, closing second target {self.stage_2_sell_amount}")
+                trade.set_custom_data(self.STAGE_SOLD.format(stage=2), True)
                 return - ( trade.stake_amount * self.stage_2_sell_amount )
             elif current_price_rate >= self.target_percent:
                 return - trade.stake_amount
