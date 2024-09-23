@@ -159,7 +159,7 @@ class Strategy_Goal_Depth_Futures_SOL(IStrategy):
                  proposed_leverage: float, max_leverage: float, entry_tag: Optional[str], side: str,
                  **kwargs) -> float:
         
-        return 3.0
+        return 4.0
     
     def custom_stoploss(self, pair: str, trade: Trade, current_time: datetime,
                         current_rate: float, current_profit: float, after_fill: bool,
