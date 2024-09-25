@@ -2,7 +2,7 @@
   "max_open_trades": 3,
   "stake_currency": "USDT",
   "stake_amount": "unlimited",
-  "available_capital": 30,
+  "available_capital": 10,
   "tradable_balance_ratio": 0.99,
   "fiat_display_currency": "USD",
   "dry_run": true,
