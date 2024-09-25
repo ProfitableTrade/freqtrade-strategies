@@ -12,6 +12,12 @@ on:
           - Strategy00_SL
           - Strategy_SLpart_SPELLUSDT_leverage
           - CrossEMAStrategy
+          - Strategy_Goal_Depth_SOL
+          - Strategy_Goal_Depth_INJ
+          - Strategy_Goal_Depth_SUI
+          - Strategy_Goal_Vidra_SUI
+          - Strategy_Goal_Vidra_INJ
+          - Strategy_Goal_Vidra_SOL
           - Strategy00G_SOLUSDT_GPT
           - Strategy00G_SOLUSDT
           - CustomStoplossWithPSAR
@@ -49,6 +55,7 @@ on:
         default: SOL/USDT
         options:
           - SOL/USDT:USDT
+          - SUI/USDT
           - SOL/USDT
           - INJ/USDT
           - KAVA/USDT
@@ -115,14 +122,15 @@ on:
           - REP/USDT
           - MLN/USDT
           - CRV/USDT
-      exchange:
-        description: "Exchange, example: binance"
+      config:
+        description: "Config, example: binance"
         required: true
         type: choice
         default: binance
         options:
           - binance
           - binance1
+          - binance2
           - binance1_leverage
 
 jobs:
@@ -175,7 +183,7 @@ jobs:
             --rm freqtrade download-data \
             --timeframes ${{ inputs.time_frames }} \
             --timerange ${{ inputs.start_date }}-${{ inputs.end_date }} \
-            --config /freqtrade/user_data/${{ inputs.exchange }}.json \
+            --config /freqtrade/user_data/${{ inputs.config }}.json \
             --pairs ${{ inputs.pair }}
           EOF | cat >> $GITHUB_STEP_SUMMARY
       #------------------------------------------------------------
@@ -193,6 +201,6 @@ jobs:
             --timeframe ${{ inputs.time_frames }} \
             --timerange ${{ inputs.start_date }}-${{ inputs.end_date }} \
             --strategy ${{ inputs.strategy }} \
-            --config /freqtrade/user_data/${{ inputs.exchange }}.json \
+            --config /freqtrade/user_data/${{ inputs.config }}.json \
             --pairs ${{ inputs.pair }}
           EOF | cat >> $GITHUB_STEP_SUMMARY
