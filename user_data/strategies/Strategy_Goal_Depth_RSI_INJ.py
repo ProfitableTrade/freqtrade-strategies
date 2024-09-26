@@ -7,6 +7,7 @@ from pandas import DataFrame
 from freqtrade.persistence import Trade
 from freqtrade.strategy import stoploss_from_open
 
+import talib.abstract as ta
 
 class SettingsObject:
     bids_ask_delta: float
@@ -19,27 +20,9 @@ class SettingsObject:
         self.volume_threshold = volume_threshold
         
 
-# class GoogleSheetsImporter:
-#     SCOPES = ['https://www.googleapis.com/auth/spreadsheets',
-#               "https://www.googleapis.com/auth/drive"]
-#     client: Spreadsheet
-
-#     def __init__(self):
-#         json_data = json.loads(base64.b64decode("eyJ3ZWIiOnsiY2xpZW50X2lkIjoiNDM5OTg5NDc4OTE0LWc0Mm90cWNkbzQxdGRiaWEzczNnZzBiMXA0ZGpiN3FzLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwicHJvamVjdF9pZCI6InByb21pc2luZy1mbGFzaC00MzUyMTItazMiLCJhdXRoX3VyaSI6Imh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbS9vL29hdXRoMi9hdXRoIiwidG9rZW5fdXJpIjoiaHR0cHM6Ly9vYXV0aDIuZ29vZ2xlYXBpcy5jb20vdG9rZW4iLCJhdXRoX3Byb3ZpZGVyX3g1MDlfY2VydF91cmwiOiJodHRwczovL3d3dy5nb29nbGVhcGlzLmNvbS9vYXV0aDIvdjEvY2VydHMiLCJjbGllbnRfc2VjcmV0IjoiR09DU1BYLUg5MnhTa3FWb1N6eHFudkY1Wjc5TjB4Y3lJdm8ifX0="))
-#         credentials = ServiceAccountCredentials.from_json_keyfile_dict(json_data)
-#         self.client = gspread.authorize(credentials).open_by_key("1C_NWy7a5EuDU6wz5xC5k2tPVfzKSV88WV4nhXYlqEsI")
-
-#     def get_timeframe_settings(self, strategy, timeframe) -> SettingsObject:
-        
-#         sheet = self.client.worksheet(strategy)
-#         self.timeframes_dics = {item['Timeframe']: SettingsObject(item["BidAskDelta"], item["Depth"], item["VolumeThreshold"]) for item in sheet.get_all_records()}
-
-#         return self.timeframes_dics[timeframe]
-# --------------------------------
-
-class Strategy_Goal_Depth_SOL(IStrategy):
+class Strategy_Goal_Depth_RSI_INJ(IStrategy):
     """
-    Strategy_Goal_Depth 
+    Strategy_Goal_Depth_RSI
     author@: Yurii Udaltsov
     github@: https://github.com/freqtrade/freqtrade-strategies
 
@@ -56,7 +39,7 @@ class Strategy_Goal_Depth_SOL(IStrategy):
     
     STRATEGY_SETTINGS = {
         "5m": SettingsObject(1.3, 15 , 500),
-        "1h": SettingsObject(1.3, 20 , 500)
+        "30m": SettingsObject(1.3, 15 , 1000)
     }
     
     position_adjustment_enable = True
@@ -65,15 +48,6 @@ class Strategy_Goal_Depth_SOL(IStrategy):
     stoploss = -0.02
     
     use_custom_stoploss = True
-
-    # Оптимальний таймфрейм для стратегії
-    #timeframe = '15s'
-
-    # Налаштування трейлінг стоп-лосу
-    # trailing_stop = True  # Включення трейлінг стоп-лосу
-    # trailing_stop_positive = 0.033  # Трейлінг стоп активується, коли прибуток досягає 3,3%
-    # trailing_stop_positive_offset = 0.035  # Трейлінг стоп починає діяти, коли прибуток перевищує 3,5%
-    # trailing_only_offset_is_reached = True  # Трейлінг стоп активується тільки після досягнення offset
 
     # запускати "populate_indicators" тільки для нової свічки
     process_only_new_candles = True
@@ -106,7 +80,10 @@ class Strategy_Goal_Depth_SOL(IStrategy):
         self.settings = self.STRATEGY_SETTINGS[self.timeframe]
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        
+        """
+        Додає індикатор RSI до таблиці `dataframe`.
+        """
+        dataframe['rsi'] = ta.RSI(dataframe, timeperiod=14)  # Розрахунок RSI за 14 періодів
         return dataframe
 
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
@@ -116,31 +93,28 @@ class Strategy_Goal_Depth_SOL(IStrategy):
         """
         
         order_book = self.dp.orderbook(metadata['pair'], self.settings.depth + 1)
-
+        
         depth_value = self.check_depth_of_market(order_book, self.settings.depth, self.settings.bids_ask_delta)
         large_orders_value = self.analyze_large_orders(order_book, self.settings.volume_threshold)
         volume_value = dataframe['volume'] > dataframe['volume'].shift(1)
         close_value = dataframe['close'] < dataframe['close'].shift(1)
+        rsi = dataframe['rsi'] < 30
         
         self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value.head(1)}, close check: {close_value.head(1)}")
 
         dataframe.loc[
-            (depth_value) & (large_orders_value) & (volume_value) & (close_value) ,
+            (depth_value) & (large_orders_value) & (volume_value) & (close_value) & {rsi},
             'enter_long'] = 1
-
+        
         return dataframe
 
 
     def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         
-        order_book = self.dp.orderbook(metadata['pair'], self.settings.depth + 1)
-        
-        # Вихід по признакам входу в шорт шортової позиції
+        # Вихід по RSI
         dataframe.loc[
-            (self.check_depth_of_market(order_book, self.settings.depth, self.settings.bids_ask_delta, exit=True)) &  
-            (self.analyze_large_orders(order_book, self.settings.volume_threshold)) &  
-            (dataframe['volume'] > dataframe['volume'].shift(1)) &  
-            (dataframe['close'] > dataframe['close'].shift(1)),  
+            (dataframe['rsi'] > 70) &  
+            (dataframe['volume'] > 0),  
             'exit_long'
             ] = 1
 

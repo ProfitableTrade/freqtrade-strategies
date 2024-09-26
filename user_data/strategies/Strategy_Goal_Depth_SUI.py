@@ -90,7 +90,7 @@ class Strategy_Goal_Depth_SUI(IStrategy):
     }
     
     # Settings for target reaching logic
-    target_percent = 0.08
+    target_percent = 0.06
     
     target_stage_1 = 0.02
     target_stage_2 = 0.04

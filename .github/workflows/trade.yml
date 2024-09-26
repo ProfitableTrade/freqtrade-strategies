@@ -72,6 +72,9 @@ on:
           - Strategy_Goal_Vidra_SUI
           - Strategy_Goal_Vidra_INJ
           - Strategy_Goal_Vidra_SOL
+          - Strategy_Goal_Depth_RSI_SUI
+          - Strategy_Goal_Depth_RSI_INJ
+          - Strategy_Goal_Depth_RSI_SOL
           - Strategy00
           - Strategy00_SL
           - Strategy00_SL_ATOMUSDT
