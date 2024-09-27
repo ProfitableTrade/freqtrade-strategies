@@ -100,7 +100,7 @@ class Strategy_Goal_Depth_RSI_SOL(IStrategy):
         close_value = dataframe['close'] < dataframe['close'].shift(1)
         rsi = dataframe['rsi'].head(14) < 30
         
-        self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value.head(1)}, close check: {close_value.head(1)}, rsi: {dataframe['rsi'].head(14)}")
+        self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value.head(1)}, close check: {close_value.head(1)}, rsi: {dataframe['rsi'].head(40)}")
 
         dataframe.loc[
             (depth_value) & (large_orders_value) & (volume_value) & (close_value) & (rsi),
