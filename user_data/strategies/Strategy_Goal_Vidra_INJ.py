@@ -99,7 +99,7 @@ class Strategy_Goal_Vidra_INJ(IStrategy):
         volume_value = dataframe['volume'] > dataframe['volume'].shift(1)
         close_value = dataframe['close'] < dataframe['close'].shift(1)
         
-        self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value.head(1)}, close check: {close_value.head(1)}")
+        self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value.tail(5)}, close check: {close_value.tail(5)}")
 
         dataframe.loc[
             (depth_value) & (large_orders_value) & (volume_value) & (close_value) ,

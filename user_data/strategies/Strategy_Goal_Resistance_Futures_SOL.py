@@ -82,19 +82,19 @@ class Strategy_Goal_Resistance_Futures_SOL(IStrategy):
 
         # Вхід в лонг на основі рівнів підтримки
         dataframe.loc[
-            (dataframe['close'] < dataframe['support'].shift(-self.window)) &      # Ціна нижче підтримки
+            (dataframe['close'] < dataframe['support']) &      # Ціна нижче підтримки
             (dataframe['volume'] > dataframe['volume'].shift(1)),  # Обсяг зростає
             'enter_long'
             ] = 1
 
         # Вхід в шорт на основі рівнів опору
         dataframe.loc[
-            (dataframe['close'] > dataframe['resistance'].shift(-self.window)) &  # Ціна вище опору
+            (dataframe['close'] > dataframe['resistance']) &  # Ціна вище опору
             (dataframe['volume'] > dataframe['volume'].shift(1)),  # Обсяг зростає
             'enter_short'
             ] = 1
         
-        self.logger.info(f"Support: {dataframe['support'].shift(-self.window).head(self.window)}, Resistance: {dataframe['resistance'].shift(-self.window).head(self.window)}")
+        self.logger.info(f"Support: {dataframe['support'].tail(10)}, Resistance: {dataframe['resistance'].tail(10)}")
 
         return dataframe
 
@@ -102,13 +102,13 @@ class Strategy_Goal_Resistance_Futures_SOL(IStrategy):
     def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         # Вихід із лонгу на основі рівнів опору
         dataframe.loc[
-            (dataframe['close'] >= dataframe['resistance'].shift(-self.window)),  # Ціна досягає опору
+            (dataframe['close'] >= dataframe['resistance']),  # Ціна досягає опору
             'exit_long'
             ] = 1
 
         # Вихід із шорту на основі рівнів підтримки
         dataframe.loc[
-            (dataframe['close'] <= dataframe['support'].shift(-self.window)),  # Ціна досягає підтримки
+            (dataframe['close'] <= dataframe['support']),  # Ціна досягає підтримки
             'exit_short'
             ] = 1
 
