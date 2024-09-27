@@ -83,7 +83,7 @@ class Strategy_Goal_Depth_RSI_SOL(IStrategy):
         """
         Додає індикатор RSI до таблиці `dataframe`.
         """
-        dataframe['rsi'] = ta.RSI(dataframe, timeperiod=14)  # Розрахунок RSI за 14 періодів
+        dataframe['rsi'] = ta.RSI(dataframe)  # Розрахунок RSI за 14 періодів
         return dataframe
 
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
@@ -98,9 +98,9 @@ class Strategy_Goal_Depth_RSI_SOL(IStrategy):
         large_orders_value = self.analyze_large_orders(order_book, self.settings.volume_threshold)
         volume_value = dataframe['volume'] > dataframe['volume'].shift(1)
         close_value = dataframe['close'] < dataframe['close'].shift(1)
-        rsi = dataframe['rsi'] < 30
+        rsi = dataframe['rsi'].head(14) < 30
         
-        self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value.head(1)}, close check: {close_value.head(1)}, rsi: {dataframe['rsi']}")
+        self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value.head(1)}, close check: {close_value.head(1)}, rsi: {dataframe['rsi'].head(14)}")
 
         dataframe.loc[
             (depth_value) & (large_orders_value) & (volume_value) & (close_value) & (rsi),
@@ -113,7 +113,7 @@ class Strategy_Goal_Depth_RSI_SOL(IStrategy):
         
         # Вихід по RSI
         dataframe.loc[
-            (dataframe['rsi'] > 70) &  
+            (dataframe['rsi'].head(14) > 70) &  
             (dataframe['volume'] > 0),  
             'exit_long'
             ] = 1
