@@ -86,7 +86,7 @@ class Strategy_Goal_Depth_RSI_SUI(IStrategy):
         """
         Додає індикатор RSI до таблиці `dataframe`.
         """
-        dataframe['rsi'] = ta.RSI(dataframe)  # Розрахунок RSI за 14 періодів
+        dataframe['rsi'] = ta.RSI(dataframe, timeperiod=self.rsi_depth)  # Розрахунок RSI за 14 періодів
         return dataframe
 
 
