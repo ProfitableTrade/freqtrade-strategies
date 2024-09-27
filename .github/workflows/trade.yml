@@ -172,7 +172,7 @@ on:
       runtime_type:
         description: "dry-run - fake trades, production - real money"
         required: true
-        default: dry-run
+        default: production
         type: choice
         options:
           - dry-run
@@ -185,7 +185,7 @@ on:
         description: "Config, example: binance"
         required: true
         type: choice
-        default: binance
+        default: binance2
         options:
           - binance
           - binance1
@@ -209,7 +209,7 @@ on:
       stoploss:
         description: "Stoploss"
         required: true
-        default: 0.05
+        default: -0.03
         type: number
       # cancel_open_orders_on_exit:
       #   description: "Cancel open orders on exit"
