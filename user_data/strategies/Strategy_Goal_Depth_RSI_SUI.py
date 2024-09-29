@@ -81,6 +81,19 @@ class Strategy_Goal_Depth_RSI_SUI(IStrategy):
         self.logger = logging.getLogger(__name__)
         
         self.settings = self.STRATEGY_SETTINGS[self.timeframe]
+        
+    @property
+    def plot_config(self):
+        plot_config = {}
+        plot_config['main_plot'] = {}
+        plot_config['subplots'] = {
+            # Additional subplot RSI
+            "RSI": {
+                'rsi': {'color': 'red'}
+            }
+        }
+
+        return plot_config
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
