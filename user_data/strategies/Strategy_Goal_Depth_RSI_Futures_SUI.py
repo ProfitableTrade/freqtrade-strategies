@@ -119,7 +119,7 @@ class Strategy_Goal_Depth_RSI_Futures_SUI(IStrategy):
         order_book = self.dp.orderbook(metadata['pair'], self.settings.depth + 1)
     
         # Умови входу за книгою ордерів
-        depth_value = self.check_depth_of_market(order_book, self.settings.depth, self.settings.bids_ask_delta)
+        depth_value = self.check_depth_of_market(order_book,self.settings.bids_ask_delta, self.settings.depth)
         large_orders_value = self.analyze_large_orders(order_book, self.settings.volume_threshold)
         volume_value = dataframe['volume'] > dataframe['volume'].shift(1)
         close_value = dataframe['close'] < dataframe['close'].shift(1)
@@ -167,8 +167,6 @@ class Strategy_Goal_Depth_RSI_Futures_SUI(IStrategy):
     def check_depth_of_market(self, order_book, bids_to_ask_delta=1.3, depth=7, is_short=False) -> bool:
         if len(order_book['bids']) < depth or len(order_book['asks']) < depth:
             return False
-        
-        self.logger.info(f"Orderbook: {order_book.items()}, depth: {depth}")
         
         total_bids = sum([bid[1] for bid in order_book['bids'][:depth]])
         total_asks = sum([ask[1] for ask in order_book['asks'][:depth]])
