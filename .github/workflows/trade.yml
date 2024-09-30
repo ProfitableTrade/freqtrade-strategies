@@ -191,6 +191,7 @@ on:
         default: binance2
         options:
           - binance
+          - binance_unlimited
           - binance1
           - binance1_leverage
           - binance1_leverage_unlim
