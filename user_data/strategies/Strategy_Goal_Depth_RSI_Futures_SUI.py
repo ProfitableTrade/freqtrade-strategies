@@ -6,6 +6,7 @@ from freqtrade.strategy import IStrategy, informative
 from pandas import DataFrame
 from freqtrade.persistence import Trade
 from freqtrade.strategy import stoploss_from_open
+import talib.abstract as ta
 # --------------------------------
 
 class SettingsObject:
@@ -81,6 +82,10 @@ class Strategy_Goal_Depth_RSI_Futures_SUI(IStrategy):
     stage_1_sell_amount = 0.4
     stage_2_sell_amount = 0.6
     
+    rsi_period = 14
+    rsi_buy_threshold = 35  # Порогове значення для покупки по RSI
+    rsi_sell_threshold = 70  # Порогове значення для продажу по RSI
+    
     
     def bot_start(self, **kwargs) -> None:
         self.logger = logging.getLogger(__name__)
@@ -94,7 +99,21 @@ class Strategy_Goal_Depth_RSI_Futures_SUI(IStrategy):
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         
+        dataframe['rsi'] = ta.RSI(dataframe, timeperiod=self.rsi_period)  # Розрахунок RSI за 14 періодів
         return dataframe
+    
+    @property
+    def plot_config(self):
+        plot_config = {}
+        plot_config['main_plot'] = {}
+        plot_config['subplots'] = {
+            # Additional subplot RSI
+            "RSI": {
+                'rsi': {'color': 'red'}
+            }
+        }
+
+        return plot_config
 
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         order_book = self.dp.orderbook(metadata['pair'], self.settings.depth + 1)
@@ -104,7 +123,7 @@ class Strategy_Goal_Depth_RSI_Futures_SUI(IStrategy):
         large_orders_value = self.analyze_large_orders(order_book, self.settings.volume_threshold)
         volume_value = dataframe['volume'] > dataframe['volume'].shift(1)
         close_value = dataframe['close'] < dataframe['close'].shift(1)
-        rsi_condition = dataframe['rsi'] < 35  # Вхід у лонг при RSI < 35
+        rsi_condition = dataframe['rsi'] < self.rsi_buy_threshold  # Вхід у лонг при RSI < 35
         
         self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value.tail(2)}, close check: {close_value.tail(2)}, rsi check: {dataframe[['date', 'rsi']].tail(2)}")
 
@@ -115,7 +134,7 @@ class Strategy_Goal_Depth_RSI_Futures_SUI(IStrategy):
         ] = 1
 
         # Умови на шорт
-        rsi_condition_short = dataframe['rsi'] > 70  # Вхід у шорт при RSI > 70
+        rsi_condition_short = dataframe['rsi'] > self.rsi_sell_threshold  # Вхід у шорт при RSI > 70
         close_value_short = dataframe['close'] > dataframe['close'].shift(1)
 
         dataframe.loc[
@@ -132,13 +151,13 @@ class Strategy_Goal_Depth_RSI_Futures_SUI(IStrategy):
         """
         # Вихід із лонгу при RSI > 70
         dataframe.loc[
-            (dataframe['rsi'] > 70),
+            (dataframe['rsi'] > self.rsi_sell_threshold),
             'exit_long'
         ] = 1
 
         # Вихід із шорту при RSI < 35
         dataframe.loc[
-            (dataframe['rsi'] < 35),
+            (dataframe['rsi'] < self.rsi_buy_threshold),
             'exit_short'
         ] = 1
 
