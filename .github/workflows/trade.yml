@@ -67,11 +67,14 @@ on:
           - Strategy_Goal_Depth_Futures_ING
           - Strategy_Goal_Depth_Futures_SOL
           - Strategy_Goal_Depth_Futures_SUI
+          - Strategy_Goal_Depth_RSI_Futures_SUI
           - Strategy_Goal_Resistance_Futures_SOL
           - Strategy_Goal_Resistance_Futures_SUI
           - Strategy_Goal_Vidra_SUI
           - Strategy_Goal_Vidra_INJ
           - Strategy_Goal_Vidra_SOL
+          - Strategy_Goal_Vidra_RSI_SUI
+          - Strategy_Goal_Vidra_RSI_INJ
           - Strategy_Goal_Depth_RSI_SUI
           - Strategy_Goal_Depth_RSI_INJ
           - Strategy_Goal_Depth_RSI_SOL
