@@ -109,7 +109,7 @@ class Strategy_Goal_Vidra_RSI_lim_UNI(IStrategy):
         close_value = dataframe['close'] < dataframe['close'].shift(1)
         rsi_buy_condition = dataframe['rsi_1h'] < self.rsi_buy_threshold
         
-        self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value.tail(2)}, close check: {close_value.tail(2)}, rsi check: {dataframe[['date', 'rsi']].tail(2)}")
+        self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value.tail(2)}, close check: {close_value.tail(2)}, rsi check: {dataframe[['date', 'rsi_1h']].tail(2)}")
 
         dataframe.loc[
             (depth_value) & (large_orders_value) & (volume_value) & (close_value) & (rsi_buy_condition),
