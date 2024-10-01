@@ -70,6 +70,7 @@ on:
           - Strategy_Goal_Depth_RSI_Futures_SUI
           - Strategy_Goal_Resistance_Futures_SOL
           - Strategy_Goal_Resistance_Futures_SUI
+          - Strategy_Goal_Vidra_RSI_lim_UNI
           - Strategy_Goal_Vidra_SUI
           - Strategy_Goal_Vidra_INJ
           - Strategy_Goal_Vidra_SOL
