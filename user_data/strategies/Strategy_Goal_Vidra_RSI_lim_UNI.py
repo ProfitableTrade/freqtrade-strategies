@@ -42,6 +42,8 @@ class Strategy_Goal_Vidra_RSI_lim_UNI(IStrategy):
     }
     
     position_adjustment_enable = True
+    
+    timeframe="5m"
 
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
     stoploss = -0.1
