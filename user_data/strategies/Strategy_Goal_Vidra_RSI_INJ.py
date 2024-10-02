@@ -46,7 +46,7 @@ class Strategy_Goal_Vidra_RSI_INJ(IStrategy):
     position_adjustment_enable = True
 
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
-    stoploss = -0.1
+    stoploss = -0.04
 
     # запускати "populate_indicators" тільки для нової свічки
     process_only_new_candles = True
