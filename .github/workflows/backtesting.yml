@@ -9,6 +9,7 @@ on:
         type: choice
         options:
           - Strategy00
+          - Strategy001
           - Strategy00_SL
           - Strategy_SLpart_SPELLUSDT_leverage
           - CrossEMAStrategy
@@ -18,6 +19,8 @@ on:
           - Strategy_Goal_Vidra_SUI
           - Strategy_Goal_Vidra_INJ
           - Strategy_Goal_Vidra_SOL
+          - Strategy_Goal_Vidra_RSI_lim_UNI
+          - Strategy_Goal_Depth_RSI_INJ
           - Strategy00G_SOLUSDT_GPT
           - Strategy00G_SOLUSDT
           - CustomStoplossWithPSAR
