@@ -39,13 +39,14 @@ class Strategy_Goal_Depth_RSI_INJ(IStrategy):
     
     STRATEGY_SETTINGS = {
         "5m": SettingsObject(1.3, 15 , 500),
-        "30m": SettingsObject(1.3, 15 , 1000)
+        "30m": SettingsObject(1.3, 15 , 1000),
+        "1h": SettingsObject(1.3, 20, 1000)
     }
     
     position_adjustment_enable = True
 
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
-    stoploss = -0.02
+    stoploss = -0.03
     
     use_custom_stoploss = True
 
@@ -67,10 +68,10 @@ class Strategy_Goal_Depth_RSI_INJ(IStrategy):
     rsi_depth = 14
     
     # Settings for target reaching logic
-    target_percent = 0.06
+    target_percent = 0.09
     
-    target_stage_1 = 0.02
-    target_stage_2 = 0.04
+    target_stage_1 = 0.03
+    target_stage_2 = 0.06
     
     stage_1_sell_amount = 0.2
     stage_2_sell_amount = 0.3
@@ -113,7 +114,7 @@ class Strategy_Goal_Depth_RSI_INJ(IStrategy):
         large_orders_value = self.analyze_large_orders(order_book, self.settings.volume_threshold)
         volume_value = dataframe['volume'] > dataframe['volume'].shift(1)
         close_value = dataframe['close'] < dataframe['close'].shift(1)
-        rsi = dataframe['rsi'] < 35
+        rsi = dataframe['rsi'] < 30
         
         self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value.tail(5)}, close check: {close_value.tail(5)}, rsi: {dataframe['rsi'].tail(5) }")
 

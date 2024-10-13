@@ -38,7 +38,7 @@ class Strategy_Goal_Vidra_RSI_lim_UNI(IStrategy):
     STRATEGY_SHEET_NAME = "DepthSpot"
     
     STRATEGY_SETTINGS = {
-        "5m": SettingsObject(1.2, 5, 700)
+        "1h": SettingsObject(1.2, 5, 1000)
     }
     
     position_adjustment_enable = True
