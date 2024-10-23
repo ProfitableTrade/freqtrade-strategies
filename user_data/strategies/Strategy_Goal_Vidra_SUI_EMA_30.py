@@ -2,7 +2,7 @@
 import datetime
 import logging
 from typing import Optional, Tuple, Union
-from freqtrade.strategy import IStrategy, merge_informative_pair
+from freqtrade.strategy import IStrategy, merge_informative_pair, informative
 from pandas import DataFrame
 from freqtrade.persistence import Trade
 import talib.abstract as ta
@@ -19,7 +19,7 @@ class SettingsObject:
         self.depth = depth
         self.volume_threshold = volume_threshold
 
-class Strategy_Goal_Vidra_SUI_EMA30(IStrategy):
+class Strategy_Goal_Vidra_SUI_EMA_30(IStrategy):
     """
     Strategy_Goal_Vidra_SUI_EMA30
     author@: Yurii Udaltsov and Illia
@@ -74,30 +74,21 @@ class Strategy_Goal_Vidra_SUI_EMA30(IStrategy):
     dca_buy_amounts = [0.15, 0.15, 0.10, 0.10]  # Buy amounts for each level
 
     # Додаємо старший таймфрейм для перевірки EMA
-    informative_timeframe = '30m'
+    informative_timeframe = '15m'
 
     def bot_start(self, **kwargs) -> None:
         self.logger = logging.getLogger(__name__)
         self.settings = self.STRATEGY_SETTINGS[self.timeframe]
+        
+    @informative(informative_timeframe)
+    def populate_indicators_15m(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        
+        dataframe['ema20'] = ta.EMA(dataframe['close'], timeperiod=20)
+        dataframe['ema30'] = ta.EMA(dataframe['close'], timeperiod=30)
+
+        return dataframe
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        # Отримуємо дані старшого таймфрейму
-        informative = self.dp.get_pair_dataframe(pair=metadata['pair'], timeframe=self.informative_timeframe)
-
-        # Розраховуємо EMA20 і EMA30 на старшому таймфреймі
-        informative['ema20'] = ta.EMA(informative['close'], timeperiod=20)
-        informative['ema30'] = ta.EMA(informative['close'], timeperiod=30)
-
-        # Залишаємо лише необхідні колонки
-        informative = informative[['date', 'ema20', 'ema30']]
-
-        # Об'єднуємо індикатори старшого таймфрейму з основним датафреймом
-        dataframe = merge_informative_pair(
-            dataframe, informative, self.timeframe, self.informative_timeframe, ffill=True
-        )
-
-        # Тепер можемо використовувати 'ema20_30m' та 'ema30_30m' в основному датафреймі
-
         return dataframe
 
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
@@ -114,7 +105,7 @@ class Strategy_Goal_Vidra_SUI_EMA30(IStrategy):
         close_value = dataframe['close'] < dataframe['close'].shift(1)
 
         # Додаємо умову EMA: EMA20 > EMA30 на 30-хвилинному таймфреймі
-        ema_condition = dataframe['ema20_30m'] > dataframe['ema30_30m']
+        ema_condition = dataframe['ema20_15m'] > dataframe['ema30_15m']
 
         self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value.tail(5)}, close check: {close_value.tail(5)}, EMA condition: {ema_condition.tail(5)}")
 
@@ -125,6 +116,11 @@ class Strategy_Goal_Vidra_SUI_EMA30(IStrategy):
         return dataframe
 
     def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        dataframe.loc[
+            (dataframe['ema30_15m'] > dataframe['ema20_15m']),
+            'exit_long'
+        ] = 1
+        
         return dataframe
 
     def check_depth_of_market(self, order_book, depth, delta, exit=False) -> bool:

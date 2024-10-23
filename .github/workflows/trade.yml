@@ -72,7 +72,7 @@ on:
           - Strategy_Goal_Resistance_Futures_SUI
           - Strategy_Goal_Vidra_RSI_lim_UNI
           - Strategy_Goal_Vidra_SUI
-          - Strategy_Goal_Vidra_SUI_EMA 30
+          - Strategy_Goal_Vidra_SUI_EMA_30
           - Strategy_Goal_Vidra_INJ
           - Strategy_Goal_Vidra_SOL
           - Strategy_Goal_Vidra_RSI_SUI
