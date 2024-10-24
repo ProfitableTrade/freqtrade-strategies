@@ -39,6 +39,8 @@ class Strategy_Goal_Vidra_SUI_EMA_30(IStrategy):
     STRATEGY_SETTINGS = {
         "5m": SettingsObject(1.3, 15, 20000)
     }
+    
+    timeframe = "5m"
 
     position_adjustment_enable = True
 
