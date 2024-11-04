@@ -131,8 +131,8 @@ class Strategy_Goal_Depth_RSI_INJ(IStrategy):
         # Вихід по RSI
         dataframe.loc[
             (dataframe['rsi'] > 70) &  
-            (dataframe['volume'] > 0),  
-            (dataframe['rsi'] > dataframe['rsi'].shift(1)),
+            (dataframe['volume'] > 0) & 
+            (dataframe['rsi'] > dataframe['rsi'].shift(1)) ,
             'exit_long'
             ] = 1
 

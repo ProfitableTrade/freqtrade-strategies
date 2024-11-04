@@ -115,8 +115,7 @@ class Strategy_Goal_Vidra_RSI_INJ(IStrategy):
 
     def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         dataframe.loc[
-            (dataframe['rsi'] > self.rsi_sell_threshold),
-            (dataframe['rsi'] > dataframe['rsi'].shift(1)),
+            (dataframe['rsi'] > self.rsi_sell_threshold) & (dataframe['rsi'] > dataframe['rsi'].shift(1)),
             'exit_long'
         ] = 1
 

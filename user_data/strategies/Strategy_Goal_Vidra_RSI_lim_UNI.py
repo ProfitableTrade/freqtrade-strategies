@@ -38,12 +38,12 @@ class Strategy_Goal_Vidra_RSI_lim_UNI(IStrategy):
     STRATEGY_SHEET_NAME = "DepthSpot"
     
     STRATEGY_SETTINGS = {
-        "1h": SettingsObject(1.2, 5, 1000)
+        "5m": SettingsObject(1.2, 5, 1000)
     }
     
     position_adjustment_enable = True
     
-    timeframe="1h"
+    timeframe="5m"
 
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
     stoploss = -0.05
@@ -120,8 +120,7 @@ class Strategy_Goal_Vidra_RSI_lim_UNI(IStrategy):
 
     def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         dataframe.loc[
-            (dataframe['rsi_1h'] > self.rsi_sell_threshold),
-            (dataframe['rsi'] > dataframe['rsi'].shift(1)),
+            (dataframe['rsi_1h'] > self.rsi_sell_threshold) & (dataframe['rsi'] > dataframe['rsi'].shift(1)),
             'exit_long'
         ] = 1
 
