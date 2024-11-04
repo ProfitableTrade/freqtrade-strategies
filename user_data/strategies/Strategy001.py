@@ -1,5 +1,6 @@
 
 # --- Do not remove these libs ---
+import logging
 from freqtrade.strategy import IStrategy
 from typing import Dict, List
 from functools import reduce
@@ -57,6 +58,9 @@ class Strategy001(IStrategy):
         'stoploss': 'market',
         'stoploss_on_exchange': False
     }
+    
+    def bot_start(self, **kwargs) -> None:
+        self.logger = logging.getLogger(__name__)
 
     def informative_pairs(self):
         """
@@ -103,6 +107,8 @@ class Strategy001(IStrategy):
                 (dataframe['ha_open'] < dataframe['ha_close'])  # green bar
             ),
             'enter_long'] = 1
+        
+        self.logger.info(f"Dataframe: {dataframe}")
 
         return dataframe
 
