@@ -39,14 +39,14 @@ class Strategy_Goal_Vidra_RSI_INJ(IStrategy):
     
     STRATEGY_SETTINGS = {
         "5m": SettingsObject(1.3, 15, 500),
-        "30m": SettingsObject(1.3, 15, 1000)
+        "30m": SettingsObject(1.3, 15, 1000),
+        "1h": SettingsObject(1.3, 20, 1000)
     }
 
-    
     position_adjustment_enable = True
 
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
-    stoploss = -0.04
+    stoploss = -0.03
 
     # запускати "populate_indicators" тільки для нової свічки
     process_only_new_candles = True
@@ -64,10 +64,10 @@ class Strategy_Goal_Vidra_RSI_INJ(IStrategy):
     }
     
     # Settings for target reaching logic
-    target_percent = 0.08
+    target_percent = 0.09
     
-    target_stage_1 = 0.02
-    target_stage_2 = 0.04
+    target_stage_1 = 0.03
+    target_stage_2 = 0.06
     
     stage_1_sell_amount = 0.2
     stage_2_sell_amount = 0.3
@@ -102,14 +102,13 @@ class Strategy_Goal_Vidra_RSI_INJ(IStrategy):
         volume_value = dataframe['volume'] > dataframe['volume'].shift(1)
         close_value = dataframe['close'] < dataframe['close'].shift(1)
         rsi_buy_condition = dataframe['rsi'] < self.rsi_buy_threshold
+        rsi_raise_condition = dataframe['rsi'] < dataframe['rsi'].shift(1)
         
-        self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value.tail(2)}, close check: {close_value.tail(2)}, rsi check: {dataframe[['date', 'rsi']].tail(2)}")
+        self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value.tail(2)}, close check: {close_value.tail(2)}, rsi check: {dataframe[['date', 'rsi']].tail(2)}, rsi raise check: {rsi_raise_condition.tail(2)}")
 
         dataframe.loc[
-            (depth_value) & (large_orders_value) & (volume_value) & (close_value) & (rsi_buy_condition),
+            (depth_value) & (large_orders_value) & (volume_value) & (close_value) & (rsi_buy_condition) & (rsi_raise_condition),
             'enter_long'] = 1
-        
-        self.logger.info(f"Dataframe: {dataframe}")
 
         return dataframe
 
@@ -117,6 +116,7 @@ class Strategy_Goal_Vidra_RSI_INJ(IStrategy):
     def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         dataframe.loc[
             (dataframe['rsi'] > self.rsi_sell_threshold),
+            (dataframe['rsi'] > dataframe['rsi'].shift(1)),
             'exit_long'
         ] = 1
 

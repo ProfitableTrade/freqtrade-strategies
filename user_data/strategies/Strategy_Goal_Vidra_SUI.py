@@ -44,7 +44,7 @@ class Strategy_Goal_Vidra_SUI(IStrategy):
     position_adjustment_enable = True
 
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
-    stoploss = -0.1
+    stoploss = -0.05
     
 
     # запускати "populate_indicators" тільки для нової свічки
@@ -63,18 +63,18 @@ class Strategy_Goal_Vidra_SUI(IStrategy):
     }
     
     # Settings for target reaching logic
-    target_percent = 0.08
+    target_percent = 0.09
     
-    target_stage_1 = 0.02
-    target_stage_2 = 0.04
+    target_stage_1 = 0.03
+    target_stage_2 = 0.06
     
     stage_1_sell_amount = 0.2
     stage_2_sell_amount = 0.3
     
     
     # Step buying (DCA) settings
-    dca_levels = [-0.02, -0.04, -0.06, -0.08]  # Levels for additional buy-ins
-    dca_buy_amounts = [0.15, 0.15, 0.10, 0.10]  # Buy amounts for each level
+    dca_levels = [-0.03]  # Levels for additional buy-ins
+    dca_buy_amounts = [0.10]  # Buy amounts for each level
 
     
     def bot_start(self, **kwargs) -> None:
