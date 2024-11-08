@@ -115,12 +115,11 @@ class Strategy_Goal_Depth_RSI_INJ(IStrategy):
         volume_value = dataframe['volume'] > dataframe['volume'].shift(1)
         close_value = dataframe['close'] < dataframe['close'].shift(1)
         rsi = dataframe['rsi'] < 30
-        rsi_raise_condition = dataframe['rsi'] < dataframe['rsi'].shift(1)
         
-        self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value.tail(5)}, close check: {close_value.tail(5)}, rsi: {dataframe['rsi'].tail(5)}, rsi raised: {rsi_raise_condition.tail(5)}")
+        self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value.tail(5)}, close check: {close_value.tail(5)}, rsi: {dataframe['rsi'].tail(5)}")
 
         dataframe.loc[
-            (depth_value) & (large_orders_value) & (volume_value) & (close_value) & (rsi) & (rsi_raise_condition),
+            (depth_value) & (large_orders_value) & (volume_value) & (close_value) & (rsi) ,
             'enter_long'] = 1
         
         return dataframe
@@ -131,8 +130,7 @@ class Strategy_Goal_Depth_RSI_INJ(IStrategy):
         # Вихід по RSI
         dataframe.loc[
             (dataframe['rsi'] > 70) &  
-            (dataframe['volume'] > 0) & 
-            (dataframe['rsi'] > dataframe['rsi'].shift(1)) ,
+            (dataframe['volume'] > 0) ,
             'exit_long'
             ] = 1
 

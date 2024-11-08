@@ -102,12 +102,11 @@ class Strategy_Goal_Vidra_RSI_INJ(IStrategy):
         volume_value = dataframe['volume'] > dataframe['volume'].shift(1)
         close_value = dataframe['close'] < dataframe['close'].shift(1)
         rsi_buy_condition = dataframe['rsi'] < self.rsi_buy_threshold
-        rsi_raise_condition = dataframe['rsi'] < dataframe['rsi'].shift(1)
         
-        self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value.tail(2)}, close check: {close_value.tail(2)}, rsi check: {dataframe[['date', 'rsi']].tail(2)}, rsi raise check: {rsi_raise_condition.tail(2)}")
+        self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value.tail(2)}, close check: {close_value.tail(2)}, rsi check: {dataframe[['date', 'rsi']].tail(2)}")
 
         dataframe.loc[
-            (depth_value) & (large_orders_value) & (volume_value) & (close_value) & (rsi_buy_condition) & (rsi_raise_condition),
+            (depth_value) & (large_orders_value) & (volume_value) & (close_value) & (rsi_buy_condition),
             'enter_long'] = 1
 
         return dataframe
@@ -115,7 +114,7 @@ class Strategy_Goal_Vidra_RSI_INJ(IStrategy):
 
     def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         dataframe.loc[
-            (dataframe['rsi'] > self.rsi_sell_threshold) & (dataframe['rsi'] > dataframe['rsi'].shift(1)),
+            (dataframe['rsi'] > self.rsi_sell_threshold),
             'exit_long'
         ] = 1
 
