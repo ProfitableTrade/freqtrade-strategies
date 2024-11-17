@@ -37,22 +37,7 @@
       "ccxt_config": {},
       "ccxt_async_config": {},
       "pair_whitelist": [
-        "INJ/USDT",
-        "ATOM/USDT",
-        "ARB/USDT",
-        "NEAR/USDT",
-        "ADA/USDT",
-        "SHIBA/USDT",
-        "LINK/USDT",
-        "LEVER/USDT",
-        "AVAX/USDT",
-        "GALA/USDT",
-        "EOS/USDT",
-        "DOT/USDT",
-        "POL/USDT",
-        "DYDX/USDT",
-        "SOL/USDT",
-        "SUI/USDT"
+        
       ],
       "pair_blacklist": [
       ]
