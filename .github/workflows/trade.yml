@@ -222,12 +222,12 @@ on:
       stake_amount:
         description: "Trade stake amount"
         required: false
-        default: 30
+        default: 50
         type: number
       stoploss:
         description: "Stoploss"
         required: true
-        default: -0.03
+        default: -0.05
         type: number
       # cancel_open_orders_on_exit:
       #   description: "Cancel open orders on exit"
