@@ -42,7 +42,7 @@ class Strategy_Goal_Vidra(IStrategy):
         "ARB/USDT": SettingsObject(1.3, 15 , 50000),
         "NEAR/USDT": SettingsObject(1.3, 15 , 5000),
         "ADA/USDT": SettingsObject(1.3, 15 , 70000),
-        "SHIBA/USDT": SettingsObject(1.3, 15 , 2805611222),
+        "SHIB/USDT": SettingsObject(1.3, 15 , 2805611222),
         "LINK/USDT": SettingsObject(1.3, 15 , 3500),
         "LEVER/USDT": SettingsObject(1.3, 15 , 2408477),
         "AVAX/USDT": SettingsObject(1.3, 15 , 1200),
