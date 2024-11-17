@@ -78,6 +78,7 @@ on:
           - ETC/USDT
           - XTZ/USDT
           - NEO/USDT
+          - NEAR/USDT
           - ATOM/USDT
           - IOTA/USDT
           - VET/USDT
@@ -88,12 +89,14 @@ on:
           - THETA/USDT
           - FIL/USDT
           - UNI/USDT
+          - LEVER/USDT
           - AAVE/USDT
           - COMP/USDT
           - MKR/USDT
           - SNX/USDT
           - YFI/USDT
           - SUSHI/USDT
+          - SHIBA/USDT
           - ZRX/USDT
           - KNC/USDT
           - BAND/USDT
@@ -108,6 +111,9 @@ on:
           - LRC/USDT
           - CVC/USDT
           - KAVA/USDT
+          - AVAX/USDT
+          - ARB/USDT
+          - GALA/USDT
           - AR/USDT
           - GRT/USDT
           - STORJ/USDT
@@ -116,9 +122,11 @@ on:
           - BNT/USDT
           - GNO/USDT
           - REP/USDT
+          - POL/USDT
           - MLN/USDT
           - CRV/USDT
           - STORJ/USDT
+          - DYDX/USDT
           - SNM/USDT
           - CTK/USDT
           - BNT/USDT

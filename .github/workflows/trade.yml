@@ -72,6 +72,7 @@ on:
           - Strategy_Goal_Resistance_Futures_SUI
           - Strategy_Goal_Vidra_RSI_lim_UNI
           - Strategy_Goal_Vidra_SUI
+          - Strategy_Goal_Vidra
           - Strategy_Goal_Vidra_SUI_EMA_30
           - Strategy_Goal_Vidra_INJ_EMA_15
           - Strategy_Goal_Vidra_INJ
@@ -115,14 +116,12 @@ on:
           - ETH/USDT
           - SPELL/USDT
           - PHB/USDT
-          - DOT/USDT
           - ADA/USDT
           - LINK/USDT
           - XRP/USDT
           - LTC/USDT
           - BCH/USDT
           - BNB/USDT
-          - EOS/USDT
           - TRX/USDT
           - XLM/USDT
           - ETC/USDT
@@ -159,6 +158,7 @@ on:
           - CVC/USDT
           - KAVA/USDT
           - AR/USDT
+          - ARB/USDT
           - GRT/USDT
           - STORJ/USDT
           - SNM/USDT
@@ -176,6 +176,16 @@ on:
           - REP/USDT
           - MLN/USDT
           - CRV/USDT
+          - NEAR/USDT
+          - ADA/USDT
+          - SHIBA/USDT
+          - LEVER/USDT
+          - AVAX/USDT
+          - GALA/USDT
+          - EOS/USDT
+          - DOT/USDT
+          - POL/USDT
+          - DYDX/USDT
       runtime_type:
         description: "dry-run - fake trades, production - real money"
         required: true
