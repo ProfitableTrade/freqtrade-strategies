@@ -49,7 +49,7 @@ on:
       strategy:
         description: "Strategy, example: Strategy0"
         required: true
-        default: Strategy00
+        default: Strategy_Goal_Vidra
         type: choice
         options:
           - Strategy_GoalPL_future_closepart
