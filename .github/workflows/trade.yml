@@ -211,6 +211,7 @@ on:
           - binance1_leverage_unlim
           - binance2
           - binance2_ihor
+          - binance2_mykola
           - binance3
           - for_futures
       timeframe:
