@@ -101,21 +101,17 @@ class Strategy_Goal_Vidra(IStrategy):
         return dataframe
 
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        """
-        Generates buy signal based on EMA indicators
-        A buy signal is generated when EMA 15 crosses above EMA 30
-        """
-        
+        # Get correct settings for pair
         settings = self.STRATEGY_SETTINGS[metadata['pair']]
         
         order_book = self.dp.orderbook(metadata['pair'], settings.depth + 1)
 
-        depth_value = self.check_depth_of_market(order_book, settings.depth, settings.bids_ask_delta)
-        large_orders_value = self.analyze_large_orders(order_book, settings.volume_threshold)
+        depth_value = self.check_depth_of_market(metadata['pair'], order_book, settings.depth, settings.bids_ask_delta)
+        large_orders_value = self.analyze_large_orders(metadata['pair'], order_book, settings.volume_threshold)
         volume_value = dataframe['volume'] > dataframe['volume'].shift(1)
         close_value = dataframe['close'] < dataframe['close'].shift(1)
         
-        self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value.tail(5)}, close check: {close_value.tail(5)}")
+        #self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value.tail(5)}, close check: {close_value.tail(5)}")
 
         dataframe.loc[
             (depth_value) & (large_orders_value) & (volume_value) & (close_value) ,
@@ -129,25 +125,25 @@ class Strategy_Goal_Vidra(IStrategy):
 
         return dataframe
     
-    def check_depth_of_market(self, order_book, depth, delta, exit=False) -> bool:
+    def check_depth_of_market(self, pair, order_book, depth, delta, exit=False) -> bool:
         if len(order_book['bids']) < depth or len(order_book['asks']) < depth:
             return False
         
         total_bids = sum([bid[1] for bid in order_book['bids'][:depth]])
         total_asks = sum([ask[1] for ask in order_book['asks'][:depth]])
         
-        self.logger.info(f"Analyzing depth of market... Results: total bids / total asks is {total_bids / total_asks}, configured delta is {delta}")
+        self.logger.info(f"[{pair}] Analyzing depth of market... Results: total bids / total asks is {total_bids / total_asks}, configured delta is {delta}")
         
         if exit:
             return ( total_asks / total_bids ) > delta  
         else:
             return ( total_bids / total_asks ) > delta  
 
-    def analyze_large_orders(self, order_book, threshold) -> bool:
+    def analyze_large_orders(self, pair, order_book, threshold) -> bool:
         large_orders = [order for order in order_book['bids'] if order[1] >= threshold] + \
                        [order for order in order_book['asks'] if order[1] >= threshold]
 
-        self.logger.info(f"Analyzing large orders for threshold {threshold}, found {len(large_orders)}")
+        self.logger.info(f"[{pair}] Analyzing large orders for threshold {threshold}, found {len(large_orders)}")
         
         return len(large_orders) > 0
     
@@ -167,7 +163,7 @@ class Strategy_Goal_Vidra(IStrategy):
 
             return None
         except Exception as e:
-            self.logger.info(f"Error occured during custom stoploss definition: {str(e)}")
+            self.logger.info(f"[{trade.pair}] Error occured during custom stoploss definition: {str(e)}")
             return None
     
     def adjust_trade_position(self, trade: Trade, current_time: datetime,
@@ -180,22 +176,22 @@ class Strategy_Goal_Vidra(IStrategy):
         try:
             
             current_price_rate = current_rate / trade.open_rate - 1
-            self.logger.info(f"Check for goal to be closed, price rate {current_price_rate}")
+            self.logger.info(f"[{trade.pair}] Check for goal to be closed, price rate {current_price_rate}")
             
             # Check if DCA levels are hit
             for level, amount in zip(self.dca_levels, self.dca_buy_amounts):
                 if not trade.get_custom_data(self.STAGE_BOUGHT.format(stage=self.dca_levels.index(level)), default=False) and current_price_rate <= level:
-                    self.logger.info(f"DCA level {level} reached, buying {amount * 100}% more")
+                    self.logger.info(f"[{trade.pair}] DCA level {level} reached, buying {amount * 100}% more")
                     trade.set_custom_data(self.STAGE_BOUGHT.format(stage=self.dca_levels.index(level)), True)
                     return amount * trade.stake_amount
 
             
             if not trade.get_custom_data(self.STAGE_SOLD.format(stage=1), default=False) and current_price_rate >= self.target_stage_1:
-                self.logger.info(f"Price rise up bigger than {self.target_stage_1}, closing first target {self.stage_1_sell_amount}")
+                self.logger.info(f"[{trade.pair}] Price rise up bigger than {self.target_stage_1}, closing first target {self.stage_1_sell_amount}")
                 trade.set_custom_data(self.STAGE_SOLD.format(stage=1), True)
                 return - ( trade.stake_amount * self.stage_1_sell_amount )
             elif not trade.get_custom_data(self.STAGE_SOLD.format(stage=2), default=False) and current_price_rate >= self.target_stage_2:
-                self.logger.info(f"Price rise up bigger than {self.target_stage_2}, closing second target {self.stage_2_sell_amount}")
+                self.logger.info(f"[{trade.pair}] Price rise up bigger than {self.target_stage_2}, closing second target {self.stage_2_sell_amount}")
                 trade.set_custom_data(self.STAGE_SOLD.format(stage=2), True)
                 return - ( trade.stake_amount * self.stage_2_sell_amount )
             elif current_price_rate >= self.target_percent:
@@ -203,5 +199,5 @@ class Strategy_Goal_Vidra(IStrategy):
             else:
                 return None
         except Exception as e:
-            self.logger.info(f"Error occured during trade position adjustment: {str(e)}")
+            self.logger.info(f"[{trade.pair}] Error occured during trade position adjustment: {str(e)}")
             return None
