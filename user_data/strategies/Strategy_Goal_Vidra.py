@@ -60,6 +60,9 @@ class Strategy_Goal_Vidra(IStrategy):
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
     stoploss = -0.05
     
+    # Беззбитковість 
+    use_custom_stoploss = True
+    
 
     # запускати "populate_indicators" тільки для нової свічки
     process_only_new_candles = True
