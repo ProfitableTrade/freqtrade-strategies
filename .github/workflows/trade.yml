@@ -212,6 +212,8 @@ on:
           - binance2
           - binance2_ihor
           - binance2_mykola
+          - binance_yurii_set1
+          - binance_yurii_set3
           - binance3
           - for_futures
       timeframe:
