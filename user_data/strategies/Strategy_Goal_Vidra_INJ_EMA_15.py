@@ -158,19 +158,19 @@ class Strategy_Goal_Vidra_INJ_EMA_15(IStrategy):
             # Перевірка, чи досягнуті рівні DCA
             for level, amount in zip(self.dca_levels, self.dca_buy_amounts):
                 stage_key = self.STAGE_BOUGHT.format(stage=self.dca_levels.index(level))
-                if not trade.custom_info.get(stage_key, False) and current_price_rate <= level:
+                if not trade.get_custom_data(stage_key, False) and current_price_rate <= level:
                     self.logger.info(f"DCA level {level} reached, buying {amount * 100}% more")
-                    trade.custom_info[stage_key] = True
+                    trade.set_custom_data(stage_key, True)
                     return amount * trade.stake_amount
 
             # Перевірка, чи досягнуті цільові рівні для продажу
-            if not trade.custom_info.get(self.STAGE_SOLD.format(stage=1), False) and current_price_rate >= self.target_stage_1:
+            if not trade.get_custom_data(self.STAGE_SOLD.format(stage=1), False) and current_price_rate >= self.target_stage_1:
                 self.logger.info(f"Price rise up bigger than {self.target_stage_1}, closing first target {self.stage_1_sell_amount}")
-                trade.custom_info[self.STAGE_SOLD.format(stage=1)] = True
+                trade.set_custom_data(self.STAGE_SOLD.format(stage=1), True)
                 return - (trade.stake_amount * self.stage_1_sell_amount)
-            elif not trade.custom_info.get(self.STAGE_SOLD.format(stage=2), False) and current_price_rate >= self.target_stage_2:
+            elif not trade.get_custom_data(self.STAGE_SOLD.format(stage=2), False) and current_price_rate >= self.target_stage_2:
                 self.logger.info(f"Price rise up bigger than {self.target_stage_2}, closing second target {self.stage_2_sell_amount}")
-                trade.custom_info[self.STAGE_SOLD.format(stage=2)] = True
+                trade.set_custom_data(self.STAGE_SOLD.format(stage=2), True)
                 return - (trade.stake_amount * self.stage_2_sell_amount)
             elif current_price_rate >= self.target_percent:
                 return -trade.stake_amount
