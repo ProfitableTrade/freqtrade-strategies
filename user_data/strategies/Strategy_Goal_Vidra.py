@@ -58,7 +58,7 @@ class Strategy_Goal_Vidra(IStrategy):
     position_adjustment_enable = True
 
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
-    stoploss = -0.05
+    stoploss = -0.03
     
     # Беззбитковість 
     use_custom_stoploss = True
@@ -80,10 +80,10 @@ class Strategy_Goal_Vidra(IStrategy):
     }
     
     # Settings for target reaching logic
-    target_percent = 0.09
+    target_percent = 0.12
     
-    target_stage_1 = 0.03
-    target_stage_2 = 0.06
+    target_stage_1 = 0.04
+    target_stage_2 = 0.08
     
     stage_1_sell_amount = 0.2
     stage_2_sell_amount = 0.3
@@ -179,13 +179,12 @@ class Strategy_Goal_Vidra(IStrategy):
             self.logger.info(f"[{trade.pair}] Check for goal to be closed, price rate {current_price_rate}")
             
             # Check if DCA levels are hit
-            for level, amount in zip(self.dca_levels, self.dca_buy_amounts):
-                if not trade.get_custom_data(self.STAGE_BOUGHT.format(stage=self.dca_levels.index(level)), default=False) and current_price_rate <= level:
-                    self.logger.info(f"[{trade.pair}] DCA level {level} reached, buying {amount * 100}% more")
-                    trade.set_custom_data(self.STAGE_BOUGHT.format(stage=self.dca_levels.index(level)), True)
-                    return amount * trade.stake_amount
+            # for level, amount in zip(self.dca_levels, self.dca_buy_amounts):
+            #     if not trade.get_custom_data(self.STAGE_BOUGHT.format(stage=self.dca_levels.index(level)), default=False) and current_price_rate <= level:
+            #         self.logger.info(f"[{trade.pair}] DCA level {level} reached, buying {amount * 100}% more")
+            #         trade.set_custom_data(self.STAGE_BOUGHT.format(stage=self.dca_levels.index(level)), True)
+            #         return amount * trade.stake_amount
 
-            
             if not trade.get_custom_data(self.STAGE_SOLD.format(stage=1), default=False) and current_price_rate >= self.target_stage_1:
                 self.logger.info(f"[{trade.pair}] Price rise up bigger than {self.target_stage_1}, closing first target {self.stage_1_sell_amount}")
                 trade.set_custom_data(self.STAGE_SOLD.format(stage=1), True)
