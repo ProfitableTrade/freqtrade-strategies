@@ -48,6 +48,7 @@ class Strategy_Goal_Vidra(IStrategy):
         "AVAX/USDT": SettingsObject(1.3, 15 , 1200),
         "GALA/USDT": SettingsObject(1.3, 15 ,  1032702),
         "EOS/USDT": SettingsObject(1.3, 15 ,  60000),
+        "INJ/USDT": SettingsObject(1.3, 15, 700),
         "DOT/USDT": SettingsObject(1.3, 15 ,  9000),
         "POL/USDT": SettingsObject(1.3, 15 ,  95000),
         "DYDX/USDT": SettingsObject(1.3, 15 ,  22000),
