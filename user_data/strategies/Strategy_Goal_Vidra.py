@@ -49,11 +49,22 @@ class Strategy_Goal_Vidra(IStrategy):
         "GALA/USDT": SettingsObject(1.3, 15 ,  1032702),
         "EOS/USDT": SettingsObject(1.3, 15 ,  60000),
         "INJ/USDT": SettingsObject(1.3, 15, 700),
-        "DOT/USDT": SettingsObject(1.3, 15 ,  9000),
         "POL/USDT": SettingsObject(1.3, 15 ,  95000),
         "DYDX/USDT": SettingsObject(1.3, 15 ,  22000),
         "SOL/USDT": SettingsObject(1.3, 15 ,  300),
         "SUI/USDT": SettingsObject(1.3, 15 ,  20000),
+        # New coins with 1.5 delta
+        "TIA/USDT": SettingsObject(1.5, 15 ,  8000),
+        "WLD/USDT": SettingsObject(1.5, 15 ,  50000),
+        "RENDER/USDT": SettingsObject(1.5, 15 ,  6400),
+        "IO/USDT": SettingsObject(1.5, 15 ,  15000),
+        "FIL/USDT": SettingsObject(1.5, 15 ,  20000),
+        "ARKM/USDT": SettingsObject(1.5, 15 ,  20000),
+        "STRK/USDT": SettingsObject(1.5, 15 ,  100000),
+        "W/USDT": SettingsObject(1.5, 15 ,  200000),
+        "ETH/USDT": SettingsObject(1.5, 15 ,  500),
+        "SUI/USDT": SettingsObject(1.5, 15 ,  20000),
+        "DOT/USDT": SettingsObject(1.5, 15 ,  7650),
     }
     
     position_adjustment_enable = True
