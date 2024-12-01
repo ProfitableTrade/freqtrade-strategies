@@ -186,6 +186,13 @@ on:
           - DOT/USDT
           - POL/USDT
           - DYDX/USDT
+          - TIA/USDT
+          - WLD/USDT
+          - RENDER/USDT
+          - IO/USDT
+          - ARKM/USDT
+          - STRK/USDT
+          - W/USDT
       runtime_type:
         description: "dry-run - fake trades, production - real money"
         required: true
@@ -233,7 +240,7 @@ on:
       stoploss:
         description: "Stoploss"
         required: true
-        default: -0.05
+        default: -0.03
         type: number
       # cancel_open_orders_on_exit:
       #   description: "Cancel open orders on exit"

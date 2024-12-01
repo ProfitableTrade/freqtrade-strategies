@@ -63,7 +63,6 @@ class Strategy_Goal_Vidra(IStrategy):
         "STRK/USDT": SettingsObject(1.5, 15 ,  100000),
         "W/USDT": SettingsObject(1.5, 15 ,  200000),
         "ETH/USDT": SettingsObject(1.5, 15 ,  500),
-        "SUI/USDT": SettingsObject(1.5, 15 ,  20000),
         "DOT/USDT": SettingsObject(1.5, 15 ,  7650),
     }
     
