@@ -1,5 +1,5 @@
 {
-    "max_open_trades": 5,
+    "max_open_trades": 7,
     "stake_currency": "USDT",
     "stake_amount": 70,
     "tradable_balance_ratio": 0.99,
@@ -41,7 +41,9 @@
         "LINK/USDT",
         "ARB/USDT",
         "ATOM/USDT",
-        "SOL/USDT"
+        "SOL/USDT",
+        "WLD/USDT",
+        "TIA/USDT"
       ],
       "pair_blacklist": [
       ]
