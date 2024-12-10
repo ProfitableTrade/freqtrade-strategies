@@ -80,6 +80,8 @@ class Strategy_Goal_Vidra_EMA(IStrategy):
         "LDO/USDT": SettingsObject(1.5, 15 ,  19000)
     }
     
+    timeframe = "5m"
+    
     position_adjustment_enable = True
 
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
