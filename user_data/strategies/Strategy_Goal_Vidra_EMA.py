@@ -144,7 +144,7 @@ class Strategy_Goal_Vidra_EMA(IStrategy):
         plot_config['subplots'] = {
             # Additional subplot EMA
             "EMA": {
-                'ema9_1h': {'color': 'yellow'}
+                'ema9_1h': {'color': 'red'}
             }
         }
 
@@ -159,11 +159,16 @@ class Strategy_Goal_Vidra_EMA(IStrategy):
 
         depth_value = self.check_depth_of_market(metadata['pair'], order_book, settings.depth, settings.bids_ask_delta)
         large_orders_value = self.analyze_large_orders(metadata['pair'], order_book, settings.volume_threshold)
-        volume_value = dataframe['volume'] > dataframe['volume'].shift(1)
-        close_value = dataframe['close'] < dataframe['close'].shift(1)
+        volume_value = dataframe['volume'] > dataframe['volume'].shift(-1)
+        close_value = dataframe['close'] > dataframe['close'].shift(-1)
         
         ema_value_crossed = dataframe['close'] > dataframe['ema9_1h'] 
         ema_value_raised = dataframe['ema9_1h'] > dataframe['ema9_1h'].shift(-1)
+        
+        
+        self.logger.info(f"{metadata['pair']} Volume operations: \nTail:\n{dataframe['volume'].tail(15)}\nRaised:\n{volume_value.tail(15)}")
+        
+        self.logger.info(f"{metadata['pair']} Close operations: \nTail:\n{dataframe['close'].tail(15)}\nRaised:\n{close_value.tail(15)}")
         
         self.logger.info(f"{metadata['pair']} EMA operations: \nTail:\n{dataframe['ema9_1h'].tail(15)}\nCrossed:\n{ema_value_crossed.tail(15)}\nRaised:\n{ema_value_raised.tail(15)}")
         
@@ -210,11 +215,11 @@ class Strategy_Goal_Vidra_EMA(IStrategy):
             
             if trade.get_custom_data(self.STAGE_SOLD.format(stage=1), default=False):
                 stoploss_level = self.target_stage_1 - self.stoploss_correction
-                self.logger.info(f"Stoploss moved to {stoploss_level} due to first target reached")
+                #self.logger.info(f"Stoploss moved to {stoploss_level} due to first target reached")
                 return stoploss_from_open(stoploss_level, current_profit, is_short=trade.is_short, leverage=trade.leverage)
             elif trade.get_custom_data(self.STAGE_SOLD.format(stage=2), default=False):
                 stoploss_level = self.target_stage_2 - self.stoploss_correction
-                self.logger.info(f"Stoploss moved to {stoploss_level} due to second target reached")
+                #self.logger.info(f"Stoploss moved to {stoploss_level} due to second target reached")
                 return stoploss_from_open(stoploss_level, current_profit, is_short=trade.is_short, leverage=trade.leverage)
 
             return None
@@ -232,7 +237,7 @@ class Strategy_Goal_Vidra_EMA(IStrategy):
         try:
             
             current_price_rate = current_rate / trade.open_rate - 1
-            self.logger.info(f"[{trade.pair}] Check for goal to be closed, price rate {current_price_rate}")
+            #self.logger.info(f"[{trade.pair}] Check for goal to be closed, price rate {current_price_rate}")
             
             # Check if DCA levels are hit
             for level, amount in zip(self.dca_levels, self.dca_buy_amounts):
