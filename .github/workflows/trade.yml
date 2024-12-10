@@ -73,6 +73,7 @@ on:
           - Strategy_Goal_Vidra_RSI_lim_UNI
           - Strategy_Goal_Vidra_SUI
           - Strategy_Goal_Vidra
+          - Strategy_Goal_Vidra_EMA
           - Strategy_Goal_Vidra_SUI_EMA_30
           - Strategy_Goal_Vidra_INJ_EMA_15
           - Strategy_Goal_Vidra_INJ
@@ -193,6 +194,20 @@ on:
           - ARKM/USDT
           - STRK/USDT
           - W/USDT
+          - AEVO/USDT
+          - DOGS/USDT
+          - MANA/USDT
+          - FLOW/USDT
+          - ILV/USDT
+          - HOOK/USDT
+          - LOKA/USDT
+          - DOGE/USDT
+          - PYTH/USDT
+          - BLUR/USDT
+          - HFT/USDT
+          - ENA/USDT
+          - OP/USDT
+          - LDO/USDT
       runtime_type:
         description: "dry-run - fake trades, production - real money"
         required: true

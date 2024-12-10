@@ -37,9 +37,9 @@
       "ccxt_config": {},
       "ccxt_async_config": {},
       "pair_whitelist": [
-        "LEVER/USDT",
+        "DOGE/USDT",
         "ARB/USDT",
-        "SOL/USDT",
+        "AEVO/USDT",
         "STRK/USDT",
         "GALA/USDT"
       ],

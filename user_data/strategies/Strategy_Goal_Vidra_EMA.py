@@ -2,10 +2,11 @@
 import datetime
 import logging
 from typing import Optional, Tuple, Union
-from freqtrade.strategy import IStrategy
+from freqtrade.strategy import IStrategy, informative
 from pandas import DataFrame
 from freqtrade.persistence import Trade
 from freqtrade.strategy import stoploss_from_open
+import talib.abstract as ta
 
 
 class SettingsObject:
@@ -20,7 +21,7 @@ class SettingsObject:
         
 
 
-class Strategy_Goal_Vidra(IStrategy):
+class Strategy_Goal_Vidra_EMA(IStrategy):
     """
     Strategy_Goal_Vidra 
     author@: Yurii Udaltsov and Illia
@@ -31,7 +32,6 @@ class Strategy_Goal_Vidra(IStrategy):
     """
 
     INTERFACE_VERSION: int = 3
-    BE_ACTIVATED: str = "be_activated"
     STAGE_SOLD: str = "stage_{stage}_sold"
     STAGE_BOUGHT: str = "stage_{stage}_bought"
     
@@ -83,12 +83,11 @@ class Strategy_Goal_Vidra(IStrategy):
     position_adjustment_enable = True
 
     # Оптимальний стоп-лосс або %max, розроблений для стратегії
-    stoploss = -0.03
+    stoploss = -0.06
     
     # Беззбитковість 
     use_custom_stoploss = True
     
-
     # запускати "populate_indicators" тільки для нової свічки
     process_only_new_candles = True
 
@@ -107,20 +106,31 @@ class Strategy_Goal_Vidra(IStrategy):
     # Settings for target reaching logic
     target_percent = 0.12
     
-    target_stage_1 = 0.04
-    target_stage_2 = 0.08
+    target_stage_1 = 0.01
+    target_stage_2 = 0.04
+    target_stage_3 = 0.08
     
-    stage_1_sell_amount = 0.2
+    stage_1_sell_amount = 0.1
     stage_2_sell_amount = 0.3
+    stage_3_sell_amount = 0.3
+    
+    stoploss_correction = 0.002
     
     
     # Step buying (DCA) settings
     dca_levels = [-0.03]  # Levels for additional buy-ins
-    dca_buy_amounts = [0.10]  # Buy amounts for each level
+    dca_buy_amounts = [2]  # Buy amounts for each level
 
     
     def bot_start(self, **kwargs) -> None:
         self.logger = logging.getLogger(__name__)
+        
+    @informative('1h')
+    def populate_indicators_1h(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        
+        dataframe['ema9'] = ta.EMA(dataframe['close'], timeperiod=9)
+
+        return dataframe
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         return dataframe
@@ -136,10 +146,15 @@ class Strategy_Goal_Vidra(IStrategy):
         volume_value = dataframe['volume'] > dataframe['volume'].shift(1)
         close_value = dataframe['close'] < dataframe['close'].shift(1)
         
+        ema_value_crossed = dataframe['close'] > dataframe['ema9_1h'] 
+        ema_value_raised = dataframe['ema9_1h'] > dataframe['ema9_1h'].shift(1)
+        
+        self.logger.info(f"EMA operations: Tail: {dataframe['ema9_1h'].tail(10)}\nCrossed: {ema_value_crossed.tail(10)}\nRaised: {ema_value_raised.tail(10)}")
+        
         #self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value.tail(5)}, close check: {close_value.tail(5)}")
 
         dataframe.loc[
-            (depth_value) & (large_orders_value) & (volume_value) & (close_value) ,
+            (depth_value) & (large_orders_value) & (volume_value) & (close_value) & (ema_value_crossed | ema_value_raised),
             'enter_long'] = 1
 
         return dataframe
@@ -176,15 +191,15 @@ class Strategy_Goal_Vidra(IStrategy):
                         current_rate: float, current_profit: float, after_fill: bool,
                         **kwargs) -> Optional[float]:
         try:
-            be_activated = trade.get_custom_data(self.BE_ACTIVATED, default=False)
             
-            current_price_rate = current_rate / trade.open_rate - 1
-
-            if be_activated or current_price_rate >= self.target_stage_1:
-                if not be_activated: 
-                    trade.set_custom_data(self.BE_ACTIVATED, True)
-                    
-                return stoploss_from_open(0.002, current_profit, is_short=trade.is_short, leverage=trade.leverage)
+            if trade.get_custom_data(self.STAGE_SOLD.format(stage=1), default=False):
+                stoploss_level = self.target_stage_1 - self.stoploss_correction
+                self.logger.info(f"Stoploss moved to {stoploss_level} due to first target reached")
+                return stoploss_from_open(stoploss_level, current_profit, is_short=trade.is_short, leverage=trade.leverage)
+            elif trade.get_custom_data(self.STAGE_SOLD.format(stage=2), default=False):
+                stoploss_level = self.target_stage_2 - self.stoploss_correction
+                self.logger.info(f"Stoploss moved to {stoploss_level} due to second target reached")
+                return stoploss_from_open(stoploss_level, current_profit, is_short=trade.is_short, leverage=trade.leverage)
 
             return None
         except Exception as e:
@@ -204,11 +219,11 @@ class Strategy_Goal_Vidra(IStrategy):
             self.logger.info(f"[{trade.pair}] Check for goal to be closed, price rate {current_price_rate}")
             
             # Check if DCA levels are hit
-            # for level, amount in zip(self.dca_levels, self.dca_buy_amounts):
-            #     if not trade.get_custom_data(self.STAGE_BOUGHT.format(stage=self.dca_levels.index(level)), default=False) and current_price_rate <= level:
-            #         self.logger.info(f"[{trade.pair}] DCA level {level} reached, buying {amount * 100}% more")
-            #         trade.set_custom_data(self.STAGE_BOUGHT.format(stage=self.dca_levels.index(level)), True)
-            #         return amount * trade.stake_amount
+            for level, amount in zip(self.dca_levels, self.dca_buy_amounts):
+                if not trade.get_custom_data(self.STAGE_BOUGHT.format(stage=self.dca_levels.index(level)), default=False) and current_price_rate <= level:
+                    self.logger.info(f"[{trade.pair}] DCA level {level} reached, buying {amount * 100}% more")
+                    trade.set_custom_data(self.STAGE_BOUGHT.format(stage=self.dca_levels.index(level)), True)
+                    return amount * trade.stake_amount
 
             if not trade.get_custom_data(self.STAGE_SOLD.format(stage=1), default=False) and current_price_rate >= self.target_stage_1:
                 self.logger.info(f"[{trade.pair}] Price rise up bigger than {self.target_stage_1}, closing first target {self.stage_1_sell_amount}")
@@ -218,6 +233,10 @@ class Strategy_Goal_Vidra(IStrategy):
                 self.logger.info(f"[{trade.pair}] Price rise up bigger than {self.target_stage_2}, closing second target {self.stage_2_sell_amount}")
                 trade.set_custom_data(self.STAGE_SOLD.format(stage=2), True)
                 return - ( trade.stake_amount * self.stage_2_sell_amount )
+            elif not trade.get_custom_data(self.STAGE_SOLD.format(stage=3), default=False) and current_price_rate >= self.target_stage_3:
+                self.logger.info(f"[{trade.pair}] Price rise up bigger than {self.target_stage_3}, closing second target {self.stage_3_sell_amount}")
+                trade.set_custom_data(self.STAGE_SOLD.format(stage=3), True)
+                return - ( trade.stake_amount * self.stage_3_sell_amount )
             elif current_price_rate >= self.target_percent:
                 return - trade.stake_amount
             else:
