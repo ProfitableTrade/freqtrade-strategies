@@ -159,11 +159,11 @@ class Strategy_Goal_Vidra_EMA(IStrategy):
 
         depth_value = self.check_depth_of_market(metadata['pair'], order_book, settings.depth, settings.bids_ask_delta)
         large_orders_value = self.analyze_large_orders(metadata['pair'], order_book, settings.volume_threshold)
-        volume_value = dataframe['volume'] > dataframe['volume'].shift(-1)
-        close_value = dataframe['close'] > dataframe['close'].shift(-1)
+        volume_value = dataframe['volume'] > dataframe['volume'].shift(1)
+        close_value = dataframe['close'] > dataframe['close'].shift(1)
         
         ema_value_crossed = dataframe['close'] > dataframe['ema9_1h'] 
-        ema_value_raised = dataframe['ema9_1h'] > dataframe['ema9_1h'].shift(-1)
+        ema_value_raised = dataframe['ema9_1h'] > dataframe['ema9_1h'].shift(1)
         
         
         self.logger.info(f"{metadata['pair']} Volume operations: \nTail:\n{dataframe['volume'].tail(15)}\nRaised:\n{volume_value.tail(15)}")
