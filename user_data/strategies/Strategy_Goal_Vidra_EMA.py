@@ -126,7 +126,7 @@ class Strategy_Goal_Vidra_EMA(IStrategy):
     
     def bot_start(self, **kwargs) -> None:
         self.logger = logging.getLogger(__name__)
-        
+     
     @informative('1h')
     def populate_indicators_1h(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         
@@ -136,6 +136,20 @@ class Strategy_Goal_Vidra_EMA(IStrategy):
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         return dataframe
+    
+    @property
+    def plot_config(self):
+        plot_config = {}
+        plot_config['main_plot'] = {}
+        plot_config['subplots'] = {
+            # Additional subplot EMA
+            "EMA": {
+                'ema9_1h': {'color': 'yellow'}
+            }
+        }
+
+        return plot_config
+        
 
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         # Get correct settings for pair
@@ -149,9 +163,9 @@ class Strategy_Goal_Vidra_EMA(IStrategy):
         close_value = dataframe['close'] < dataframe['close'].shift(1)
         
         ema_value_crossed = dataframe['close'] > dataframe['ema9_1h'] 
-        ema_value_raised = dataframe['ema9_1h'] > dataframe['ema9_1h'].shift(1)
+        ema_value_raised = dataframe['ema9_1h'] > dataframe['ema9_1h'].shift(-1)
         
-        self.logger.info(f"EMA operations: Tail: {dataframe['ema9_1h'].tail(10)}\nCrossed: {ema_value_crossed.tail(10)}\nRaised: {ema_value_raised.tail(10)}")
+        self.logger.info(f"{metadata['pair']} EMA operations: \nTail:\n{dataframe['ema9_1h'].tail(15)}\nCrossed:\n{ema_value_crossed.tail(15)}\nRaised:\n{ema_value_raised.tail(15)}")
         
         #self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value.tail(5)}, close check: {close_value.tail(5)}")
 
