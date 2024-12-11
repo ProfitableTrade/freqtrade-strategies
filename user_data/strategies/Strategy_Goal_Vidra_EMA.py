@@ -130,7 +130,8 @@ class Strategy_Goal_Vidra_EMA(IStrategy):
     @informative('1h')
     def populate_indicators_1h(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         
-        dataframe['ema9'] = ta.EMA(dataframe['close'], timeperiod=9)
+        dataframe['ema20'] = ta.EMA(dataframe['close'], timeperiod=20)
+        dataframe['ema30'] = ta.EMA(dataframe['close'], timeperiod=30)
 
         return dataframe
 
@@ -144,7 +145,8 @@ class Strategy_Goal_Vidra_EMA(IStrategy):
         plot_config['subplots'] = {
             # Additional subplot EMA
             "EMA": {
-                'ema9_1h': {'color': 'red'}
+                'ema20_1h': {'color': 'red'},
+                'ema30_1h': {'color': 'yellow'}
             }
         }
 
@@ -162,20 +164,14 @@ class Strategy_Goal_Vidra_EMA(IStrategy):
         volume_value = dataframe['volume'] > dataframe['volume'].shift(1)
         close_value = dataframe['close'] > dataframe['close'].shift(1)
         
-        ema_value_crossed = dataframe['close'] > dataframe['ema9_1h'] 
-        ema_value_raised = dataframe['ema9_1h'] > dataframe['ema9_1h'].shift(1)
+        ema_value_bigger = dataframe['ema20_1h'] > dataframe['ema30_1h']
         
-        
-        self.logger.info(f"{metadata['pair']} Volume operations: \nTail:\n{dataframe['volume'].tail(15)}\nRaised:\n{volume_value.tail(15)}")
-        
-        self.logger.info(f"{metadata['pair']} Close operations: \nTail:\n{dataframe['close'].tail(15)}\nRaised:\n{close_value.tail(15)}")
-        
-        self.logger.info(f"{metadata['pair']} EMA operations: \nTail:\n{dataframe['ema9_1h'].tail(15)}\nCrossed:\n{ema_value_crossed.tail(15)}\nRaised:\n{ema_value_raised.tail(15)}")
+        self.logger.info(f"{metadata['pair']} EMA operations: \n20 bigger than 30:\n{ema_value_bigger.tail(16)}")
         
         #self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value.tail(5)}, close check: {close_value.tail(5)}")
 
         dataframe.loc[
-            (depth_value) & (large_orders_value) & (volume_value) & (close_value) & (ema_value_crossed | ema_value_raised),
+            (depth_value) & (large_orders_value) & (volume_value) & (close_value) & (ema_value_bigger),
             'enter_long'] = 1
 
         return dataframe
@@ -214,13 +210,11 @@ class Strategy_Goal_Vidra_EMA(IStrategy):
         try:
             
             if trade.get_custom_data(self.STAGE_SOLD.format(stage=1), default=False):
-                stoploss_level = self.target_stage_1 - self.stoploss_correction
-                #self.logger.info(f"Stoploss moved to {stoploss_level} due to first target reached")
-                return stoploss_from_open(stoploss_level, current_profit, is_short=trade.is_short, leverage=trade.leverage)
+                return stoploss_from_open(self.stoploss_correction, current_profit, is_short=trade.is_short, leverage=trade.leverage)
             elif trade.get_custom_data(self.STAGE_SOLD.format(stage=2), default=False):
-                stoploss_level = self.target_stage_2 - self.stoploss_correction
-                #self.logger.info(f"Stoploss moved to {stoploss_level} due to second target reached")
-                return stoploss_from_open(stoploss_level, current_profit, is_short=trade.is_short, leverage=trade.leverage)
+                return stoploss_from_open(self.target_stage_1, current_profit, is_short=trade.is_short, leverage=trade.leverage)
+            elif trade.get_custom_data(self.STAGE_SOLD.format(stage=3), default=False):
+                return stoploss_from_open(self.target_stage_2, current_profit, is_short=trade.is_short, leverage=trade.leverage)
 
             return None
         except Exception as e:
