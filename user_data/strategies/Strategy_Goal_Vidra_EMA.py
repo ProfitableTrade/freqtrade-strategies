@@ -166,7 +166,7 @@ class Strategy_Goal_Vidra_EMA(IStrategy):
         
         ema_value_bigger = dataframe['ema20_1h'] > dataframe['ema30_1h']
         
-        self.logger.info(f"{metadata['pair']} EMA operations: \n20 bigger than 30:\n{ema_value_bigger.tail(16)}")
+        #self.logger.info(f"{metadata['pair']} EMA operations: \n20 bigger than 30:\n{ema_value_bigger.tail(16)}")
         
         #self.logger.info(f"Depth check: {depth_value}, large orders check: {large_orders_value}, volume check: {volume_value.tail(5)}, close check: {close_value.tail(5)}")
 
