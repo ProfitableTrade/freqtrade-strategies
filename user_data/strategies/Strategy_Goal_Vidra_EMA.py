@@ -71,7 +71,7 @@ class Strategy_Goal_Vidra_EMA(IStrategy):
         "ILV/USDT": SettingsObject(1.5, 15 ,  550),
         "HOOK/USDT": SettingsObject(1.5, 15 ,  55000),
         "LOKA/USDT": SettingsObject(1.5, 15 ,  32000),
-        "DOGE/USDT": SettingsObject(1.5, 15 ,  2280500),
+        "DOGE/USDT": SettingsObject(1.5, 15 ,  120000),
         "PYTH/USDT": SettingsObject(1.5, 15 ,  85000),
         "BLUR/USDT": SettingsObject(1.5, 15 ,  100000),
         "HFT/USDT": SettingsObject(1.5, 15 ,  65000),
