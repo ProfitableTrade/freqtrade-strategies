@@ -121,7 +121,7 @@ class Strategy_Goal_Vidra_EMA(IStrategy):
     
     # Step buying (DCA) settings
     dca_levels = [-0.03]  # Levels for additional buy-ins
-    dca_buy_amounts = [2]  # Buy amounts for each level
+    dca_buy_amounts = [1]  # Buy amounts for each level
 
     
     def bot_start(self, **kwargs) -> None:
