@@ -14,6 +14,7 @@ on:
           - Strategy_SLpart_SPELLUSDT_leverage
           - CrossEMAStrategy
           - Strategy_Chandelier_ZLSMA
+          - Strategy_Chandelier_ZLSMA_Goals
           - Strategy_Goal_Depth_SOL
           - Strategy_Goal_Depth_INJ
           - Strategy_Goal_Depth_SUI

@@ -92,10 +92,10 @@ class Strategy_Chandelier_ZLSMA(IStrategy):
             'enter_long'] = 1
 
         # Sell condition (short)
-        dataframe.loc[
-            (dataframe['close'] < dataframe['zlsma_final']) &
-            (dataframe['close'] < dataframe['long_stop_prev']),
-            'enter_short'] = 1
+        # dataframe.loc[
+        #     (dataframe['close'] < dataframe['zlsma_final']) &
+        #     (dataframe['close'] < dataframe['long_stop_prev']),
+        #     'enter_short'] = 1
 
         return dataframe
 
@@ -107,9 +107,9 @@ class Strategy_Chandelier_ZLSMA(IStrategy):
             'exit_long'] = 1
 
         # Short exit
-        dataframe.loc[
-            (dataframe['close'] > dataframe['zlsma_final']),
-            'exit_short'] = 1
+        # dataframe.loc[
+        #     (dataframe['close'] > dataframe['zlsma_final']),
+        #     'exit_short'] = 1
 
         return dataframe
     
