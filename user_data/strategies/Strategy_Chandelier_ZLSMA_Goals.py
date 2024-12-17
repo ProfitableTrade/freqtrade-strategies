@@ -123,9 +123,9 @@ class Strategy_Chandelier_ZLSMA_Goals(IStrategy):
 
     def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
          # Long exit
-        dataframe.loc[
-            (dataframe['close'] < dataframe['zlsma_final']),
-            'exit_long'] = 1
+        # dataframe.loc[
+        #     (dataframe['close'] < dataframe['zlsma_final']),
+        #     'exit_long'] = 1
 
         return dataframe
     
