@@ -209,9 +209,9 @@ class Strategy_Goal_Vidra_EMA(IStrategy):
                         **kwargs) -> Optional[float]:
         try:
             
-            if trade.get_custom_data(self.STAGE_SOLD.format(stage=1), default=False):
-                return stoploss_from_open(self.stoploss_correction, current_profit, is_short=trade.is_short, leverage=trade.leverage)
-            elif trade.get_custom_data(self.STAGE_SOLD.format(stage=2), default=False):
+            # if trade.get_custom_data(self.STAGE_SOLD.format(stage=1), default=False):
+            #     return stoploss_from_open(self.stoploss_correction, current_profit, is_short=trade.is_short, leverage=trade.leverage)
+            if trade.get_custom_data(self.STAGE_SOLD.format(stage=2), default=False):
                 return stoploss_from_open(self.target_stage_1, current_profit, is_short=trade.is_short, leverage=trade.leverage)
             elif trade.get_custom_data(self.STAGE_SOLD.format(stage=3), default=False):
                 return stoploss_from_open(self.target_stage_2, current_profit, is_short=trade.is_short, leverage=trade.leverage)
@@ -240,11 +240,11 @@ class Strategy_Goal_Vidra_EMA(IStrategy):
                     trade.set_custom_data(self.STAGE_BOUGHT.format(stage=self.dca_levels.index(level)), True)
                     return amount * trade.stake_amount
 
-            if not trade.get_custom_data(self.STAGE_SOLD.format(stage=1), default=False) and current_price_rate >= self.target_stage_1:
-                self.logger.info(f"[{trade.pair}] Price rise up bigger than {self.target_stage_1}, closing first target {self.stage_1_sell_amount}")
-                trade.set_custom_data(self.STAGE_SOLD.format(stage=1), True)
-                return - ( trade.stake_amount * self.stage_1_sell_amount )
-            elif not trade.get_custom_data(self.STAGE_SOLD.format(stage=2), default=False) and current_price_rate >= self.target_stage_2:
+            # if not trade.get_custom_data(self.STAGE_SOLD.format(stage=1), default=False) and current_price_rate >= self.target_stage_1:
+            #     self.logger.info(f"[{trade.pair}] Price rise up bigger than {self.target_stage_1}, closing first target {self.stage_1_sell_amount}")
+            #     trade.set_custom_data(self.STAGE_SOLD.format(stage=1), True)
+            #     return - ( trade.stake_amount * self.stage_1_sell_amount )
+            if not trade.get_custom_data(self.STAGE_SOLD.format(stage=2), default=False) and current_price_rate >= self.target_stage_2:
                 self.logger.info(f"[{trade.pair}] Price rise up bigger than {self.target_stage_2}, closing second target {self.stage_2_sell_amount}")
                 trade.set_custom_data(self.STAGE_SOLD.format(stage=2), True)
                 return - ( trade.stake_amount * self.stage_2_sell_amount )
