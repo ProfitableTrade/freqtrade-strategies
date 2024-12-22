@@ -146,6 +146,7 @@ on:
           - binance1
           - binance2
           - binance1_leverage
+          - binance1_leverage_unlim
 
 jobs:
   backtesting:
