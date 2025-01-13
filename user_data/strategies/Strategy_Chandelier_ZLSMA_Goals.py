@@ -65,11 +65,11 @@ class Strategy_Chandelier_ZLSMA_Goals(IStrategy):
     
     stoploss_correction = 0.002
     
-    atr_period = IntParameter(10, 30, default=22)
-    atr_multiplier = DecimalParameter(1.0, 5.0, default=3.0)
-    zlsma_length = IntParameter(10, 50, default=32)
-    zlsma_offset = IntParameter(0, 10, default=0)
-    use_close_price = BooleanParameter(default=True)
+    atr_period = IntParameter(10, 30, default=22, space="buy")
+    atr_multiplier = DecimalParameter(1.0, 5.0, default=3.0, space="buy")
+    zlsma_length = IntParameter(10, 50, default=32, space="buy")
+    zlsma_offset = IntParameter(0, 10, default=0, space="buy")
+    use_close_price = BooleanParameter(default=True, space="buy")
 
     
     def bot_start(self, **kwargs) -> None:
