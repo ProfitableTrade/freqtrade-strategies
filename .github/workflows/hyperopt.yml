@@ -115,7 +115,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" <<'EOF' 
           set -e 
           cd /root/hyperopt/${{ github.run_number }}
-          docker compose -f docker-compose-backtesting.yml \
+          docker compose -f docker-compose-hyperopt.yml \
             run \
             --rm freqtrade download-data \
             --timeframes ${{ inputs.time_frames }} \
@@ -131,7 +131,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i ./id_rsa "$REMOTE_SERVER" <<'EOF' 
           set -e 
           cd /root/hyperopt/${{ github.run_number }}
-          docker compose -f docker-compose-backtesting.yml \
+          docker compose -f docker-compose-hyperopt.yml \
             run \
             --rm freqtrade hyperopt \
             --timeframe ${{ inputs.time_frames }} \
