@@ -300,8 +300,8 @@ jobs:
           echo "|Timeframe:        | ${{ inputs.timeframe }}       |" >> $GITHUB_STEP_SUMMARY
           echo "|Stake amount:     | ${{ inputs.stake_amount }}    |" >> $GITHUB_STEP_SUMMARY
           echo "|Stoploss:         | ${{ inputs.stoploss }}        |" >> $GITHUB_STEP_SUMMARY
-          echo "|Cancel open orders on exit: | ${{ inputs.cancel_open_orders_on_exit }} |" >> $GITHUB_STEP_SUMMARY
-          echo "|Telegram:         | ${{ inputs.telegram }}        |" >> $GITHUB_STEP_SUMMARY
+      #    echo "|Cancel open orders on exit: | ${{ inputs.cancel_open_orders_on_exit }} |" >> $GITHUB_STEP_SUMMARY
+      #    echo "|Telegram:         | ${{ inputs.telegram }}        |" >> $GITHUB_STEP_SUMMARY
 
       #------------------------------------------------------------
       # Install rsync
