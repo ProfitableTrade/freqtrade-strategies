@@ -90,8 +90,8 @@ on:
           - Strategy00_SL_LUNCUSDT
           - Strategy00_SL_PHBUSDT
           - Strategy00_SL_BNBUSDT
-          - BollingerBandsStrategy
-          - EMACrossoverStopLossStrategy
+          - Strategy_BollingerBands
+          - Strategy_EMACrossoverStopLoss
           - CrossEMAStrategy
           - CustomStoplossWithPSAR
           - HourBasedStrategy

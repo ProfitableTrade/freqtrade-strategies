@@ -1,7 +1,7 @@
 from freqtrade.strategy.interface import IStrategy
 from pandas import DataFrame
 
-class BollingerBandsStrategy(IStrategy):
+class Strategy_BollingerBands(IStrategy):
     
     INTERFACE_VERSION: int = 3
     
