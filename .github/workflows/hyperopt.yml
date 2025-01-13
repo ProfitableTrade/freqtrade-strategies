@@ -9,6 +9,88 @@ on:
         type: choice
         options:
           - Strategy_Chandelier_ZLSMA
+      pair:
+        description: "Pair, example: SOL/USDT"
+        required: true
+        type: choice
+        default: SOL/USDT
+        options:
+          - SOL/USDT:USDT
+          - SUI/USDT
+          - SOL/USDT
+          - INJ/USDT
+          - KAVA/USDT
+          - BTC/USDT
+          - ETH/USDT
+          - DOT/USDT
+          - ADA/USDT
+          - LINK/USDT
+          - XRP/USDT
+          - LTC/USDT
+          - BCH/USDT
+          - BNB/USDT
+          - EOS/USDT
+          - TRX/USDT
+          - XLM/USDT
+          - ETC/USDT
+          - XTZ/USDT
+          - NEO/USDT
+          - NEAR/USDT
+          - ATOM/USDT
+          - IOTA/USDT
+          - VET/USDT
+          - XMR/USDT
+          - DASH/USDT
+          - ZEC/USDT
+          - QTUM/USDT
+          - THETA/USDT
+          - FIL/USDT
+          - UNI/USDT
+          - LEVER/USDT
+          - AAVE/USDT
+          - COMP/USDT
+          - MKR/USDT
+          - SNX/USDT
+          - YFI/USDT
+          - SUSHI/USDT
+          - SHIBA/USDT
+          - ZRX/USDT
+          - KNC/USDT
+          - BAND/USDT
+          - REN/USDT
+          - BAL/USDT
+          - OXT/USDT
+          - CRV/USDT
+          - TRB/USDT
+          - UMA/USDT
+          - NMR/USDT
+          - ANT/USDT
+          - LRC/USDT
+          - CVC/USDT
+          - KAVA/USDT
+          - AVAX/USDT
+          - ARB/USDT
+          - GALA/USDT
+          - AR/USDT
+          - GRT/USDT
+          - STORJ/USDT
+          - SNM/USDT
+          - CTK/USDT
+          - BNT/USDT
+          - GNO/USDT
+          - REP/USDT
+          - POL/USDT
+          - MLN/USDT
+          - CRV/USDT
+          - STORJ/USDT
+          - DYDX/USDT
+          - SNM/USDT
+          - CTK/USDT
+          - BNT/USDT
+          - GNO/USDT
+          - REP/USDT
+          - MLN/USDT
+          - CRV/USDT
       config:
         description: "Config, example: binance"
         required: true
@@ -121,6 +203,7 @@ jobs:
             --timeframes ${{ inputs.time_frames }} \
             --timerange ${{ inputs.start_date }}-${{ inputs.end_date }} \
             --config /freqtrade/user_data/${{ inputs.config }}.json \
+            --pairs ${{ inputs.pair }}
           EOF | cat >> $GITHUB_STEP_SUMMARY
       #------------------------------------------------------------
       # Hyperopt
@@ -141,4 +224,5 @@ jobs:
             --spaces  ${{ inputs.spaces }} \
             --hyperopt-loss ${{ inputs.loss }} \
             --config /freqtrade/user_data/${{ inputs.config }}.json \
+            --pairs ${{ inputs.pair }}
           EOF | cat >> $GITHUB_STEP_SUMMARY
