@@ -242,6 +242,7 @@ on:
           - binance_yurii_set3
           - binance3
           - for_futures
+          - For_long_term_100
       timeframe:
         description: "Timeframe"
         required: true
