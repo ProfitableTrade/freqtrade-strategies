@@ -39,7 +39,7 @@
       "pair_whitelist": [
         "BTC/USDT",
         "INJ/USDT",
-        "SOL/USDT",
+        "SOL/USDT"
       ],
       "pair_blacklist": [
       ]
