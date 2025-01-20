@@ -41,7 +41,7 @@ class Strategy_BollingerBands(IStrategy):
         """
         # Check for long condition: close > bb_upper within the time range
         dataframe.loc[
-            (dataframe['close'] < dataframe['bb_lowerband']),
+            (dataframe['close'] > dataframe['bb_upperband']),
             'enter_long'
         ] = 1
 
@@ -53,7 +53,7 @@ class Strategy_BollingerBands(IStrategy):
         """
         # Check for flat condition: close < bb_lower within the time range
         dataframe.loc[
-            (dataframe['close'] > dataframe['bb_upperband']),
+            (dataframe['close'] < dataframe['bb_lowerband']),
             'exit_long'
         ] = 1
 
