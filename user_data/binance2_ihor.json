@@ -38,10 +38,10 @@
       "ccxt_async_config": {},
       "pair_whitelist": [
         "DOGE/USDT",
-        "ARB/USDT",
-        "AEVO/USDT",
-        "STRK/USDT",
-        "GALA/USDT"
+        "ETH/USDT",
+        "SOL/USDT",
+        "LINK/USDT",
+        "XRP/USDT"
       ],
       "pair_blacklist": [
       ]
