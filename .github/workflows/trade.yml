@@ -243,6 +243,7 @@ on:
           - binance3
           - for_futures
           - For_long_term_100
+          - For_long_term_100_Gala_Avax_Spell
       timeframe:
         description: "Timeframe"
         required: true
